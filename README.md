@@ -1,5 +1,11 @@
 # MyBusFeed Mobile app
 
+## Instructions
+
+1. Always work on **development** branch
+2. Push to branch, create a pull request to merge to **staging**
+3. Once testing is done on **staging**, move to **main**
+
 ## Running dev environment
 
 **Run instructions for iOS:**
