@@ -10,12 +10,12 @@ import tailwind from 'tailwind-rn'
 
 const HomeContainer = () => {
 
-  return (
-    <View style={tailwind('bg-white h-full')}>
-        <Controls/>
-        <ListView/>
-    </View>
-  )
+    return (
+        <View style={tailwind('bg-white h-full')}>
+            <Controls/>
+            <ListView/>
+        </View>
+    )
 }
 
 export default HomeContainer

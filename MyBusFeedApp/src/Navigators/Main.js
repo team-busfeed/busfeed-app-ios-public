@@ -1,14 +1,16 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { HomeContainer } from '@/Containers'
-// import { View } from 'react-native'
 
 const Tab = createBottomTabNavigator()
 
 // @refresh reset
 const MainNavigator = () => {
     return (
-        <HomeContainer/>
+        <Tab.Navigator>
+            <Tab.Screen name="Bus Stops" component={HomeContainer} />
+            <Tab.Screen name="Favourites" component={HomeContainer} />
+        </Tab.Navigator>
     )
 }
 
