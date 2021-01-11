@@ -6,7 +6,7 @@ import tailwind from 'tailwind-rn'
 const Map = () => (
    <View>
         <MapView
-            style={tailwind('h-80')}
+            style={tailwind('h-5/6')}
             initialRegion={{
                 latitude: 1.3521,
                 longitude: 103.8198,

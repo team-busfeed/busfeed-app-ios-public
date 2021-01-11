@@ -21,7 +21,7 @@ const ApplicationNavigator = () => {
 
   useEffect(() => {
     if (MainNavigator == null && !applicationIsLoading) {
-      MainNavigator = require('@/Navigators/Main').default
+      MainNavigator = require('@/Containers/Home/Index').default
       setIsApplicationLoaded(true)
     }
   }, [applicationIsLoading])

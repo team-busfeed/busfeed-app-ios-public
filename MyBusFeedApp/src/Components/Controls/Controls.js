@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 
 const Controls = () => {
     return (
-        <View style={tailwind('h-3/5 bg-white px-4 mb-2')}>
+        <View style={tailwind('h-3/5 bg-white px-4 mb-4 mt-4')}>
             <View style={styles.card}>
                 <Header/>
                 <Map/>
