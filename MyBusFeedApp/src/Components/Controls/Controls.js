@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import { default as Header } from './Header'
 import { default as Map } from './Map'
 import { default as Navigation } from './Navigation'
+import { default as Beacon } from './Beacon'
 import tailwind from 'tailwind-rn'
 
 const styles = StyleSheet.create({
@@ -29,6 +30,7 @@ const Controls = () => {
             <View style={styles.card}>
                 <Header/>
                 <Map/>
+                <Beacon/>
                 <Navigation/>
             </View>
         </View>
