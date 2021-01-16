@@ -24,6 +24,8 @@ class Map extends Component {
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
             })
+            console.log(this.state.latitude)
+            console.log(this.state.longitude)
         })
     }
 
