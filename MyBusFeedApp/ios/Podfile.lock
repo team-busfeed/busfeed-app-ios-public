@@ -238,6 +238,10 @@ PODS:
   - React-jsinspector (0.63.3)
   - react-native-appearance (0.3.4):
     - React
+  - react-native-ble-plx (1.1.1):
+    - React
+    - react-native-ble-plx-swift
+  - react-native-ble-plx-swift (1.1.1)
   - react-native-flipper (0.64.0):
     - React
   - react-native-geolocation (2.0.2):
@@ -360,6 +364,8 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-appearance (from `../node_modules/react-native-appearance`)
+  - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
+  - react-native-ble-plx-swift (from `../node_modules/react-native-ble-plx`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
@@ -430,6 +436,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-appearance:
     :path: "../node_modules/react-native-appearance"
+  react-native-ble-plx:
+    :path: "../node_modules/react-native-ble-plx"
+  react-native-ble-plx-swift:
+    :path: "../node_modules/react-native-ble-plx"
   react-native-flipper:
     :path: "../node_modules/react-native-flipper"
   react-native-geolocation:
@@ -501,6 +511,8 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
   react-native-appearance: fc2014516054585d531e07aa0b40ab0de1d2be85
+  react-native-ble-plx: 304c7bee074a05581672c9990f375b3906808718
+  react-native-ble-plx-swift: eb64f02b988becb84a60164aba9fab5d6ddb6dc8
   react-native-flipper: 40d6bbb5a6e5e685fd81868b1950dabed035366d
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
@@ -524,6 +536,6 @@ SPEC CHECKSUMS:
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 459eb55b434c598848e111a798f13fd031dce8bb
+PODFILE CHECKSUM: 7ca2a363398a688be55d066c900c2ea316e29cfe
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.9.1
