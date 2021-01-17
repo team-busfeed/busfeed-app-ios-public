@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Component } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { default as Header } from './Header'
 import { default as Map } from './Map'
@@ -23,16 +23,19 @@ const styles = StyleSheet.create({
     }
 })
 
-const Controls = () => {
-    return (
-        <View style={tailwind('h-3/5 bg-white px-4 mb-4 mt-4')}>
-            <View style={styles.card}>
-                <Header/>
-                <Map/>
-                <Navigation/>
+class Controls extends Component {
+
+    render() {
+        return (
+            <View style={tailwind('h-3/5 bg-white px-4 mb-4 mt-4')}>
+                <View style={styles.card}>
+                    <Header/>
+                    <Map states = {this.props.states}/>
+                    <Navigation/>
+                </View>
             </View>
-        </View>
-    )
+        )
+    }
 }
 
 export default Controls

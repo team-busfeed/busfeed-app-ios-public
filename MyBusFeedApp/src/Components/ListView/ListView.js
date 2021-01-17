@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import tailwind from 'tailwind-rn'
 
@@ -38,29 +38,24 @@ const styles = StyleSheet.create({
     }
 })
 
-const ListView = () => {
-    return (
-      <View style={tailwind('h-64 bg-white px-2 pb-7')}>
-        <FlatList
-          data={[
-            {key: '03019', name: 'Blk 319'},
-            {key: '04019', name: 'Marymount View'},
-            {key: '05019', name: 'Shunfu Est'},
-            {key: '06019', name: 'aaa'},
-            {key: '07019', name: 'aaa'},
-            {key: '08019', name: 'aaa'},
-            {key: '09019', name: 'aaa'},
-            {key: '10019', name: 'aaa'},
-            {key: '11019', name: 'aaa'},
-            {key: '12019', name: 'aaa'},
-          ]}
-          renderItem={({item}) => 
-          <View style={styles.card}>
-            <Text>{item.key} {item.name}</Text>
-          </View>}
-        />
-      </View>
-    )
+class ListView extends Component {
+    render() {
+
+        return (
+            <View style={tailwind('h-64 bg-white px-2 pb-7')}>
+                <FlatList
+                data={
+                    this.props.states.busStops
+                }
+                renderItem={({item}) => 
+                <View style={styles.card}>
+                    <Text>{item.busstop_number} {item.busstop_name}</Text>
+                </View>}
+                keyExtractor={item => item.busstop_number}
+                />
+            </View>
+        )
+    }
 }
   
   export default ListView
