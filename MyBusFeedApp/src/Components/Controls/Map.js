@@ -1,5 +1,5 @@
 import React, { useState, Component } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native'
 import MapView from 'react-native-maps'
 import { default as Navigation } from './Navigation'
 import tailwind from 'tailwind-rn'
@@ -13,6 +13,19 @@ class Map extends Component {
     
     render() {
 
+        if (this.props.states.isLoading) {
+            markers = <Text>Maps loading..</Text>
+        } else {
+            markers = this.props.states.busStops.map(busStop => 
+                <MapView.Marker
+                    key={busStop.busstop_number}
+                    coordinate={{latitude: busStop.busstop_lat ? Number(busStop.busstop_lat) : 0, longitude: busStop.busstop_lng ? Number(busStop.busstop_lng) : 0}}
+                    title={busStop.busstop_name}
+                    description={"Stop Number: " + busStop.busstop_number}
+                />
+            )
+        }
+
         return (
             <View>
                 <MapView
@@ -25,14 +38,7 @@ class Map extends Component {
                     }}
                     showsUserLocation={true}
                 >
-                    {this.props.states.busStops.map(busStop => 
-                        <MapView.Marker
-                            key={busStop.busstop_number}
-                            coordinate={{latitude: busStop.busstop_lat, longitude: busStop.busstop_lng}}
-                            title={busStop.busstop_name}
-                            description={"Stop Number: " + busStop.busstop_number}
-                        />
-                    )}
+                    {markers}
                 </MapView>
                 <View style={styles.nav}>
                     <Navigation style={styles.nav}/>

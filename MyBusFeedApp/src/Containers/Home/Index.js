@@ -18,6 +18,7 @@ class HomeContainer extends Component {
             latitudeDelta: 0.1,
             longitudeDelta: 0.1,
             updatedGeolocation: false,
+            isLoading: true,
             busStops: []
         }
     }
@@ -50,6 +51,7 @@ class HomeContainer extends Component {
         .then((response) => {
             console.log("Fetched API data: " + JSON.stringify(response.data))
             this.setState({
+                isLoading: false,
                 busStops: response.data
             })
         })
