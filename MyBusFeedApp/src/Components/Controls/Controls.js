@@ -14,7 +14,7 @@ class Controls extends Component {
                 <View style={externalStyle.controlsCard}>
                     <Header/>
                     <Map states = {this.props.states}/>
-                    <Navigation/>
+                    {/* <Navigation/> */}
                 </View>
             </View>
         )
