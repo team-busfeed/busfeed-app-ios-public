@@ -15,7 +15,6 @@ export default class BusTimeBlock extends Component {
       userProximity: false,
       latitude: 1.3521,
       longitude: 103.8198,
-      busServices: [],
       nextBusTiming: 0,
       nextBusTiming2: 0
     }
@@ -99,15 +98,14 @@ export default class BusTimeBlock extends Component {
         bus_no: this.state.busNumber,
       })
       .then((response) => {
-
+        console.log(response.data.services[0].next_bus.estimated_arrival)
         this.setState({
-          busServices: services.services,
-          // nextBusTiming: response.data.services[0].next_bus,
-          // nextBusTiming2: response.data.services[0].next_bus_2
+          nextBusTiming: moment(response.data.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes'),
+          nextBusTiming2: moment(response.data.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes'),
 
           //for hardcoded service data
-          nextBusTiming: moment(services.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes'),
-          nextBusTiming2: moment(services.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes'),
+          // nextBusTiming: moment(services.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes'),
+          // nextBusTiming2: moment(services.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes'),
         })
         console.log("Next bus timing")
       })

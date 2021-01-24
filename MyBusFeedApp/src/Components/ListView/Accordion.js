@@ -42,22 +42,22 @@ export default class Accordion extends Component {
   }
 
   // Fetch the list of bus based on busstop_number given
-  GetBus = (busstop_number) => {
+  GetBus = () => {
     console.log('onPressGetBus API')
     const baseFetchURL = 'http://192.168.10.141:3000/api/v1/busstop/'
-
+    console.log(this.props.title.busstop_number)
     axios
-      .get(baseFetchURL.concat(busstop_number))
+      .get(baseFetchURL.concat(this.props.title.busstop_number))
       .then((response) => {
-        // console.log("Fetched bus API data: " + JSON.stringify(response.data))
+        console.log("Fetched bus API data: " + JSON.stringify(response.data))
         this.setState({
           // ACTUAL VALUE
-          // busStops: response.data,
+          busStops: response.data,
 
           // HARDCODED VALUE - use when bus services is null
-          busStops: {
-            services: ['169', '860', '811'],
-          },
+          // busStops: {
+          //   services: ['169', '860', '811'],
+          // },
         })
         console.log(this.state.busStops)
       })
