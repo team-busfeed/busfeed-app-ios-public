@@ -10,6 +10,13 @@ const styles = StyleSheet.create({
     },
 });
 class Map extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            shit: ["A", "B"]
+        }
+    }
     
     render() {
 
@@ -25,8 +32,15 @@ class Map extends Component {
                     }}
                     showsUserLocation={true}
                 >
+                    {this.props.states.busStops.map(busStop => 
+                        <MapView.Marker
+                            key={busStop.busstop_number}
+                            coordinate={{latitude: busStop.busstop_lat, longitude: busStop.busstop_lng}}
+                            title={busStop.busstop_name}
+                            description={"Stop Number: " + busStop.busstop_number}
+                        />
+                    )}
                 </MapView>
-                    
                 <View style={styles.nav}>
                     <Navigation style={styles.nav}/>
                 </View>
