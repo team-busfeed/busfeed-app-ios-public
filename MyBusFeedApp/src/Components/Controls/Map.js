@@ -10,13 +10,6 @@ const styles = StyleSheet.create({
     },
 });
 class Map extends Component {
-
-    constructor(props) {
-        super(props)
-        this.state = {
-            shit: ["A", "B"]
-        }
-    }
     
     render() {
 
