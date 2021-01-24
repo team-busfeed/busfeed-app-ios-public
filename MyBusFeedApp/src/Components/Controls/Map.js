@@ -23,7 +23,9 @@ class Map extends Component {
                         latitudeDelta: 0.005,
                         longitudeDelta: 0.005,
                     }}
-                />
+                    showsUserLocation={true}
+                >
+                </MapView>
                     
                 <View style={styles.nav}>
                     <Navigation style={styles.nav}/>
