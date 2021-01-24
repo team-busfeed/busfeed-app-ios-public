@@ -40,9 +40,9 @@ export default class BusTimeBlock extends Component {
   getBusTiming() {
     var url = ''
     if (this.state.userProximity == true) {
-      var url = 'http://192.168.10.141:3000/api/v1/expected-demand/'
+      var url = 'https://api.mybusfeed.com/demand/expected/add'
     } else {
-      var url = 'http://192.168.10.141:3000/api/v1/bus-timing'
+      var url = 'https://api.mybusfeed.com/demand/bus-timing'
     }
 
     // HARDCODED VALUE - To be used when there are no bus available to fetch (when coding late at night)

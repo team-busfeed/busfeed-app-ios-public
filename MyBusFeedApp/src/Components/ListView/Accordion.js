@@ -44,7 +44,7 @@ export default class Accordion extends Component {
   // Fetch the list of bus based on busstop_number given
   GetBus = () => {
     console.log('onPressGetBus API')
-    const baseFetchURL = 'http://192.168.10.141:3000/api/v1/busstop/'
+    const baseFetchURL = 'https://api.mybusfeed.com/demand/bus-stop/'
     console.log(this.props.title.busstop_number)
     axios
       .get(baseFetchURL.concat(this.props.title.busstop_number))
