@@ -4,7 +4,7 @@ import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler'
 import Geolocation from '@react-native-community/geolocation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-
+import tailwind from 'tailwind-rn'
 export default class BusTimeBlock extends Component {
   constructor(props) {
     super(props)
@@ -112,7 +112,7 @@ export default class BusTimeBlock extends Component {
       .catch((error) => {
         console.log(error)
       })
-  }
+  } 
 
   // To check current location
   getGeoLocation() {
@@ -147,16 +147,23 @@ export default class BusTimeBlock extends Component {
   render() {
     return (
       <View style={styles.eachRow}>
-        <Text>{this.state.busNumber}</Text>
+        <Text style={styles.busNumber}>{this.state.busNumber}</Text>
 
         {this.state.busTimingContent ? (
           <TouchableOpacity onPress={() => this.componentHideAndShow()}>
-            <Icon name={'lunch-dining'} size={40} color="#000000" />
+            <Icon name={'lunch-dining'} size={40} color="#4F4F4F" />
           </TouchableOpacity>
         ) : (
-          <View>
-            <Text>{this.state.nextBusTiming}</Text>
-            <Text>{this.state.nextBusTiming2}</Text>
+          <View style={tailwind('flex flex-row')}>
+            <View>
+              <Text style={styles.busTimingFirst}>{this.state.nextBusTiming} min</Text>
+            </View>
+            <View>
+              <Text style={styles.busTimingSecond}>{this.state.nextBusTiming2} min</Text>
+            </View>
+            <View>
+              <Icon name={'favorite-border'} size={25} color="#000000" />
+            </View>
           </View>
         )}
       </View>
@@ -173,4 +180,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  busTimingFirst: { 
+    marginRight: 70, 
+    fontSize: 20,
+    borderBottomColor: '#EB5757', 
+    borderBottomWidth: 4,  
+  }, 
+  busTimingSecond: { 
+    position: 'absolute', 
+    marginRight: 10, 
+    bottom: 0, 
+    right: 0, 
+    borderBottomColor: '#EB5757', 
+    borderBottomWidth: 4,  
+  }, 
+  busNumber: {
+    fontSize: 20, 
+    color: '#4F4F4F', 
+    fontWeight: 'bold',
+  }
 })
