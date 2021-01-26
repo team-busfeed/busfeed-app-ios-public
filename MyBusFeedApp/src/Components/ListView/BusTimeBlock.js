@@ -15,8 +15,8 @@ export default class BusTimeBlock extends Component {
       userProximity: false,
       latitude: 1.3521,
       longitude: 103.8198,
-      nextBusTiming: 0,
-      nextBusTiming2: 0
+      nextBus1: {},
+      nextBus2: {}
     }
   }
 
@@ -99,15 +99,20 @@ export default class BusTimeBlock extends Component {
       })
       .then((response) => {
         console.log(response.data.services[0].next_bus.estimated_arrival)
-        this.setState({
-          nextBusTiming: moment(response.data.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes'),
-          nextBusTiming2: moment(response.data.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes'),
+        var nextBus1Timing = moment(response.data.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
+        var nextBus2Timing = moment(response.data.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
 
-          //for hardcoded service data
-          // nextBusTiming: moment(services.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes'),
-          // nextBusTiming2: moment(services.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes'),
+        var nextBus1 = response.data.services[0].next_bus
+        var nextBus2 = response.data.services[0].next_bus_2
+
+        nextBus1.estimated_arrival = nextBus1Timing >= 2 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr"
+        nextBus2.estimated_arrival = nextBus2Timing >= 2 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr"
+        this.setState({
+          nextBus1: nextBus1,
+          nextBus2: nextBus2,
         })
-        console.log("Next bus timing")
+        console.log("Nextbus1 timing:")
+        console.log(nextBus1)
       })
       .catch((error) => {
         console.log(error)
@@ -155,11 +160,11 @@ export default class BusTimeBlock extends Component {
           </TouchableOpacity>
         ) : (
           <View style={tailwind('flex flex-row')}>
-            <View>
-              <Text style={styles.busTimingFirst}>{this.state.nextBusTiming} min</Text>
+            <View style={this.state.nextBus1.load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus1.load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : tailwind('border-b-4 border-yellow-500 mx-2') }>
+              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival}</Text>
             </View>
-            <View>
-              <Text style={styles.busTimingSecond}>{this.state.nextBusTiming2} min</Text>
+            <View style={this.state.nextBus2.load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus1.load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : tailwind('border-b-4 border-yellow-500 mx-2') }>
+              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival}</Text>
             </View>
             <View>
               <Icon name={'favorite-border'} size={25} color="#000000" />
