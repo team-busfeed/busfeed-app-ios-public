@@ -14,7 +14,7 @@ import externalStyle from '../../../style/externalStyle'
 import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler'
 import BusTimeBlock from './BusTimeBlock'
-
+import tailwind from 'tailwind-rn'
 
 export default class Accordion extends Component {
   constructor(props) {
@@ -23,6 +23,7 @@ export default class Accordion extends Component {
       data: props.data,
       expanded: false,
       busStops: [],
+      newServices: {}
     }
 
     if (Platform.OS === 'android') {
@@ -41,6 +42,16 @@ export default class Accordion extends Component {
     this.setState({ expanded: !this.state.expanded })
   }
 
+  callBusAPI = () => {
+    Object.keys(services).map((function(key) {
+        services[key].getBusTiming()
+    }))
+  }
+
+  didTapRefresh = () => {
+      console.log("Hi")
+  }
+
   // Fetch the list of bus based on busstop_number given
   GetBus = () => {
     console.log('onPressGetBus API')
@@ -50,6 +61,25 @@ export default class Accordion extends Component {
       .get(baseFetchURL.concat(this.props.title.busstop_number))
       .then((response) => {
         console.log("Fetched bus API data: " + JSON.stringify(response.data))
+
+        var resp = response.data.services
+
+        console.log("RESRES")
+        console.log(resp)
+
+        var mapServices = {}
+
+        resp.map(function(service) {
+            mapServices[service] = React.createRef()
+        })
+        this.setState({
+            newServices: mapServices
+        })
+
+        this.didTapRefresh = () => Object.keys(mapServices).forEach(function(key) {
+            mapServices[key].current.getBusTiming()
+        })
+
         this.setState({
           // ACTUAL VALUE
           busStops: response.data,
@@ -60,6 +90,7 @@ export default class Accordion extends Component {
           // },
         })
         console.log(this.state.busStops)
+        console.log(this.state.newServices)
       })
       .catch((error) => {
         console.log('error:', error)
@@ -68,8 +99,22 @@ export default class Accordion extends Component {
     console.log('onPressGetBus API Exit')
   }
 
+  
 
   render() {
+    // this.state.busStops.services.map(function(service) {
+    //     newServices[service] = React.createRef()
+    // })
+        var flatList = <FlatList
+        data={this.state.busStops.services}
+        renderItem={({ item }) => (
+        <BusTimeBlock ref={this.state.newServices[item]
+        } bus_number={item} busstop_number={this.props.title.busstop_number}/>
+        )}
+        keyExtractor={(item) => item}
+        />
+        // console.log(newServices)
+
     return (
       <View>
         <TouchableOpacity
@@ -91,13 +136,20 @@ export default class Accordion extends Component {
         <View style={styles.parentHr} />
         {this.state.expanded && (
           <View style={styles.child}>
-            <FlatList
-              data={this.state.busStops.services}
-              renderItem={({ item }) => (
-                <BusTimeBlock bus_number={item} busstop_number={this.props.title.busstop_number}/>
-              )}
-              keyExtractor={(item) => item}
-            />
+            <View style={tailwind('flex flex-row')}>
+              <Text
+                onPress={() => this.didTapRefresh()}>Refresh</Text>
+              <Icon
+                name={
+                'autorenew'
+                }
+                size={18}
+                color="#5E5E5E"
+                onPress={() => this.didTapRefresh()}
+              />
+            </View>
+
+            {flatList}
           </View>
         )}
       </View>
