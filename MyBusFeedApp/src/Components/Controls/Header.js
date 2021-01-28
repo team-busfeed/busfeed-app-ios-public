@@ -21,15 +21,11 @@ const Header = () => {
                         Bus Locator
                     </Text>
                 </View>
-                    <Icon name="search" size={20} color="grey" style={[tailwind("w-1/5"), styles.controls]}/>
-                    <Icon name="ellipsis-v" size={20} color="grey" style={[tailwind("w-1/5"), styles.controls]}/>
                 <View style={tailwind('w-1/5')}>
+                    <Icon name="search" size={20} color="grey"/>
                 </View>
                 <View style={tailwind('w-1/5')}>
-                    
-                </View>
-                <View style={tailwind('w-1/5')}>
-                    
+                <Icon name="ellipsis-v" size={20} color="grey"/>
                 </View>
             </View>
             

@@ -39,7 +39,7 @@ export default class BusTimeBlock extends Component {
   // Fetch bus timing
   getBusTiming() {
     var url = ''
-    if (this.state.userProximity == true) {
+    if (this.state.userProximity) {
       var url = 'https://api.mybusfeed.com/demand/expected/add'
     } else {
       var url = 'https://api.mybusfeed.com/demand/bus-timing'
@@ -156,7 +156,7 @@ export default class BusTimeBlock extends Component {
 
         {this.state.busTimingContent ? (
           <TouchableOpacity onPress={() => this.componentHideAndShow()}>
-            <Icon name={'lunch-dining'} size={40} color="#4F4F4F" />
+            <Icon name={'refresh'} size={30} color="#4F4F4F" />
           </TouchableOpacity>
         ) : (
           <View style={tailwind('flex flex-row')}>
