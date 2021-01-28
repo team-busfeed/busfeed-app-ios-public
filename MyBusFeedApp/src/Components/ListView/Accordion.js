@@ -49,7 +49,7 @@ export default class Accordion extends Component {
   }
 
   didTapRefresh = () => {
-      console.log("Hi")
+      console.log("This is for async while the data loads...")
   }
 
   // Fetch the list of bus based on busstop_number given
@@ -64,20 +64,17 @@ export default class Accordion extends Component {
 
         var resp = response.data.services
 
-        console.log("RESRES")
-        console.log(resp)
-
-        var mapServices = {}
+        var loadedServices = {}
 
         resp.map(function(service) {
-            mapServices[service] = React.createRef()
+            loadedServices[service] = React.createRef()
         })
         this.setState({
-            newServices: mapServices
+            newServices: loadedServices
         })
 
-        this.didTapRefresh = () => Object.keys(mapServices).forEach(function(key) {
-            mapServices[key].current.getBusTiming()
+        this.didTapRefresh = () => Object.keys(loadedServices).forEach(function(key) {
+            loadedServices[key].current.getBusTiming()
         })
 
         this.setState({
@@ -102,9 +99,6 @@ export default class Accordion extends Component {
   
 
   render() {
-    // this.state.busStops.services.map(function(service) {
-    //     newServices[service] = React.createRef()
-    // })
         var flatList = <FlatList
         data={this.state.busStops.services}
         renderItem={({ item }) => (
@@ -113,7 +107,6 @@ export default class Accordion extends Component {
         )}
         keyExtractor={(item) => item}
         />
-        // console.log(newServices)
 
     return (
       <View>
