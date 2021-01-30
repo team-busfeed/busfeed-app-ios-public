@@ -45,7 +45,10 @@
     "redux": "^4.0.5",
     "redux-flipper": "^1.4.2",
     "redux-persist": "^6.0.0",
-    "tailwind-rn": "^3.0.0"
+    "tailwind-rn": "^3.0.0",
+    "react-native-background-actions": "^2.5.2",
+    "react-native-beacons-manager": "github:jitsi/react-native-beacons-manager#d9e8040082570a951f3c8a7a5c96c073821841d6",
+    "react-native-push-notification": "^5.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
