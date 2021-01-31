@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import { Text, View, DeviceEventEmitter,PermissionsAndroid,} from 'react-native'
 
 import Beacons  from 'react-native-beacons-manager';
-// import PushNotification from "react-native-push-notification";
+import PushNotification from "react-native-push-notification";
 import moment   from 'moment';
 
 const TIME_FORMAT = 'MM/DD/YYYY HH:mm:ss';
@@ -18,9 +18,10 @@ export default class BLEreader extends Component {
 			// region information
 			uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825',
 			identifier: "iBeacon",
-		major: 1,
-		minor: 1, 
+			major: 1,
+			minor: 1, 
 			foundBeacon: false,
+			bustop: 4121
 		};
 	}
 
@@ -152,10 +153,14 @@ export default class BLEreader extends Component {
 			(data) => {
 				console.log('beaconsDidRange data: ', data);
 				if (data.beacons.length > 0) {
-					// PushNotification.localNotification({
-					// 	title: "BusFeed",
-					// 	message: "You are near a bus stop, check for your bus timing!",
-					// });
+					const { foundBeacon } = this.state;
+					const { bustop } = this.state;
+					if (!foundBeacon){
+						PushNotification.localNotification({
+							title: "BusFeed",
+							message: "You are near a bus stop " + bustop + ", check for your bus timing!",
+						});
+					}
 					Beacons
 						.stopRangingBeaconsInRegion(identifier, uuid)
 						.then(() => console.log('Beacons ranging stopped succesfully'))

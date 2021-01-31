@@ -238,6 +238,8 @@ PODS:
   - React-jsinspector (0.63.3)
   - react-native-appearance (0.3.4):
     - React
+  - react-native-background-actions (2.5.2):
+    - React-Core
   - react-native-ble-plx (1.1.1):
     - React
     - react-native-ble-plx-swift
@@ -248,6 +250,8 @@ PODS:
     - React
   - react-native-maps (0.27.1):
     - React
+  - react-native-notifications (3.4.2):
+    - React-Core
   - react-native-safe-area-context (3.1.9):
     - React-Core
   - react-native-webview (11.0.2):
@@ -312,6 +316,8 @@ PODS:
     - React-Core (= 0.63.3)
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
+  - ReactNativeBeaconsManager (1.1.0):
+    - React
   - RNCAsyncStorage (1.13.2):
     - React
   - RNCMaskedView (0.1.10):
@@ -366,11 +372,13 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-appearance (from `../node_modules/react-native-appearance`)
+  - react-native-background-actions (from `../node_modules/react-native-background-actions`)
   - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
   - react-native-ble-plx-swift (from `../node_modules/react-native-ble-plx`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - react-native-notifications (from `../node_modules/react-native-notifications`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -383,6 +391,7 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - ReactNativeBeaconsManager (from `../node_modules/react-native-beacons-manager`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -439,6 +448,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-appearance:
     :path: "../node_modules/react-native-appearance"
+  react-native-background-actions:
+    :path: "../node_modules/react-native-background-actions"
   react-native-ble-plx:
     :path: "../node_modules/react-native-ble-plx"
   react-native-ble-plx-swift:
@@ -449,6 +460,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-notifications:
+    :path: "../node_modules/react-native-notifications"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-webview:
@@ -473,6 +486,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  ReactNativeBeaconsManager:
+    :path: "../node_modules/react-native-beacons-manager"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
@@ -516,11 +531,13 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
   react-native-appearance: fc2014516054585d531e07aa0b40ab0de1d2be85
+  react-native-background-actions: 683a30adb9fe52f558969e0dfcc94ac2a1856dbe
   react-native-ble-plx: 304c7bee074a05581672c9990f375b3906808718
   react-native-ble-plx-swift: eb64f02b988becb84a60164aba9fab5d6ddb6dc8
   react-native-flipper: 40d6bbb5a6e5e685fd81868b1950dabed035366d
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
+  react-native-notifications: e914ff49de3b2268cfa1b5e2ad21fd27c36d5b7b
   react-native-safe-area-context: 86612d2c9a9e94e288319262d10b5f93f0b395f5
   react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
@@ -533,6 +550,7 @@ SPEC CHECKSUMS:
   React-RCTText: 65a6de06a7389098ce24340d1d3556015c38f746
   React-RCTVibration: 8e9fb25724a0805107fc1acc9075e26f814df454
   ReactCommon: 4167844018c9ed375cc01a843e9ee564399e53c3
+  ReactNativeBeaconsManager: dd0b01841445881989af5be9ab83153d1cdaa6b7
   RNCAsyncStorage: bc2f81cc1df90c267ce9ed30bb2dbc93b945a8ee
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
@@ -544,4 +562,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 25aee2c8d22233c5135d702ae7cb3d7c2bd36947
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.9.1
