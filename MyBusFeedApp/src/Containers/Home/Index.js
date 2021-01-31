@@ -37,10 +37,11 @@ class HomeContainer extends Component {
             })
 
             this.getProximityBusStops()
-            console.log("LAT:" + this.state.latitude)
-            console.log("LONG:" + this.state.longitude)
+            console.log("LAT:" + info.coords.latitude)
+            console.log("LONG:" + info.coords.longitude)
             console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
-        })
+        }, (error) => console.log('position error!!!', error),
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 0})
     }
 
     getProximityBusStops() {
@@ -50,10 +51,18 @@ class HomeContainer extends Component {
         .get(fetchURL)
         .then((response) => {
             console.log("Fetched API data: " + JSON.stringify(response.data))
-            this.setState({
-                isLoading: false,
-                busStops: response.data
-            })
+
+            if (response.data.status === "not_found") {
+                this.setState({
+                    isLoading: false,
+                    busStops: []
+                })
+            } else {
+                this.setState({
+                    isLoading: false,
+                    busStops: response.data
+                })
+            }
         })
         .catch((error) => {
             console.log('error:', error)
@@ -68,7 +77,7 @@ class HomeContainer extends Component {
         return (
             <View style={tailwind('bg-white h-full')}>
                 <Controls states = { this.state }/>
-                <ListView states = { this.state }/>
+                <ListView states = { this.state } />
             </View>
         )
     }

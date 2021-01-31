@@ -39,36 +39,42 @@ class Map extends Component {
     
     render() {
 
-        if (this.props.states.isLoading) {
-            markers = <Text>Maps loading..</Text>
-        } else {
-            markers = this.props.states.busStops.map(busStop => 
-                <Marker
-                    key={busStop.busstop_number}
-                    coordinate={{latitude: busStop.busstop_lat ? Number(busStop.busstop_lat) : 0, longitude: busStop.busstop_lng ? Number(busStop.busstop_lng) : 0}}
-                    title={busStop.busstop_name}
-                    description={"Stop Number: " + busStop.busstop_number}
-                >
-                    <Callout
-                    tooltip={true}
-                    style={styles.callout}
-                    >
-                        <View style={tailwind('flex flex-row')}>
-                            <View style={tailwind('w-1/5')}>
-                                <Icon name="bus" size={20} color="black" style={[tailwind("my-2"), styles.image]}/>
-                            </View>
-                            <View style={tailwind('w-4/5')}>
-                                <Text style={styles.title}>
-                                    {busStop.busstop_name}
-                                </Text>
-                                <Text style={styles.description}>
-                                    {"Stop Number: " + busStop.busstop_number}
-                                </Text>
-                            </View>
-                        </View>
-                  </Callout>
-                </Marker>
-            )
+        markers = null
+
+        if (!this.props.states.isLoading) {
+            try {
+                if (this.props.states.busStops !== undefined) {
+                    markers = this.props.states.busStops.map(busStop => 
+                        <Marker
+                            key={busStop.busstop_number}
+                            coordinate={{latitude: busStop.busstop_lat ? Number(busStop.busstop_lat) : 0, longitude: busStop.busstop_lng ? Number(busStop.busstop_lng) : 0}}
+                            title={busStop.busstop_name}
+                            description={"Stop Number: " + busStop.busstop_number}
+                        >
+                            <Callout
+                            tooltip={true}
+                            style={styles.callout}
+                            >
+                                <View style={tailwind('flex flex-row')}>
+                                    <View style={tailwind('w-1/5')}>
+                                        <Icon name="bus" size={20} color="black" style={[tailwind("my-2"), styles.image]}/>
+                                    </View>
+                                    <View style={tailwind('w-4/5')}>
+                                        <Text style={styles.title}>
+                                            {busStop.busstop_name}
+                                        </Text>
+                                        <Text style={styles.description}>
+                                            {"Stop Number: " + busStop.busstop_number}
+                                        </Text>
+                                    </View>
+                                </View>
+                          </Callout>
+                        </Marker>
+                    )
+                }
+            } catch (error) {
+                markers = null
+            }
         }
         
         return (
