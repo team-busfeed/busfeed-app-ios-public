@@ -1,7 +1,5 @@
 import React from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { HomeContainer } from '@/Containers'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import tailwind from 'tailwind-rn'
 

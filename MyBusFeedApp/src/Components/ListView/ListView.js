@@ -40,7 +40,7 @@ class ListView extends Component {
 
             this.getProximityBusStops()
         }, (error) => console.log('position error!!!', error),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 0})
+        {enableHighAccuracy: true, timeout: 20000})
     }
 
     getProximityBusStops() {

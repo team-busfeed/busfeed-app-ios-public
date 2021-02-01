@@ -88,7 +88,7 @@ class Map extends Component {
                     }}
                     showsUserLocation={true}
                 >
-                    {this.markers}
+                    {markers}
                 </MapView>
                 <View style={styles.nav}>
                     <Navigation style={styles.nav}/>
