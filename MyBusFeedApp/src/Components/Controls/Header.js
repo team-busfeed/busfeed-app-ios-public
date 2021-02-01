@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native'
+import { View, Text, TextInput, Button, StyleSheet, Keyboard } from 'react-native'
 import tailwind from 'tailwind-rn'
 import { WebView } from 'react-native-webview'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome'
+import { SearchBar } from 'react-native-elements'
 
 const styles = StyleSheet.create({
     controls: {
@@ -20,7 +21,7 @@ export default class Header extends Component {
         }
     }
 
-    didPressSearchButton() {
+    didToggleSearchButton() {
         console.log("=======================")
         console.log("Did press search button")
         console.log("=======================")
@@ -30,8 +31,9 @@ export default class Header extends Component {
         }))
     }
 
-    onChangeText(text) {
-        console.log(text)
+    didTriggerSearch() {
+        Keyboard.dismiss()
+        console.log(this.state.searchText)
     }
 
     render() {
@@ -46,7 +48,7 @@ export default class Header extends Component {
                     </Text>
                 </View>
                 <View style={tailwind('w-1/5')}>
-                    <Icon name="search" size={20} color="grey" onPress={() => this.didPressSearchButton()}/>
+                    <Icon name="search" size={20} color="grey" onPress={() => this.didToggleSearchButton()}/>
                 </View>
                 <View style={tailwind('w-1/5')}>
                     <Icon name="ellipsis-v" size={20} color="grey"/>
@@ -57,10 +59,18 @@ export default class Header extends Component {
                 <View style={tailwind('w-5/6')}>
                     <TextInput
                         style={tailwind('h-8 border border-gray-400 rounded-2xl px-3')}
+                        onChangeText={(text) => this.setState({searchText: text})}
+                        onSubmitEditing={() => this.didTriggerSearch()}
+                        placeholder={"e.g. Marymount Stn or 05131..."}
+                        clearButtonMode={"while-editing"}
                     />
+                    {/* <SearchBar
+                        placeholder={"e.g. Marymount Stn or 05131..."}
+                        onChangeText={(text) => this.setState({searchText: text})}
+                        value={this.state.searchText}/> */}
                 </View>
                 <View style={tailwind('w-1/6 p-1 ml-2 mt-2')}>
-                    <Text style={tailwind('text-blue-500')} onPress={() => this.didPressSearchButton()}>Cancel</Text>
+                    <Text style={tailwind('text-blue-500')} onPress={() => this.didToggleSearchButton()}>Cancel</Text>
                 </View>
             </View>
         }
