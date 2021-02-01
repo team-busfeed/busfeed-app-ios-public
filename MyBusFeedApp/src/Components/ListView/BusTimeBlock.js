@@ -31,7 +31,7 @@ export default class BusTimeBlock extends Component {
             next_bus: {
               origin_code: '77009',
               destination_code: '52009',
-              estimated_arrival: '2021-02-01T03:44:00+08:00',
+              estimated_arrival: '2021-02-01T15:31:00+08:00',
               latitude: '1.379359',
               longitude: '103.92117033333334',
               visit_number: '1',
@@ -68,16 +68,16 @@ export default class BusTimeBlock extends Component {
   }
 
   componentDidUpdate(prevProp, prevState){
-    console.log('====================================');
-    console.log('COMPONENTDIDUPDATE');
-    console.log(prevState.userProximity)
-    console.log(this.state.userProximity)
-    console.log('====================================');
+    // console.log('====================================');
+    // console.log('COMPONENTDIDUPDATE');
+    // console.log("prevState.userProximity => " + prevState.userProximity + " this.state.userProximity => " + this.state.userProximity)
+    // console.log("prevState.arrivalPause =>" + prevState.arrivalPause + ' this.state.arrivalPause =>' + this.state.arrivalPause)
+    // console.log('====================================');
 
     if (this.state.constantPollOn != prevState.constantPollOn && this.state.constantPollOn==true){
       // 30s API call
       this.constantBasicPoll()
-    }else if (this.state.arrivalPause != prevState.arrivalPause && this.state.arrivalPause==true) {
+    }else if (this.state.arrivalPause != prevState.arrivalPause && this.state.arrivalPause==true && this.state.userProximity == true) {
       this.arrivalPause(prevState.userProximity)
     }
   }
@@ -98,7 +98,7 @@ export default class BusTimeBlock extends Component {
         console.log('userProximity DATA in constantBasicPoll state => ' + this.state.userProximity)
       })
       // console.log('userProximity DATA in constantBasicPoll state 2 => ' + this.state.userProximity)
-    }, 5000); //30000 -> 30 sec
+    }, 30000); //30000 -> 30 sec
 
     this.setState({ intervalId: intervalId })
   }
@@ -108,27 +108,54 @@ export default class BusTimeBlock extends Component {
     console.log('arrivalPause START');
     console.log('++++++++++++++++++++++++++++++++++++');
     setTimeout(() => {
-      this.getGeoLocation()
-      this.getUserProximity().then((data) => {
-        this.setState({ userProximity: data })
-        console.log('userProximity DATA in arrivalPause data=> ' + data)
-        console.log('userProximity DATA in arrivalPause state=> ' + this.state.userProximity)
-        if (prevUserProximity == true && this.state.userProximity == false){
-          this.addToActualDemand(true)
-          clearInterval(this.state.intervalId)
-          console.log('<><><><><>< constantBasicPoll Cleared <><><><><><')
-        } else if (prevUserProximity == true && this.state.userProximity == true){
-          this.addToActualDemand(false)
-          this.setState({
-            constantPollOn: true,
-          })
-          console.log('<><><><><>< constantBasicPoll Resume <><><><><><')
-        }
+      // 1. Get Geolocation
+      Geolocation.getCurrentPosition((info) => {
         console.log('++++++++++++++++++++++++++++++++++++');
-        console.log('arrivalPause END');
+        console.log('arrivalPause 1');
         console.log('++++++++++++++++++++++++++++++++++++');
-      })
-    }, 20000)
+        console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
+        this.setState({
+          latitude: info.coords.latitude,
+          longitude: info.coords.longitude,
+        })
+      },error => console.log('Error', JSON.stringify(error)),
+        {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+      ).then(
+        // 2. Get user Proximity
+        this.getUserProximity()
+        .then((data) => {
+          console.log('++++++++++++++++++++++++++++++++++++');
+          console.log('arrivalPause 2');
+          console.log('++++++++++++++++++++++++++++++++++++');
+          this.setState({ userProximity: data })
+          
+          // 3. Geo logic
+          console.log("prevUserProximity  => " + prevUserProximity)
+          console.log("this.state.userProximity => " + this.state.userProximity)
+          if (this.state.userProximity == false){
+            // If user left the bus stop
+            this.addToActualDemand(true)
+            clearInterval(this.state.intervalId)
+            console.log('<><><><><>< constantBasicPoll Cleared <><><><><><')
+          } else if (this.state.userProximity == true){
+            // If user remains in the bus stop
+            this.addToActualDemand(false)
+            this.setState({
+              constantPollOn: true,
+            })
+            console.log('<><><><><>< constantBasicPoll Resume <><><><><><')
+          }
+
+          console.log('++++++++++++++++++++++++++++++++++++');
+          console.log('arrivalPause END');
+          console.log('++++++++++++++++++++++++++++++++++++');
+
+        })
+        .catch((error) => console.log("userProximity Error => "+error))
+      )
+      .catch((error) => console.log("GeoERROR => " + error))
+
+    }, 120000) //120000 -> 2 min
   }
 
   addToActualDemand = (userBoardStatus) => {
@@ -148,7 +175,7 @@ export default class BusTimeBlock extends Component {
     })
     .then((response) => {
       console.log(response.data)
-      console.log('userProximity DATA in addToActualDemand => ' + this.state.userProximity)
+      // console.log('userProximity DATA in addToActualDemand => ' + this.state.userProximity)
 
       console.log('####################################');
       console.log('addToActualDemand END');
@@ -164,15 +191,24 @@ export default class BusTimeBlock extends Component {
     this.setState((previousState) => ({
       busTimingContent: !previousState.busTimingContent,
     }))
-    this.getGeoLocation()
-    this.getUserProximity()
+
+    Geolocation.getCurrentPosition((info) => {
+      console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
+      this.setState({
+        latitude: info.coords.latitude,
+        longitude: info.coords.longitude,
+      })
+    },error => console.log('Error', JSON.stringify(error)),
+      {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+    ).then(
+      this.getUserProximity()
       .then((data) => {
         this.setState({ userProximity: data })
-        console.log('userProximity DATA in componentHideAndShow => ' + data)
-        console.log('userProximity STATE in componentHideAndShow => ' + this.state.userProximity)
       })
       .then(this.getBusTiming())
-      .catch((error) => console.log(error))
+      .catch((error) => console.log("userProximity Error => "+error))
+    )
+    .catch((error) => console.log("GeoERROR => " + error))
   }
 
   // Fetch bus timing
@@ -204,16 +240,16 @@ export default class BusTimeBlock extends Component {
         // console.log(response.data.services[0].next_bus.estimated_arrival)
 
         // for hardcoded values
-        var nextBus1Timing = moment(this.state.hardcodeServices.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
-        var nextBus2Timing = moment(this.state.hardcodeServices.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
-        var nextBus1 = this.state.hardcodeServices.services[0].next_bus
-        var nextBus2 = this.state.hardcodeServices.services[0].next_bus_2
+        // var nextBus1Timing = moment(this.state.hardcodeServices.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
+        // var nextBus2Timing = moment(this.state.hardcodeServices.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
+        // var nextBus1 = this.state.hardcodeServices.services[0].next_bus
+        // var nextBus2 = this.state.hardcodeServices.services[0].next_bus_2
 
         //actual values
-        // var nextBus1Timing = moment(response.data.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
-        // var nextBus2Timing = moment(response.data.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
-        // var nextBus1 = response.data.services[0].next_bus
-        // var nextBus2 = response.data.services[0].next_bus_2
+        var nextBus1Timing = moment(response.data.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
+        var nextBus2Timing = moment(response.data.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
+        var nextBus1 = response.data.services[0].next_bus
+        var nextBus2 = response.data.services[0].next_bus_2
 
         nextBus1.estimated_arrival_text = nextBus1Timing >= 2 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr"
         nextBus2.estimated_arrival_text = nextBus2Timing >= 2 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr"
@@ -227,15 +263,18 @@ export default class BusTimeBlock extends Component {
             constantPollOn: false,
             arrivalPause: true
           })
+          console.log('xxxxxxxxxxxxxxxxxxxxxxxx');
           console.log("Constant Polling stopped");
+          console.log('xxxxxxxxxxxxxxxxxxxxxxxx');
         }else{
           this.setState({
             constantPollOn: true,
+            arrivalPause: false
           })
         }
 
-        console.log("Nextbus1 timing:")
-        console.log(nextBus1)
+        // console.log("Nextbus1 timing:")
+        // console.log(nextBus1)
         // console.log("constantPollOn => " + this.state.constantPollOn)
       })
       .catch((error) => {
@@ -244,28 +283,28 @@ export default class BusTimeBlock extends Component {
   }
 
   // To check current location
-  getGeoLocation() {
-    Geolocation.getCurrentPosition((info) => {
-      console.log('========================')
-      console.log('Got current geolocation!')
-      console.log('========================')
-      this.setState({
-        latitude: info.coords.latitude,
-        longitude: info.coords.longitude,
-      })
-      console.log('LAT:' + this.state.latitude)
-      console.log('LONG:' + this.state.longitude)
-    }
-      ,error => console.log('Error', JSON.stringify(error)),
-      {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
-    )
-  }
+  // getGeoLocation() {
+  //   return Geolocation.getCurrentPosition((info) => {
+  //     console.log('========================')
+  //     console.log('Got current geolocation!')
+  //     console.log('========================')
+  //     this.setState({
+  //       latitude: info.coords.latitude,
+  //       longitude: info.coords.longitude,
+  //     })
+  //     console.log('LAT:' + this.state.latitude)
+  //     console.log('LONG:' + this.state.longitude)
+  //     info.coords.latitude
+  //   }
+  //     ,error => console.log('Error', JSON.stringify(error)),
+  //     {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+  //   )
+  // }
 
   // To see if user is in range of bus stop
   getUserProximity() {
     console.log('====================================');
     console.log('getUserProximity');
-    console.log(this.state.latitude)
     console.log('====================================');
 
     const fetchURL = 'https://api.mybusfeed.com/location/getBusStopNo/'.concat(
@@ -275,6 +314,7 @@ export default class BusTimeBlock extends Component {
       '-',
       this.state.busStopNumber,
     )
+    console.log("fetchURL" + fetchURL);
     return axios
       .get(fetchURL)
       .then((response) => response.data.status)
