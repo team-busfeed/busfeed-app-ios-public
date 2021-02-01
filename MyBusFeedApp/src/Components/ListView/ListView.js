@@ -101,7 +101,7 @@ class ListView extends Component {
                 onRefresh={() => this.getGeoLocation()}
                 refreshing={this.state.isLoading}
                 renderItem={({ item }) => (
-                    <Accordion title={item} data={item} />
+                    <Accordion title={item} data={this.props.states} />
                 )}
                 keyExtractor={(item) => item.busstop_number}
                 />

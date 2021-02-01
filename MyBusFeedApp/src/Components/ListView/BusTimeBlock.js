@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Timers } from 'react-native'
 import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler'
 import Geolocation from '@react-native-community/geolocation'
@@ -9,28 +9,167 @@ export default class BusTimeBlock extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      data: props.data,
       busTimingContent: true,
       busNumber: this.props.bus_number,
       busStopNumber: this.props.busstop_number,
-      userProximity: false,
-      latitude: 1.3521,
-      longitude: 103.8198,
+      userProximity: this.props.userProximity,
+      latitude: props.data.latitude,
+      longitude: props.data.longitude,
       nextBus1: {},
-      nextBus2: {}
+      nextBus2: {},
+      constantPollOn: null,
+      arrivalPause: false,
+      pollURL: "",
+
+      // HARDCODED VALUE - To be used when there are no bus available to fetch (when coding late at night)
+      hardcodeServices: {
+        services: [
+          {
+            service_no: '88',
+            operator: 'SBST',
+            next_bus: {
+              origin_code: '77009',
+              destination_code: '52009',
+              estimated_arrival: '2021-02-01T03:44:00+08:00',
+              latitude: '1.379359',
+              longitude: '103.92117033333334',
+              visit_number: '1',
+              load: 'SEA',
+              feature: 'WAB',
+              type: 'DD',
+            },
+            next_bus_2: {
+              origin_code: '77009',
+              destination_code: '52009',
+              estimated_arrival: '2021-01-31T01:45:00+08:00',
+              latitude: '1.3827318333333334',
+              longitude: '103.93599933333333',
+              visit_number: '1',
+              load: 'SEA',
+              feature: 'WAB',
+              type: 'DD',
+            },
+            next_bus_3: {
+              origin_code: '77009',
+              destination_code: '52009',
+              estimated_arrival: '2021-01-24T04:58:00+08:00',
+              latitude: '0',
+              longitude: '0',
+              visit_number: '1',
+              load: 'SEA',
+              feature: 'WAB',
+              type: 'DD',
+            },
+          },
+        ],
+      }
     }
+  }
+
+  componentDidUpdate(prevProp, prevState){
+    console.log('====================================');
+    console.log('COMPONENTDIDUPDATE');
+    console.log(prevState.userProximity)
+    console.log(this.state.userProximity)
+    console.log('====================================');
+
+    if (this.state.constantPollOn != prevState.constantPollOn && this.state.constantPollOn==true){
+      // 30s API call
+      this.constantBasicPoll()
+    }else if (this.state.arrivalPause != prevState.arrivalPause && this.state.arrivalPause==true) {
+      this.arrivalPause(prevState.userProximity)
+    }
+  }
+
+  constantBasicPoll = () => {
+    console.log('====================================');
+    console.log('constantBasicPoll start');
+    console.log('====================================');
+    var count = 0
+
+    let intervalId = setInterval(() => {
+      this.getBusTiming()
+
+      this.getUserProximity()
+      .then((data) => {
+        this.setState({ userProximity: data })
+        console.log('userProximity DATA in constantBasicPoll data => ' + data)
+        console.log('userProximity DATA in constantBasicPoll state => ' + this.state.userProximity)
+      })
+      // console.log('userProximity DATA in constantBasicPoll state 2 => ' + this.state.userProximity)
+    }, 5000); //30000 -> 30 sec
+
+    this.setState({ intervalId: intervalId })
+  }
+
+  arrivalPause = (prevUserProximity) => {
+    console.log('++++++++++++++++++++++++++++++++++++');
+    console.log('arrivalPause START');
+    console.log('++++++++++++++++++++++++++++++++++++');
+    setTimeout(() => {
+      this.getGeoLocation()
+      this.getUserProximity().then((data) => {
+        this.setState({ userProximity: data })
+        console.log('userProximity DATA in arrivalPause data=> ' + data)
+        console.log('userProximity DATA in arrivalPause state=> ' + this.state.userProximity)
+        if (prevUserProximity == true && this.state.userProximity == false){
+          this.addToActualDemand(true)
+          clearInterval(this.state.intervalId)
+          console.log('<><><><><>< constantBasicPoll Cleared <><><><><><')
+        } else if (prevUserProximity == true && this.state.userProximity == true){
+          this.addToActualDemand(false)
+          this.setState({
+            constantPollOn: true,
+          })
+          console.log('<><><><><>< constantBasicPoll Resume <><><><><><')
+        }
+        console.log('++++++++++++++++++++++++++++++++++++');
+        console.log('arrivalPause END');
+        console.log('++++++++++++++++++++++++++++++++++++');
+      })
+    }, 20000)
+  }
+
+  addToActualDemand = (userBoardStatus) => {
+    console.log('####################################');
+    console.log('addToActualDemand START');
+    console.log('####################################');
+
+    const moment = require("moment")
+
+    axios
+    .post("https://api.mybusfeed.com/demand/actual/add", {
+      app_id: 'A1',
+      bus_stop_no: this.state.busStopNumber,
+      bus_no: this.state.busNumber,
+      has_successfully_board: userBoardStatus,
+      created_time: moment()
+    })
+    .then((response) => {
+      console.log(response.data)
+      console.log('userProximity DATA in addToActualDemand => ' + this.state.userProximity)
+
+      console.log('####################################');
+      console.log('addToActualDemand END');
+      console.log('####################################');
+    })
   }
 
   // Reveal bus timing & make icon disssssapppppear
   componentHideAndShow = () => {
+    console.log('====================================');
+    console.log('componentHideAndShow');
+    console.log('====================================');
     this.setState((previousState) => ({
       busTimingContent: !previousState.busTimingContent,
     }))
     this.getGeoLocation()
-    console.log(this.state.busStopNumber)
     this.getUserProximity()
       .then((data) => {
         this.setState({ userProximity: data })
-        console.log('DATA => ' + data)
+        console.log('userProximity DATA in componentHideAndShow => ' + data)
+        console.log('userProximity STATE in componentHideAndShow => ' + this.state.userProximity)
       })
       .then(this.getBusTiming())
       .catch((error) => console.log(error))
@@ -38,56 +177,20 @@ export default class BusTimeBlock extends Component {
 
   // Fetch bus timing
   getBusTiming() {
+    console.log('====================================');
+    console.log('getBusTiming');
+    console.log('====================================');
+
     var url = ''
     if (this.state.userProximity) {
       var url = 'https://api.mybusfeed.com/demand/expected/add'
     } else {
       var url = 'https://api.mybusfeed.com/demand/bus-timing'
     }
+    this.setState({
+      pollURL:url
+    })
 
-    // HARDCODED VALUE - To be used when there are no bus available to fetch (when coding late at night)
-    const services = {
-      services: [
-        {
-          service_no: '88',
-          operator: 'SBST',
-          next_bus: {
-            origin_code: '77009',
-            destination_code: '52009',
-            estimated_arrival: '2021-01-24T05:20:00+08:00',
-            latitude: '1.379359',
-            longitude: '103.92117033333334',
-            visit_number: '1',
-            load: 'SEA',
-            feature: 'WAB',
-            type: 'DD',
-          },
-          next_bus_2: {
-            origin_code: '77009',
-            destination_code: '52009',
-            estimated_arrival: '2021-01-24T05:31:00+08:00',
-            latitude: '1.3827318333333334',
-            longitude: '103.93599933333333',
-            visit_number: '1',
-            load: 'SEA',
-            feature: 'WAB',
-            type: 'DD',
-          },
-          next_bus_3: {
-            origin_code: '77009',
-            destination_code: '52009',
-            estimated_arrival: '2021-01-24T04:58:00+08:00',
-            latitude: '0',
-            longitude: '0',
-            visit_number: '1',
-            load: 'SEA',
-            feature: 'WAB',
-            type: 'DD',
-          },
-        },
-      ],
-    }
-    
     // Calling moment library
     const moment = require("moment")
 
@@ -98,26 +201,47 @@ export default class BusTimeBlock extends Component {
         bus_no: this.state.busNumber,
       })
       .then((response) => {
-        console.log(response.data.services[0].next_bus.estimated_arrival)
-        var nextBus1Timing = moment(response.data.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
-        var nextBus2Timing = moment(response.data.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
+        // console.log(response.data.services[0].next_bus.estimated_arrival)
 
-        var nextBus1 = response.data.services[0].next_bus
-        var nextBus2 = response.data.services[0].next_bus_2
+        // for hardcoded values
+        var nextBus1Timing = moment(this.state.hardcodeServices.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
+        var nextBus2Timing = moment(this.state.hardcodeServices.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
+        var nextBus1 = this.state.hardcodeServices.services[0].next_bus
+        var nextBus2 = this.state.hardcodeServices.services[0].next_bus_2
 
-        nextBus1.estimated_arrival = nextBus1Timing >= 2 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr"
-        nextBus2.estimated_arrival = nextBus2Timing >= 2 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr"
+        //actual values
+        // var nextBus1Timing = moment(response.data.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
+        // var nextBus2Timing = moment(response.data.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
+        // var nextBus1 = response.data.services[0].next_bus
+        // var nextBus2 = response.data.services[0].next_bus_2
+
+        nextBus1.estimated_arrival_text = nextBus1Timing >= 2 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr"
+        nextBus2.estimated_arrival_text = nextBus2Timing >= 2 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr"
         this.setState({
           nextBus1: nextBus1,
           nextBus2: nextBus2,
         })
+
+        if (nextBus1Timing < 2){
+          this.setState({
+            constantPollOn: false,
+            arrivalPause: true
+          })
+          console.log("Constant Polling stopped");
+        }else{
+          this.setState({
+            constantPollOn: true,
+          })
+        }
+
         console.log("Nextbus1 timing:")
         console.log(nextBus1)
+        // console.log("constantPollOn => " + this.state.constantPollOn)
       })
       .catch((error) => {
-        console.log(error)
+        console.log("error => " + error)
       })
-  } 
+  }
 
   // To check current location
   getGeoLocation() {
@@ -131,11 +255,19 @@ export default class BusTimeBlock extends Component {
       })
       console.log('LAT:' + this.state.latitude)
       console.log('LONG:' + this.state.longitude)
-    })
+    }
+      ,error => console.log('Error', JSON.stringify(error)),
+      {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+    )
   }
 
   // To see if user is in range of bus stop
   getUserProximity() {
+    console.log('====================================');
+    console.log('getUserProximity');
+    console.log(this.state.latitude)
+    console.log('====================================');
+
     const fetchURL = 'https://api.mybusfeed.com/location/getBusStopNo/'.concat(
       this.state.latitude,
       '-',
@@ -161,10 +293,10 @@ export default class BusTimeBlock extends Component {
         ) : (
           <View style={tailwind('flex flex-row')}>
             <View style={this.state.nextBus1.load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus1.load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : tailwind('border-b-4 border-yellow-500 mx-2') }>
-              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival}</Text>
+              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text}</Text>
             </View>
             <View style={this.state.nextBus2.load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus1.load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : tailwind('border-b-4 border-yellow-500 mx-2') }>
-              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival}</Text>
+              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text}</Text>
             </View>
             <View>
               <Icon name={'favorite-border'} size={25} color="#000000" />

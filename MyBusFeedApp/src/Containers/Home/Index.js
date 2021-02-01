@@ -19,7 +19,8 @@ class HomeContainer extends Component {
             longitudeDelta: 0.1,
             updatedGeolocation: false,
             isLoading: true,
-            busStops: []
+            busStops: [],
+            userProximity: false
         }
     }
     

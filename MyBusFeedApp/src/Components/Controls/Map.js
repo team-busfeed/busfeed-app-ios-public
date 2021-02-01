@@ -36,9 +36,8 @@ const styles = StyleSheet.create({
 
 });
 class Map extends Component {
-    
-    render() {
 
+    render() {
         markers = null
 
         if (!this.props.states.isLoading) {
@@ -89,7 +88,7 @@ class Map extends Component {
                     }}
                     showsUserLocation={true}
                 >
-                    {markers}
+                    {this.markers}
                 </MapView>
                 <View style={styles.nav}>
                     <Navigation style={styles.nav}/>

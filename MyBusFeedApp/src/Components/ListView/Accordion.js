@@ -8,6 +8,7 @@ import {
   Platform,
   UIManager,
   Button,
+  ProgressViewIOSComponent,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import externalStyle from '../../../style/externalStyle'
@@ -23,7 +24,10 @@ export default class Accordion extends Component {
       data: props.data,
       expanded: false,
       busStops: [],
-      newServices: {}
+      newServices: {},
+      latitude: props.data.latitude,
+      longitude: props.data.longitude,
+      userProximity: null,
     }
 
     if (Platform.OS === 'android') {
@@ -31,9 +35,41 @@ export default class Accordion extends Component {
     }
   }
 
+  componentDidMount(){
+    this.getUserProximity().then( (data) => {
+      console.log("getUserProximity response =>" + data)
+      this.setState({
+        userProximity: data
+      })
+    })
+    .catch((error) => console.log("error: " + error))
+    console.log("ONPRESSTOGGLE -=>" + this.state.userProximity)
+  }
+
   onPressToggle = () => {
     this.toggleExpand()
     this.GetBus()
+
+  }
+
+  // To see if user is in range of bus stop
+  getUserProximity() {
+    console.log('====================================');
+    console.log('getUserProximity');
+    console.log(this.state.longitude);
+    console.log('====================================');
+
+    const fetchURL = 'https://api.mybusfeed.com/location/getBusStopNo/'.concat(
+      this.state.latitude,
+      '-',
+      this.state.longitude,
+      '-',
+      this.state.busStopNumber,
+    )
+    return axios
+      .get(fetchURL)
+      .then((response) => response.data.status )
+      .catch((error) => console.log(error))
   }
 
   // Set accordion toggle state
@@ -66,12 +102,12 @@ export default class Accordion extends Component {
 
         var loadedServices = {}
 
-        resp.map(function(service) {
-            loadedServices[service] = React.createRef()
-        })
-        this.setState({
-            newServices: loadedServices
-        })
+        // resp.map(function(service) {
+        //     loadedServices[service] = React.createRef()
+        // })
+        // this.setState({
+        //     newServices: loadedServices
+        // })
 
         this.didTapRefresh = () => Object.keys(loadedServices).forEach(function(key) {
             loadedServices[key].current.getBusTiming()
@@ -79,12 +115,12 @@ export default class Accordion extends Component {
 
         this.setState({
           // ACTUAL VALUE
-          busStops: response.data,
+          // busStops: response.data,
 
           // HARDCODED VALUE - use when bus services is null
-          // busStops: {
-          //   services: ['169', '860', '811'],
-          // },
+          busStops: {
+            services: ['169', '860', '811'],
+          },
         })
         console.log(this.state.busStops)
         console.log(this.state.newServices)
@@ -103,7 +139,7 @@ export default class Accordion extends Component {
         data={this.state.busStops.services}
         renderItem={({ item }) => (
         <BusTimeBlock ref={this.state.newServices[item]
-        } bus_number={item} busstop_number={this.props.title.busstop_number}/>
+        } bus_number={item} busstop_number={this.props.title.busstop_number} data={this.state.data} userProximity={this.state.userProximity}/>
         )}
         keyExtractor={(item) => item}
         />
