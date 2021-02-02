@@ -17,10 +17,10 @@ const styles = StyleSheet.create({
 const Navigation = () => (
     <View style={tailwind('flex flex-row')}>
         <View style={tailwind('w-1/2')}>
-            <Icon name="map-marker" size={30} color="black" style={[tailwind("my-2"), styles.image]}/>
+            <Icon name="map-marker" size={30} color="black" style={[styles.image]}/>
         </View>
         <View style={tailwind('w-1/2')}>
-            <Icon name="heart" size={30} color="black" style={[tailwind("my-2"), styles.image]}/>
+            <Icon name="heart" size={30} color="black" style={[styles.image]}/>
         </View>
     </View> 
 )

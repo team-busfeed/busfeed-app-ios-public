@@ -19,6 +19,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         padding: 10, 
+        flex: 1, 
+        position: "relative", 
       },
     title: {
         color: "#4F4F4F",
@@ -54,11 +56,11 @@ class Map extends Component {
                             tooltip={true}
                             style={styles.callout}
                             >
-                                <View style={tailwind('flex flex-row')}>
-                                    <View style={tailwind('w-1/5')}>
-                                        <Icon name="bus" size={20} color="black" style={[tailwind("my-2"), styles.image]}/>
+                                <View style={tailwind('flex flex-row justify-center items-center')}>
+                                    <View style={tailwind("w-10")}>
+                                        <Icon name="bus" size={30} color="black" style={[tailwind("flex"), styles.image]}/>
                                     </View>
-                                    <View style={tailwind('w-4/5')}>
+                                    <View>
                                         <Text style={styles.title}>
                                             {busStop.busstop_name}
                                         </Text>
@@ -79,7 +81,7 @@ class Map extends Component {
         return (
             <View>
                 <MapView
-                    style={tailwind('h-80')}
+                    style={tailwind('h-4/5')}
                     region={{
                         latitude: this.props.states.latitude,
                         longitude: this.props.states.longitude,
@@ -91,7 +93,7 @@ class Map extends Component {
                     {markers}
                 </MapView>
                 <View style={styles.nav}>
-                    <Navigation style={styles.nav}/>
+                    <Navigation style={[tailwind('h-1/5'), styles.nav]}/>
                 </View>
             </View>
         )

@@ -1232,6 +1232,13 @@
   "resolved" "https://registry.npmjs.org/@react-native-community/masked-view/-/masked-view-0.1.10.tgz"
   "version" "0.1.10"
 
+"@react-native-community/push-notification-ios@^1.4.0":
+  "integrity" "sha512-vxvkeampafjmtDoQBN8Q4azP21l6cMX93+OQZemyIWZmG++OjCVDQVitobf/kWLm5zyGwdylejbpMGo75qo7rA=="
+  "resolved" "https://registry.npmjs.org/@react-native-community/push-notification-ios/-/push-notification-ios-1.8.0.tgz"
+  "version" "1.8.0"
+  dependencies:
+    "invariant" "^2.2.4"
+
 "@react-navigation/bottom-tabs@^5.11.1":
   "integrity" "sha512-fkkFzEIOZzV98sbq2kee/cXNIO3L/2x4cDGP0oIqhXDxser78J0jg08pZqyF6IIq9gPHo5T8vGffvhNBaZoCGw=="
   "resolved" "https://registry.npmjs.org/@react-navigation/bottom-tabs/-/bottom-tabs-5.11.1.tgz"
@@ -6459,6 +6466,19 @@
     "invariant" "^2.2.4"
     "use-subscription" "^1.0.0"
 
+"react-native-background-actions@^2.5.2":
+  "integrity" "sha512-LP6OfjIabtNXtPw0AUL0rrqFoZAx+YDOEa7eY8AsRIQrBUYuQRNZhc7cvqtE+VXge4F1dFdeSLrt17/lVky5fA=="
+  "resolved" "https://registry.npmjs.org/react-native-background-actions/-/react-native-background-actions-2.5.2.tgz"
+  "version" "2.5.2"
+
+"react-native-background-timer@^2.4.1":
+  "integrity" "sha512-TE4Kiy7jUyv+hugxDxitzu38sW1NqjCk4uE5IgU2WevLv7sZacaBc6PZKOShNRPGirLl1NWkaG3LDEkdb9Um5g=="
+  "resolved" "https://registry.npmjs.org/react-native-background-timer/-/react-native-background-timer-2.4.1.tgz"
+  "version" "2.4.1"
+
+"react-native-beacons-manager@github:jitsi/react-native-beacons-manager#d9e8040082570a951f3c8a7a5c96c073821841d6":
+  "resolved" "git+ssh://git@github.com/jitsi/react-native-beacons-manager.git#d9e8040082570a951f3c8a7a5c96c073821841d6"
+
 "react-native-ble-plx@^1.1.1":
   "integrity" "sha512-UR1Kf3ubJbXI/F7+ApJYN0MJne7M7PapCXYhgi+MyQ7rUEYQ//3f2U5TFK2XdxMnz+Q0cuNaltg5uM42zyVsfg=="
   "resolved" "https://registry.npmjs.org/react-native-ble-plx/-/react-native-ble-plx-1.1.1.tgz"
@@ -6509,6 +6529,18 @@
   "integrity" "sha512-HygBkZBecTnIVRYrSiLRAvu4OmXOYso/A7c6Cy73HkOh9CgGV8Ap5eBea24tvmFGptjj5Hg8AJ94/YbmWK1Okw=="
   "resolved" "https://registry.npmjs.org/react-native-maps/-/react-native-maps-0.27.1.tgz"
   "version" "0.27.1"
+
+"react-native-notifications@^3.4.2":
+  "integrity" "sha512-kJL3fDQu2LaCmz94dpUjWbpXSTwoouHCNpYQgIwNDL4H4lp7h5TNnfoo0owwA0CSz9E1egWz9o3CioM/unZw/w=="
+  "resolved" "https://registry.npmjs.org/react-native-notifications/-/react-native-notifications-3.4.2.tgz"
+  "version" "3.4.2"
+
+"react-native-push-notification@^5.1.1":
+  "integrity" "sha512-CJmKqzM2P/s+a9PImoaiUN4TP1+K4YfmG1B0uUbavgFdGhTtRPTLLwDfFk2h3J6VmTXNak82rUz2iGwyptHm5w=="
+  "resolved" "https://registry.npmjs.org/react-native-push-notification/-/react-native-push-notification-5.1.1.tgz"
+  "version" "5.1.1"
+  dependencies:
+    "@react-native-community/push-notification-ios" "^1.4.0"
 
 "react-native-ratings@^6.3.0":
   "integrity" "sha512-YMcfQ7UQCmXGEc/WPlukHSHs5yvckTwjq5fTRk1FG8gaO7fZCNygEUGPuw4Dbvvp3IlsCUn0bOQd63RYsb7NDQ=="
