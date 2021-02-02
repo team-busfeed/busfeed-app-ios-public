@@ -21,6 +21,7 @@ export default class BusTimeBlock extends Component {
       constantPollOn: true,
       arrivalPause: false,
       pollURL: "",
+      expectedBusArrive: false,
 
       // HARDCODED VALUE - To be used when there are no bus available to fetch (when coding late at night)
       hardcodeServices: {
@@ -84,7 +85,9 @@ export default class BusTimeBlock extends Component {
       console.log('====================================');
       console.log('arrivalPause START');
       console.log('====================================');
-      this.arrivalPause(prevState.userProximity)
+      this.arrivalPause()
+    }else if (this.state.arrivalPause == false && this.state.constantPollOn != prevState.constantPollOn && this.state.constantPollOn==false){
+      clearInterval(this.state.intervalId)
     }
   }
 
@@ -152,7 +155,9 @@ export default class BusTimeBlock extends Component {
             })
             console.log('<><><><><>< constantBasicPoll Resume <><><><><><')
           }
-
+          this.setState({
+            arrivalPause: false
+          })
           console.log('++++++++++++++++++++++++++++++++++++');
           console.log('arrivalPause INTERVAL END');
           console.log('++++++++++++++++++++++++++++++++++++');
@@ -171,9 +176,10 @@ export default class BusTimeBlock extends Component {
     console.log('####################################');
 
     const moment = require("moment")
-
+    console.log(userBoardStatus)
     axios
     .post("https://api.mybusfeed.com/demand/actual/add", {
+      
       app_id: 'A1',
       bus_stop_no: this.state.busStopNumber,
       bus_no: this.state.busNumber,
@@ -226,8 +232,11 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     var url = ''
-    if (this.state.userProximity) {
+    if (this.state.userProximity && this.state.expectedBusArrive == false) {
       var url = 'https://api.mybusfeed.com/demand/expected/add'
+      this.setState({
+        expectedBusArrive: true
+      })
     } else {
       var url = 'https://api.mybusfeed.com/demand/bus-timing'
     }
