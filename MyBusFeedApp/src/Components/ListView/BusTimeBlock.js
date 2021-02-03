@@ -103,7 +103,7 @@ export default class BusTimeBlock extends Component {
         this.setState({
           constantPollLimitOn: false
         })
-      }, 30000); //300000 -> 5 minutes
+      }, 300000); //300000 -> 5 minutes
     }
   }
 
