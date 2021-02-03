@@ -99,12 +99,19 @@ export default class Accordion extends Component {
     console.log('onPressGetBus API Exit')
   }
 
+  busTrackCountFunction = () => {
+    console.log('====================================');
+    console.log("busTrackCountFunction accordion");
+    console.log('====================================');
+    this.props.busTrackCountFunction()
+  }
+
   render() {
         var flatList = <FlatList
         data={this.state.busStops.services}
         renderItem={({ item }) => (
         <BusTimeBlock ref={this.state.newServices[item]
-        } bus_number={item} busstop_number={this.props.title.busstop_number} data={this.state.data}/>
+        } bus_number={item} busstop_number={this.props.title.busstop_number} data={this.state.data} busTrackCountFunction={this.busTrackCountFunction} busTrackCount={this.props.busTrackCount}/>
         )}
         keyExtractor={(item) => item}
         />

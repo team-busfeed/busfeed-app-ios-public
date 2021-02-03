@@ -16,7 +16,8 @@ class ListView extends Component {
       longitude: this.props.states.longitude,
       userProximity: false,
       isLoading: false,
-      busStops: this.props.states.busStops
+      busStops: this.props.states.busStops,
+      busTrackCount: 0
     }
   }
 
@@ -71,6 +72,19 @@ class ListView extends Component {
         })
     }
 
+    busTrackCountFunction = () => {
+        var count = this.state.busTrackCount
+        var count2 = count + 1
+        this.setState({
+            busTrackCount: count2
+        })
+        console.log('====================================');
+        console.log("busTrackCount => " + this.state.busTrackCount);
+        console.log("busTrackCount => " + count2);
+        console.log('====================================');
+        
+    }
+
 
     render() {
         flatList = null
@@ -101,7 +115,7 @@ class ListView extends Component {
                 onRefresh={() => this.getGeoLocation()}
                 refreshing={this.state.isLoading}
                 renderItem={({ item }) => (
-                    <Accordion title={item} data={this.props.states} />
+                    <Accordion title={item} data={this.props.states} busTrackCountFunction={this.busTrackCountFunction} busTrackCount={this.state.busTrackCount}/>
                 )}
                 keyExtractor={(item) => item.busstop_number}
                 />

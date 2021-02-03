@@ -18,11 +18,12 @@ export default class BusTimeBlock extends Component {
       longitude: props.data.longitude,
       nextBus1: {},
       nextBus2: {},
-      constantPollOn: true,
+      constantPollOn: false,
       arrivalPause: false,
       pollURL: "",
       expectedBusArrive: false,
-
+      constantPollLimitOn: false,
+      busTrackCount: this.props.busTrackCount,
       // HARDCODED VALUE - To be used when there are no bus available to fetch (when coding late at night)
       hardcodeServices: {
         services: [
@@ -78,16 +79,31 @@ export default class BusTimeBlock extends Component {
     if (this.state.constantPollOn != prevState.constantPollOn && this.state.constantPollOn==true){
       // 30s API call
       console.log('====================================');
-      console.log('constantBasicPoll START');
+      console.log('constantBasicPoll ON for => '  + this.state.busNumber);
       console.log('====================================');
       this.constantBasicPoll()
     }else if (this.state.arrivalPause != prevState.arrivalPause && this.state.arrivalPause==true && this.state.userProximity == true) {
       console.log('====================================');
-      console.log('arrivalPause START');
+      console.log('arrivalPause ON for => '  + this.state.busNumber);
       console.log('====================================');
       this.arrivalPause()
-    }else if (this.state.arrivalPause == false && this.state.constantPollOn != prevState.constantPollOn && this.state.constantPollOn==false){
+    }else if (this.state.constantPollOn != prevState.constantPollOn && this.state.constantPollOn==false){
+      console.log('====================================');
+      console.log('constantBasicPoll OFF for => '  + this.state.busNumber);
+      console.log('====================================');
       clearInterval(this.state.intervalId)
+    }
+
+    if (this.state.constantPollLimitOn != prevState.constantPollLimitOn && this.state.constantPollLimitOn==true) {
+      // if user still not in proximity
+      setTimeout(() => {
+        if (this.state.userProximity == false){
+          clearInterval(this.state.intervalId)
+        }
+        this.setState({
+          constantPollLimitOn: false
+        })
+      }, 300000); //300000 -> 5 minutes
     }
   }
 
@@ -95,17 +111,25 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
     console.log('constantBasicPoll INTERVAL for => ' + this.state.busNumber);
     console.log('====================================');
-    var count = 0
 
     let intervalId = setInterval(() => {
-      this.getBusTiming()
+      // this.getBusTiming()
 
       // Update proximity status
       this.getUserProximity()
       .then((data) => {
         this.setState({ userProximity: data })
-        console.log('userProximity DATA in constantBasicPoll data => ' + data)
-        console.log('userProximity DATA in constantBasicPoll state => ' + this.state.userProximity)
+        console.log('userProximity DATA in constantBasicPoll data => ' + data  + this.state.busNumber)
+        console.log('userProximity DATA in constantBasicPoll state => ' + this.state.userProximity + this.state.busNumber)
+
+        // Update bus timing
+        this.getBusTiming()
+
+        if(this.state.userProximity == false){
+          this.setState({
+            constantPollLimitOn: true
+          })
+        }
       })
       // console.log('userProximity DATA in constantBasicPoll state 2 => ' + this.state.userProximity)
     }, 30000); //30000 -> 30 sec
@@ -115,17 +139,18 @@ export default class BusTimeBlock extends Component {
 
   arrivalPause = () => {
     console.log('++++++++++++++++++++++++++++++++++++');
-    console.log('arrivalPause INTERVAL START');
+    console.log('arrivalPause INTERVAL START'  + this.state.busNumber);
     console.log('++++++++++++++++++++++++++++++++++++');
+
     clearInterval(this.state.intervalId)
-    console.log('<><><><><>< constantBasicPoll Cleared <><><><><><')
+    console.log('<><><><><>< constantBasicPoll Cleared <><><><><><'  + this.state.busNumber)
     setTimeout(() => {
       // 1. Get Geolocation
       Geolocation.getCurrentPosition((info) => {
-        console.log('++++++++++++++++++++++++++++++++++++');
-        console.log('1 arrivalPause Geolocation');
-        console.log('++++++++++++++++++++++++++++++++++++');
-        console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
+        // console.log('++++++++++++++++++++++++++++++++++++');
+        // console.log('1 arrivalPause Geolocation');
+        // console.log('++++++++++++++++++++++++++++++++++++');
+        // console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
         this.setState({
           latitude: info.coords.latitude,
           longitude: info.coords.longitude,
@@ -134,21 +159,21 @@ export default class BusTimeBlock extends Component {
         // 2. Get user Proximity
         this.getUserProximity()
         .then((data) => {
-          console.log('++++++++++++++++++++++++++++++++++++');
-          console.log('2 arrivalPause getUserProximity');
-          console.log('++++++++++++++++++++++++++++++++++++');
+          // console.log('++++++++++++++++++++++++++++++++++++');
+          // console.log('2 arrivalPause getUserProximity');
+          // console.log('++++++++++++++++++++++++++++++++++++');
           this.setState({ userProximity: data })
 
           // 3. Geo logic
-          console.log("userProximity data => " + data)
-          console.log("this.state.userProximity => " + this.state.userProximity)
+          // console.log("userProximity data in arrivalPause=> " + data + this.state.busNumber)
+          console.log("this.state.userProximity => " + this.state.userProximity + this.state.busNumber)
           if (this.state.userProximity == false){
             // If user left the bus stop
-            console.log("user left bus stop")
+            console.log("user left bus stop " + this.state.busNumber)
             this.addToActualDemand(true)
           } else if (this.state.userProximity == true){
             // If user remains in the bus stop
-            console.log("user remains in bus stop")
+            console.log("user remains in bus stop "  + this.state.busNumber)
             this.addToActualDemand(false)
             this.setState({
               constantPollOn: true,
@@ -163,7 +188,7 @@ export default class BusTimeBlock extends Component {
           console.log('++++++++++++++++++++++++++++++++++++');
 
         })
-        .catch((error) => console.log("userProximity Error => "+error))
+        .catch((error) => console.log("userProximity Error => " + error))
       },error => console.log('Error', JSON.stringify(error)),
         {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
       )
@@ -172,7 +197,7 @@ export default class BusTimeBlock extends Component {
 
   addToActualDemand = (userBoardStatus) => {
     console.log('####################################');
-    console.log('addToActualDemand START =>' + userBoardStatus);
+    console.log('addToActualDemand START =>' + userBoardStatus + this.state.busNumber);
     console.log('####################################');
 
     const moment = require("moment")
@@ -196,14 +221,32 @@ export default class BusTimeBlock extends Component {
     })
   }
 
+  busTrackCountFunction = () => {
+    console.log('====================================');
+    console.log("busTrackCountFunction bustimeblock");
+    console.log('====================================');
+    this.props.busTrackCountFunction()
+  }
+
   // Reveal bus timing & make icon disssssapppppear
   componentHideAndShow = () => {
     console.log('====================================');
     console.log('componentHideAndShow');
     console.log('====================================');
-    this.setState((previousState) => ({
-      busTimingContent: !previousState.busTimingContent,
-    }))
+
+    this.busTrackCountFunction()
+    console.log('====================================');
+    console.log("busTrackCountFunction bustimeblock componentHideAndShow" + this.state.busTrackCount);
+    console.log('====================================');
+
+    if (this.state.busTrackCount <= 3){
+      this.setState((previousState) => ({
+        busTimingContent: !previousState.busTimingContent,
+      }))
+    }
+
+
+    
 
     Geolocation.getCurrentPosition((info) => {
       console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
@@ -217,9 +260,20 @@ export default class BusTimeBlock extends Component {
       this.getUserProximity()
       .then((data) => {
         this.setState({ userProximity: data })
+        this.getBusTiming()
+        this.setState({
+          constantPollOn: true,
+          pollLimitOn: true
+        })
+        if (data == true){
+          console.log('====================================');
+          console.log('User in bus stop proximity');
+          console.log('====================================');
+          this.setState({ constantPollOn: true })
+        }
       })
-      .then(this.getBusTiming())
-      .then(this.constantBasicPoll())
+      // .then(this.getBusTiming())
+      // .then(this.constantBasicPoll())
       .catch((error) => console.log("userProximity Error => "+error))
     )
     .catch((error) => console.log("GeoERROR => " + error))
@@ -228,7 +282,7 @@ export default class BusTimeBlock extends Component {
   // Fetch bus timing
   getBusTiming() {
     console.log('====================================');
-    console.log('getBusTiming');
+    console.log('getBusTiming => ' + this.state.busNumber);
     console.log('====================================');
 
     var url = ''
@@ -276,7 +330,7 @@ export default class BusTimeBlock extends Component {
         console.log("nextBus1 => " + nextBus1Timing);
         console.log("nextBus2 => " + nextBus2Timing);
 
-        if (nextBus1Timing < 2){
+        if (nextBus1Timing < 2 && nextBus1Timing > 0){
           this.setState({
             constantPollOn: false,
             arrivalPause: true
