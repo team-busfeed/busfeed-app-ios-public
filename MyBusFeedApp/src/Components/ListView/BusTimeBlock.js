@@ -103,7 +103,7 @@ export default class BusTimeBlock extends Component {
         this.setState({
           constantPollLimitOn: false
         })
-      }, 300000); //300000 -> 5 minutes
+      }, 30000); //300000 -> 5 minutes
     }
   }
 
@@ -114,23 +114,34 @@ export default class BusTimeBlock extends Component {
 
     let intervalId = setInterval(() => {
       // this.getBusTiming()
+      Geolocation.getCurrentPosition((info) => {
+        console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
+        this.setState({
+          latitude: info.coords.latitude,
+          longitude: info.coords.longitude,
+        })
 
-      // Update proximity status
-      this.getUserProximity()
-      .then((data) => {
-        this.setState({ userProximity: data })
-        console.log('userProximity DATA in constantBasicPoll data => ' + data  + this.state.busNumber)
-        console.log('userProximity DATA in constantBasicPoll state => ' + this.state.userProximity + this.state.busNumber)
+        // Update proximity status
+        this.getUserProximity()
+        .then((data) => {
+          this.setState({ userProximity: data })
+          console.log('userProximity DATA in constantBasicPoll data => ' + data  + this.state.busNumber)
+          console.log('userProximity DATA in constantBasicPoll state => ' + this.state.userProximity + this.state.busNumber)
 
-        // Update bus timing
-        this.getBusTiming()
+          // Update bus timing
+          this.getBusTiming()
 
-        if(this.state.userProximity == false){
-          this.setState({
-            constantPollLimitOn: true
-          })
-        }
-      })
+          if(this.state.userProximity == false){
+            console.log("constantPollLimitOn 5 min");
+            this.setState({
+              constantPollLimitOn: true
+            })
+          }
+        })
+
+      },error => console.log('Error', JSON.stringify(error)),
+        {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+      )
       // console.log('userProximity DATA in constantBasicPoll state 2 => ' + this.state.userProximity)
     }, 30000); //30000 -> 30 sec
 
@@ -244,9 +255,6 @@ export default class BusTimeBlock extends Component {
         busTimingContent: !previousState.busTimingContent,
       }))
     }
-
-
-    
 
     Geolocation.getCurrentPosition((info) => {
       console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
