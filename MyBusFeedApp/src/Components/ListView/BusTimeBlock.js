@@ -271,14 +271,14 @@ export default class BusTimeBlock extends Component {
         this.getBusTiming()
         this.setState({
           constantPollOn: true,
-          pollLimitOn: true
+          constantPollLimitOn: true
         })
-        if (data == true){
-          console.log('====================================');
-          console.log('User in bus stop proximity');
-          console.log('====================================');
-          this.setState({ constantPollOn: true })
-        }
+        // if (data == true){
+        //   console.log('====================================');
+        //   console.log('User in bus stop proximity');
+        //   console.log('====================================');
+        //   this.setState({ constantPollOn: true })
+        // }
       })
       // .then(this.getBusTiming())
       // .then(this.constantBasicPoll())
