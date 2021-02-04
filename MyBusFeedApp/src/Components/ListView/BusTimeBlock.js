@@ -246,15 +246,6 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     this.busTrackCountFunction()
-    console.log('====================================');
-    console.log("busTrackCountFunction bustimeblock componentHideAndShow" + this.state.busTrackCount);
-    console.log('====================================');
-
-    if (this.state.busTrackCount <= 3){
-      this.setState((previousState) => ({
-        busTimingContent: !previousState.busTimingContent,
-      }))
-    }
 
     Geolocation.getCurrentPosition((info) => {
       console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
@@ -268,20 +259,28 @@ export default class BusTimeBlock extends Component {
       this.getUserProximity()
       .then((data) => {
         this.setState({ userProximity: data })
+        
+        // Call for bus timing
         this.getBusTiming()
-        this.setState({
-          constantPollOn: true,
-          constantPollLimitOn: true
-        })
-        // if (data == true){
-        //   console.log('====================================');
-        //   console.log('User in bus stop proximity');
-        //   console.log('====================================');
-        //   this.setState({ constantPollOn: true })
-        // }
+
+        // Reveal bus timing
+        this.setState((previousState) => ({
+          busTimingContent: !previousState.busTimingContent,
+        }))
+
+        // Poll limit check - 3 bus Max
+        if (this.props.busTrackCount <= 3){
+          this.setState({
+            constantPollOn: true,
+            constantPollLimitOn: true
+          })
+        } else {
+          console.log('#############################################');
+          console.log('Max polling hit =>' + this.props.busTrackCount);
+          console.log('#############################################');
+        }
+
       })
-      // .then(this.getBusTiming())
-      // .then(this.constantBasicPoll())
       .catch((error) => console.log("userProximity Error => "+error))
     )
     .catch((error) => console.log("GeoERROR => " + error))
@@ -343,10 +342,7 @@ export default class BusTimeBlock extends Component {
             constantPollOn: false,
             arrivalPause: true
           })
-          console.log('xxxxxxxxxxxxxxxxxxxxxxxx');
-          console.log("Constant Polling stopped");
-          console.log('xxxxxxxxxxxxxxxxxxxxxxxx');
-        }else{
+        }else if (this.props.busTrackCount <= 3){
           this.setState({
             constantPollOn: true,
             arrivalPause: false
