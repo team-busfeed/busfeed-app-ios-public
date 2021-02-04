@@ -69,6 +69,13 @@ export default class BusTimeBlock extends Component {
     }
   }
 
+  componentDidMount(){
+    const moment = require("moment")
+    console.log("moment 1=> " + moment().utcOffset("+08:00").format("dddd, MMMM Do YYYY, h:mm:ss a"))
+    console.log("moment 2=> " + moment().utcOffset("+08:00").format())
+    console.log("moment 3 => " + moment().utcOffset("+08:00"))
+  }
+
   componentDidUpdate(prevProp, prevState){
     // console.log('====================================');
     // console.log('COMPONENTDIDUPDATE');
@@ -212,7 +219,8 @@ export default class BusTimeBlock extends Component {
     console.log('####################################');
 
     const moment = require("moment")
-    console.log(userBoardStatus)
+    console.log("moment => " + moment().utcOffset("+08:00").format("dddd, MMMM Do YYYY, h:mm:ss a"))
+
     axios
     .post("https://api.mybusfeed.com/demand/actual/add", {
       
@@ -220,7 +228,7 @@ export default class BusTimeBlock extends Component {
       bus_stop_no: this.state.busStopNumber,
       bus_no: this.state.busNumber,
       has_successfully_board: userBoardStatus,
-      created_time: moment()
+      created_time: moment().utcOffset("+08:00").format()
     })
     .then((response) => {
       console.log(response.data)
@@ -246,6 +254,9 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     this.busTrackCountFunction()
+    console.log('#############################################');
+    console.log("Total bus polling => " + this.props.busTrackCount);
+    console.log('#############################################');
 
     Geolocation.getCurrentPosition((info) => {
       console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
@@ -275,9 +286,9 @@ export default class BusTimeBlock extends Component {
             constantPollLimitOn: true
           })
         } else {
-          console.log('#############################################');
+          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
           console.log('Max polling hit =>' + this.props.busTrackCount);
-          console.log('#############################################');
+          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         }
 
       })
