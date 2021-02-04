@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { View, Text, TextInput, Button, StyleSheet, Keyboard } from 'react-native'
 import tailwind from 'tailwind-rn'
+import axios from 'axios'
 import { WebView } from 'react-native-webview'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { SearchBar } from 'react-native-elements'
@@ -37,6 +38,16 @@ export default class Header extends Component {
     didTriggerSearch() {
         Keyboard.dismiss()
         console.log(this.state.searchText)
+
+        axios
+        .get("https://api.mybusfeed.com/location/getBusStopInformation/" + this.state.searchText)
+        .then((response) => {
+            console.log(response.data)
+            this.props.states.busStops = [response.data]
+            this.props.triggerParentOnSearch()
+        }).catch((error) => {
+            console.log(error)
+        })
     }
 
     render() {

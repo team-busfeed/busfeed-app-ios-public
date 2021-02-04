@@ -17,9 +17,17 @@ class ListView extends Component {
       userProximity: false,
       isLoading: false,
       busStops: this.props.states.busStops,
-      busTrackCount: 0
+      busTrackCount: 0,
+      isUpdated: false
     }
   }
+
+    didTriggerSearch() {
+        this.props.states.isLoading = false
+        this.setState({
+            isUpdated: true
+        })
+    }
 
     getGeoLocation() {
         Geolocation.getCurrentPosition((info) => {
@@ -85,15 +93,43 @@ class ListView extends Component {
         
     }
 
+    updateFlatList() {
+        if (this.props.states.busStops.length == 0) {
+            localVarBusStops = [{"type": "-1", "message": "No nearby bus stops."}]
+            flatList = <FlatList
+            data={localVarBusStops}
+            onRefresh={() => this.getGeoLocation()}
+            key={this.props.states.busStops}
+            refreshing={this.state.isLoading}
+            renderItem={({ item }) => (
+                <View style={tailwind('px-4 my-4')}>
+                    <Text style={tailwind('text-lg text-center')}>{item.message}</Text>
+                </View>
+            )}
+            keyExtractor={(item) => item.type}
+            />
+        } else {
+            flatList = <FlatList
+            data={this.props.states.busStops}
+            key={this.props.states.busStops}
+            onRefresh={() => this.getGeoLocation()}
+            refreshing={this.state.isLoading}
+            renderItem={({ item }) => (
+                <Accordion title={item} data={this.props.states} busTrackCountFunction={this.busTrackCountFunction} busTrackCount={this.state.busTrackCount}/>
+            )}
+            keyExtractor={(item) => item.busstop_number}
+            />
+        }
+        this.setState({
+            flatList: flatList
+        })
+    }
+
 
     render() {
         flatList = null
         
         if (this.props.states.isLoading) {
-            loading = 
-            <View style={tailwind('px-4 my-4')}>
-                <Text style={tailwind('text-lg text-center')}>Loading data...</Text>
-            </View>
         } else {
 
             if (this.props.states.busStops.length == 0) {
@@ -101,6 +137,7 @@ class ListView extends Component {
                 flatList = <FlatList
                 data={localVarBusStops}
                 onRefresh={() => this.getGeoLocation()}
+                key={this.props.states.busStops}
                 refreshing={this.state.isLoading}
                 renderItem={({ item }) => (
                     <View style={tailwind('px-4 my-4')}>
@@ -112,6 +149,7 @@ class ListView extends Component {
             } else {
                 flatList = <FlatList
                 data={this.props.states.busStops}
+                key={this.props.states.busStops}
                 onRefresh={() => this.getGeoLocation()}
                 refreshing={this.state.isLoading}
                 renderItem={({ item }) => (
@@ -124,7 +162,7 @@ class ListView extends Component {
 
         return (
         <View style={tailwind('h-64 bg-white px-2 pb-7')}>
-            {flatList}
+            {this.isUpdated ? this.state.flatList : flatList}
         </View>
         )
     }

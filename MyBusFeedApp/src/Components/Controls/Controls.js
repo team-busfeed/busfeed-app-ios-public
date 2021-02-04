@@ -12,7 +12,7 @@ class Controls extends Component {
         return (
             <View style={tailwind('h-3/5 bg-white px-4 mb-4 mt-4')}>
                 <View style={externalStyle.controlsCard}>
-                    <Header/>
+                    <Header states = {this.props.states} triggerParentOnSearch={this.props.triggerParentOnSearch} />
                     <Map states = {this.props.states}/>
                     {/* <Navigation/> */}
                 </View>

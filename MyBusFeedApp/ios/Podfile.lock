@@ -240,6 +240,8 @@ PODS:
     - React
   - react-native-background-actions (2.5.2):
     - React-Core
+  - react-native-background-timer (2.4.1):
+    - React-Core
   - react-native-ble-plx (1.1.1):
     - React
     - react-native-ble-plx-swift
@@ -373,6 +375,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-appearance (from `../node_modules/react-native-appearance`)
   - react-native-background-actions (from `../node_modules/react-native-background-actions`)
+  - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-ble-plx (from `../node_modules/react-native-ble-plx`)
   - react-native-ble-plx-swift (from `../node_modules/react-native-ble-plx`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
@@ -450,6 +453,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-appearance"
   react-native-background-actions:
     :path: "../node_modules/react-native-background-actions"
+  react-native-background-timer:
+    :path: "../node_modules/react-native-background-timer"
   react-native-ble-plx:
     :path: "../node_modules/react-native-ble-plx"
   react-native-ble-plx-swift:
@@ -532,6 +537,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
   react-native-appearance: fc2014516054585d531e07aa0b40ab0de1d2be85
   react-native-background-actions: 683a30adb9fe52f558969e0dfcc94ac2a1856dbe
+  react-native-background-timer: 117fffdc9b0d6f144444bb49029f94275a45fdb5
   react-native-ble-plx: 304c7bee074a05581672c9990f375b3906808718
   react-native-ble-plx-swift: eb64f02b988becb84a60164aba9fab5d6ddb6dc8
   react-native-flipper: 40d6bbb5a6e5e685fd81868b1950dabed035366d
@@ -560,6 +566,6 @@ SPEC CHECKSUMS:
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 25aee2c8d22233c5135d702ae7cb3d7c2bd36947
+PODFILE CHECKSUM: edf2d4aece849493793e22caa99ad0045d319d39
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.3
