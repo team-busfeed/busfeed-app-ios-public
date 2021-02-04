@@ -86,7 +86,7 @@ class HomeContainer extends Component {
     render() {
         return (
             <View style={tailwind('bg-white h-full')}>
-                <Controls states = { this.state } triggerParentOnSearch={this.didPerformSearch}/>
+                <Controls states = { this.state } triggerIndexOnSearch={this.didPerformSearch}/>
                 <ListView states = { this.state } ref={this.listViewRef} />
             </View>
         )

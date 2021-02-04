@@ -39,6 +39,67 @@ const styles = StyleSheet.create({
 });
 class Map extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            markers: null,
+            isUpdated: false
+        }
+    }
+
+    didMapsTriggerOnSearch() {
+        this.setState({
+            isUpdated: true
+        })
+        this.refreshMarker()
+    }
+
+    refreshMarker() {
+
+        markers = null
+
+        try {
+            if (this.props.states.busStops !== undefined) {
+                markers = this.props.states.busStops.map(busStop => 
+                    <Marker
+                        key={busStop.busstop_number}
+                        coordinate={{latitude: busStop.busstop_lat ? Number(busStop.busstop_lat) : 0, longitude: busStop.busstop_lng ? Number(busStop.busstop_lng) : 0}}
+                        title={busStop.busstop_name}
+                        description={"Stop Number: " + busStop.busstop_number}
+                    >
+                        <Callout
+                        tooltip={true}
+                        style={styles.callout}
+                        >
+                            <View style={tailwind('flex flex-row justify-center items-center')}>
+                                <View style={tailwind("w-10")}>
+                                    <Icon name="bus" size={30} color="black" style={[tailwind("flex"), styles.image]}/>
+                                </View>
+                                <View>
+                                    <Text style={styles.title}>
+                                        {busStop.busstop_name}
+                                    </Text>
+                                    <Text style={styles.description}>
+                                        {"Stop Number: " + busStop.busstop_number}
+                                    </Text>
+                                </View>
+                            </View>
+                        </Callout>
+                    </Marker>
+                )
+            }
+        } catch (error) {
+            console.log(error)
+            markers = null
+        }
+
+
+        this.setState({
+            isUpdated: true,
+            markers: markers
+        })
+    }
+
     render() {
         markers = null
 
@@ -90,7 +151,7 @@ class Map extends Component {
                     }}
                     showsUserLocation={true}
                 >
-                    {markers}
+                    {this.state.isUpdated ? this.state.markers : markers}
                 </MapView>
                 <View style={styles.nav}>
                     <Navigation style={[tailwind('h-1/5'), styles.nav]}/>

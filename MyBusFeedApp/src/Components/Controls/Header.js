@@ -44,7 +44,8 @@ export default class Header extends Component {
         .then((response) => {
             console.log(response.data)
             this.props.states.busStops = [response.data]
-            this.props.triggerParentOnSearch()
+            this.props.triggerIndexOnSearch()
+            this.props.triggerMapsOnSearch()
         }).catch((error) => {
             console.log(error)
         })

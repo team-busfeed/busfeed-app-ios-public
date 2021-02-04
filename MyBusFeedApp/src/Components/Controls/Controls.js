@@ -1,4 +1,4 @@
-import React, { useState, Component } from 'react'
+import React, { Component } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import externalStyle from "../../../style/externalStyle"
 import { default as Header } from './Header'
@@ -8,12 +8,25 @@ import tailwind from 'tailwind-rn'
 
 class Controls extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {
+            nothing: null
+        }
+    }
+
+    mapsRef = React.createRef()
+
+    triggerMaps = () => {
+        this.mapsRef.current.didMapsTriggerOnSearch()
+    }
+
     render() {
         return (
             <View style={tailwind('h-3/5 bg-white px-4 mb-4 mt-4')}>
                 <View style={externalStyle.controlsCard}>
-                    <Header states = {this.props.states} triggerParentOnSearch={this.props.triggerParentOnSearch} />
-                    <Map states = {this.props.states}/>
+                    <Header states = {this.props.states} triggerMapsOnSearch={this.triggerMaps} triggerIndexOnSearch={this.props.triggerIndexOnSearch} />
+                    <Map states = {this.props.states} ref={this.mapsRef} />
                     {/* <Navigation/> */}
                 </View>
             </View>
