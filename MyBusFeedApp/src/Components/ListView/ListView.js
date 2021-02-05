@@ -89,7 +89,6 @@ class ListView extends Component {
         console.log('====================================');
         console.log("busTrackCount => " + this.state.busTrackCount);
         console.log('====================================');
-        
     }
 
     updateFlatList() {

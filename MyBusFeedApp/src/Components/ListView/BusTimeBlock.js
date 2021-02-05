@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Timers } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Timers, TouchableNativeFeedbackBase } from 'react-native'
 import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler'
 import Geolocation from '@react-native-community/geolocation'
@@ -24,6 +24,7 @@ export default class BusTimeBlock extends Component {
       expectedBusArrive: false,
       constantPollLimitOn: false,
       busTrackCount: this.props.busTrackCount,
+      specialTimeOut: false,
       // HARDCODED VALUE - To be used when there are no bus available to fetch (when coding late at night)
       hardcodeServices: {
         services: [
@@ -76,40 +77,66 @@ export default class BusTimeBlock extends Component {
   }
 
   componentDidUpdate(prevProp, prevState){
-    // console.log('====================================');
-    // console.log('COMPONENTDIDUPDATE');
-    // console.log("prevState.userProximity => " + prevState.userProximity + " this.state.userProximity => " + this.state.userProximity)
-    // console.log("prevState.arrivalPause =>" + prevState.arrivalPause + ' this.state.arrivalPause =>' + this.state.arrivalPause)
-    // console.log('====================================');
-
     if (this.state.constantPollOn != prevState.constantPollOn && this.state.constantPollOn==true){
       // 30s API call
       console.log('====================================');
       console.log('constantBasicPoll ON for => '  + this.state.busNumber);
       console.log('====================================');
       this.constantBasicPoll()
-    }else if (this.state.arrivalPause != prevState.arrivalPause && this.state.arrivalPause==true && this.state.userProximity == true) {
-      console.log('====================================');
-      console.log('arrivalPause ON for => '  + this.state.busNumber);
-      console.log('====================================');
-      this.arrivalPause()
     }else if (this.state.constantPollOn != prevState.constantPollOn && this.state.constantPollOn==false){
       console.log('====================================');
       console.log('constantBasicPoll OFF for => '  + this.state.busNumber);
       console.log('====================================');
       clearInterval(this.state.intervalId)
     }
+    
+    if (this.state.arrivalPause != prevState.arrivalPause && this.state.arrivalPause==true && this.state.userProximity == true) {
+      console.log('====================================');
+      console.log('arrivalPause ON for => '  + this.state.busNumber);
+      console.log('====================================');
+      this.arrivalPause()
+    }
 
     if (this.state.constantPollLimitOn != prevState.constantPollLimitOn && this.state.constantPollLimitOn==true) {
       // if user still not in proximity
+      console.log('====================================');
+      console.log("constantPollLimitOn 5min for => " + this.state.busNumber);
+      console.log('====================================');
       setTimeout(() => {
         if (this.state.userProximity == false){
-          clearInterval(this.state.intervalId)
+          // clearInterval(this.state.intervalId)
+          this.setState({
+            constantPollOn: false
+          })
         }
         this.setState({
           constantPollLimitOn: false
         })
       }, 300000); //300000 -> 5 minutes
+    }
+
+    if (this.state.specialTimeOut != prevState.specialTimeOut && this.state.specialTimeOut==true){
+      console.log('====================================');
+      console.log("specialTimeOut ON for => " + this.state.busNumber);
+      console.log('====================================');
+      var timeoutMin = 4 * 1000 * 60 //default timeout 4 min
+      if (this.state.nextBus1Timing > 4){
+        var timeoutMin = Math.abs(Math.min( ((this.state.nextBus1Timing - 4) * 1000 * 60), (5 * 1000 * 60) ))
+      }
+      console.log("timeoutMin => " + timeoutMin)
+
+      setTimeout(() => {
+        console.log('specialTimeOut Interval kicks in');
+        this.setState({
+          specialTimeOut: false
+        })
+        this.getBusTiming()
+
+        console.log('====================================');
+        console.log("specialTimeOut OFF => " + this.state.specialTimeOut);
+        console.log('====================================');
+      }, timeoutMin);
+
     }
   }
 
@@ -119,7 +146,6 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     let intervalId = setInterval(() => {
-      // this.getBusTiming()
       Geolocation.getCurrentPosition((info) => {
         console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
         this.setState({
@@ -137,8 +163,8 @@ export default class BusTimeBlock extends Component {
           // Update bus timing
           this.getBusTiming()
 
-          if(this.state.userProximity == false){
-            console.log("constantPollLimitOn 5 min");
+          // If user not in proximity
+          if(data == false ){
             this.setState({
               constantPollLimitOn: true
             })
@@ -195,6 +221,7 @@ export default class BusTimeBlock extends Component {
             this.setState({
               constantPollOn: true,
             })
+            // this.getBusTiming()
             console.log('<><><><><>< constantBasicPoll Resume <><><><><><')
           }
           this.setState({
@@ -214,7 +241,7 @@ export default class BusTimeBlock extends Component {
 
   addToActualDemand = (userBoardStatus) => {
     console.log('####################################');
-    console.log('addToActualDemand START =>' + userBoardStatus + this.state.busNumber);
+    console.log('addToActualDemand START => ' + userBoardStatus + this.state.busNumber);
     console.log('####################################');
 
     const moment = require("moment")
@@ -279,16 +306,17 @@ export default class BusTimeBlock extends Component {
         }))
 
         // Poll limit check - 3 bus Max
-        if (this.props.busTrackCount <= 3){
-          this.setState({
-            constantPollOn: true,
-            constantPollLimitOn: true
-          })
-        } else {
-          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-          console.log('Max polling hit =>' + this.props.busTrackCount);
-          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-        }
+        // if (this.props.busTrackCount <= 3 && this.state.specialTimeOut == false){
+        //   console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+        //   this.setState({
+        //     constantPollOn: true,
+        //     // constantPollLimitOn: true
+        //   })
+        // } else {
+        //   console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+        //   console.log('Max polling hit =>' + this.props.busTrackCount);
+        //   console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+        // }
 
       })
       .catch((error) => console.log("userProximity Error => "+error))
@@ -342,26 +370,37 @@ export default class BusTimeBlock extends Component {
         this.setState({
           nextBus1: nextBus1,
           nextBus2: nextBus2,
+          nextBus1Timing: nextBus1Timing,
+          nextBus2Timing: nextBus2Timing
         })
 
         console.log("nextBus1 => " + nextBus1Timing);
         console.log("nextBus2 => " + nextBus2Timing);
 
-        if (nextBus1Timing < 2 && nextBus1Timing > 0){
+        if (nextBus1Timing <= 2 && nextBus1Timing >= 0){
           this.setState({
             constantPollOn: false,
-            arrivalPause: true
+            arrivalPause: true,
+            specialTimeOut: false
           })
         }else if (this.props.busTrackCount <= 3){
-          this.setState({
-            constantPollOn: true,
-            arrivalPause: false
-          })
+          if (nextBus1Timing <= 4 && nextBus1Timing >= 0){
+            this.setState({
+              constantPollOn: true,
+              arrivalPause: false,
+              specialTimeOut: false
+            })
+          } else if (nextBus1Timing > 4){
+            this.setState({
+              specialTimeOut: true,
+              constantPollOn: false,
+            })
+          }
+        }else{
+          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+          console.log('Max polling hit =>' + this.props.busTrackCount);
+          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         }
-
-        // console.log("Nextbus1 timing:")
-        // console.log(nextBus1)
-        // console.log("constantPollOn => " + this.state.constantPollOn)
       })
       .catch((error) => {
         console.log("error => " + error)
