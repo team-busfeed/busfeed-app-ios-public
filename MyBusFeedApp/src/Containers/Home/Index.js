@@ -6,6 +6,8 @@ import { ListView } from '@/Components/ListView'
 import tailwind from 'tailwind-rn'
 import Geolocation from '@react-native-community/geolocation'
 import axios from 'axios'
+import DeviceInfo from 'react-native-device-info';
+
 
 class HomeContainer extends Component {
 
@@ -42,7 +44,7 @@ class HomeContainer extends Component {
             console.log("LONG:" + info.coords.longitude)
             console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
         }, (error) => console.log('position error!!!', error),
-        {enableHighAccuracy: Platform.OS !== 'android', timeout: 20000, maximumAge: 0})
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 0})
     }
 
     getProximityBusStops() {
@@ -72,6 +74,12 @@ class HomeContainer extends Component {
 
     componentDidMount() {
         this.getGeoLocation()
+
+        var uniqueId = DeviceInfo.getUniqueId();
+        console.log("uniqueId =>" + uniqueId);
+        this.setState({
+            appID: uniqueId
+        })
     }
 
     listViewRef = React.createRef()

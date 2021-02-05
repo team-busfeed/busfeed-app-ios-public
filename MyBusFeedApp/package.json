@@ -35,6 +35,7 @@
     "react-native-beacons-manager": "github:jitsi/react-native-beacons-manager#d9e8040082570a951f3c8a7a5c96c073821841d6",
     "react-native-ble-plx": "^1.1.1",
     "react-native-collapsible": "^1.5.3",
+    "react-native-device-info": "^8.0.1",
     "react-native-elements": "^1.2.7",
     "react-native-flipper": "^0.64.0",
     "react-native-gesture-handler": "^1.8.0",

@@ -70,10 +70,9 @@ export default class BusTimeBlock extends Component {
   }
 
   componentDidMount(){
-    const moment = require("moment")
-    console.log("moment 1=> " + moment().utcOffset("+08:00").format("dddd, MMMM Do YYYY, h:mm:ss a"))
-    console.log("moment 2=> " + moment().utcOffset("+08:00").format())
-    console.log("moment 3 => " + moment().utcOffset("+08:00"))
+    console.log('====================================');
+    console.log("this.state.data.appID -> " + this.state.data.appID);
+    console.log('====================================');
   }
 
   componentDidUpdate(prevProp, prevState){
@@ -224,7 +223,7 @@ export default class BusTimeBlock extends Component {
     axios
     .post("https://api.mybusfeed.com/demand/actual/add", {
       
-      app_id: 'A1',
+      app_id: this.state.data.appID,
       bus_stop_no: this.state.busStopNumber,
       bus_no: this.state.busNumber,
       has_successfully_board: userBoardStatus,
@@ -319,7 +318,7 @@ export default class BusTimeBlock extends Component {
 
     axios
       .post(url, {
-        app_id: 'A1',
+        app_id: this.state.data.appID,
         bus_stop_no: this.state.busStopNumber,
         bus_no: this.state.busNumber,
       })

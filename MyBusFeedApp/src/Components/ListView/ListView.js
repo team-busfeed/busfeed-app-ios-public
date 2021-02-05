@@ -88,7 +88,6 @@ class ListView extends Component {
         })
         console.log('====================================');
         console.log("busTrackCount => " + this.state.busTrackCount);
-        console.log("busTrackCount => " + count2);
         console.log('====================================');
         
     }
