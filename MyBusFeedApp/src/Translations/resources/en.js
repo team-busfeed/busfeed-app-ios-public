@@ -1,5 +1,5 @@
 export default {
-  welcome: 'Welcome to React Native MyBusFeedApp by TheCodingMachine',
+  welcome: 'MyBusFeed app by Team Busfeed',
   actions: {
     continue: 'Continue',
   },
