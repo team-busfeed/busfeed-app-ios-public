@@ -74,6 +74,8 @@ class ListView extends Component {
                     isLoading: false
                 })
             }
+
+            this.props.triggerCentreOnRefresh()
         })
         .catch((error) => {
             console.log('error:', error)

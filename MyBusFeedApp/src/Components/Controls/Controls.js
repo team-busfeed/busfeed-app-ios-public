@@ -21,12 +21,16 @@ class Controls extends Component {
         this.mapsRef.current.didMapsTriggerOnSearch()
     }
 
+    didTriggerRefresh = () => {
+        this.mapsRef.current.didMapsTriggerOnRefresh()
+    }
+
     render() {
         return (
             <View style={tailwind('h-3/5 bg-white px-4 mb-4 mt-4')}>
                 <View style={externalStyle.controlsCard}>
                     <Header states = {this.props.states} triggerMapsOnSearch={this.triggerMaps} triggerIndexOnSearch={this.props.triggerIndexOnSearch} />
-                    <Map states = {this.props.states} ref={this.mapsRef} />
+                    <Map states = {this.props.states} ref={this.mapsRef} triggerCentreOnRefresh={this.props.triggerCentreOnRefresh} />
                     {/* <Navigation/> */}
                 </View>
             </View>

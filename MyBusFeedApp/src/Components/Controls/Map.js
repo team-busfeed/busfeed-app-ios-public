@@ -1,5 +1,5 @@
 import React, { useState, Component } from 'react'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text, TouchableNativeFeedbackBase } from 'react-native'
 import MapView, {Marker, Callout} from 'react-native-maps'
 import { default as Navigation } from './Navigation'
 import tailwind from 'tailwind-rn'
@@ -54,6 +54,13 @@ class Map extends Component {
         this.refreshMarker()
     }
 
+    didMapsTriggerOnRefresh() {
+        this.setState({
+            isUpdated: true
+        })
+        this.refreshMarker()
+    }
+
     refreshMarker() {
 
         markers = null
@@ -97,6 +104,15 @@ class Map extends Component {
         this.setState({
             isUpdated: true,
             markers: markers
+        })
+    }
+
+    refreshLocation = () => {
+        this.map.animateToRegion({
+            latitude: this.props.states.latitude,
+            longitude: this.props.states.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
         })
     }
 
@@ -150,6 +166,9 @@ class Map extends Component {
                         longitudeDelta: 0.005,
                     }}
                     showsUserLocation={true}
+                    followsUserLocation={true}
+                    showsMyLocationButton={true}
+                    ref={map => {this.map = map}}
                 >
                     {this.state.isUpdated ? this.state.markers : markers}
                 </MapView>

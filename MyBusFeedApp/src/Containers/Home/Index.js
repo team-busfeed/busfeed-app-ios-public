@@ -83,6 +83,7 @@ class HomeContainer extends Component {
     }
 
     listViewRef = React.createRef()
+    controlsRef = React.createRef()
 
     didPerformSearch = () => {
         this.setState({
@@ -91,11 +92,15 @@ class HomeContainer extends Component {
         this.listViewRef.current.didTriggerSearch()
     }
 
+    centreOnRefresh = () => {
+        this.controlsRef.current.didTriggerRefresh()
+    }
+
     render() {
         return (
             <View style={tailwind('bg-white h-full')}>
-                <Controls states = { this.state } triggerIndexOnSearch={this.didPerformSearch}/>
-                <ListView states = { this.state } ref={this.listViewRef} />
+                <Controls states = { this.state } ref={this.controlsRef} triggerIndexOnSearch={this.didPerformSearch}/>
+                <ListView states = { this.state } ref={this.listViewRef} triggerCentreOnRefresh={this.centreOnRefresh}/>
             </View>
         )
     }
