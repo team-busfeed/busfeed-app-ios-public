@@ -156,9 +156,10 @@ class Map extends Component {
         }
         
         return (
-            <View>
+            <View
+            style={tailwind('h-4/6')}>
                 <MapView
-                    style={tailwind('h-4/5')}
+                    style={tailwind('h-full')}
                     region={{
                         latitude: this.props.states.latitude,
                         longitude: this.props.states.longitude,
@@ -172,9 +173,9 @@ class Map extends Component {
                 >
                     {this.state.isUpdated ? this.state.markers : markers}
                 </MapView>
-                <View style={styles.nav}>
+                {/* <View style={styles.nav}>
                     <Navigation style={[tailwind('h-1/5'), styles.nav]}/>
-                </View>
+                </View> */}
             </View>
         )
     }

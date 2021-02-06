@@ -25,13 +25,18 @@ class Controls extends Component {
         this.mapsRef.current.didMapsTriggerOnRefresh()
     }
 
+    didTriggerReloadLocation = () => {
+        this.props.triggerReloadLocation()
+    }
+
+
     render() {
         return (
-            <View style={tailwind('h-3/5 bg-white px-4 mb-4 mt-4')}>
+            <View style={tailwind('h-3/6 bg-white px-4 mb-4 mt-4')}>
                 <View style={externalStyle.controlsCard}>
                     <Header states = {this.props.states} triggerMapsOnSearch={this.triggerMaps} triggerIndexOnSearch={this.props.triggerIndexOnSearch} />
                     <Map states = {this.props.states} ref={this.mapsRef} triggerCentreOnRefresh={this.props.triggerCentreOnRefresh} />
-                    {/* <Navigation/> */}
+                    <Navigation states = {this.props.states} triggerFavourites={this.props.triggerIndexOnSearch} triggerRefresh={this.didTriggerReloadLocation}/>
                 </View>
             </View>
         )

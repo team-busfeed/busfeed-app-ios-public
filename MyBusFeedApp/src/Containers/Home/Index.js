@@ -46,7 +46,7 @@ class HomeContainer extends Component {
             console.log("LONG:" + info.coords.longitude)
             console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
         }, (error) => console.log('position error!!!', error),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 0})
+        {enableHighAccuracy: Platform.OS !== 'android', timeout: 20000, maximumAge: 0})
     }
 
     getProximityBusStops() {
@@ -100,6 +100,15 @@ class HomeContainer extends Component {
             isLoading: true
         })
         this.listViewRef.current.didTriggerSearch()
+        this.controlsRef.current.didTriggerRefresh()
+    }
+
+    triggerReloadLocation = () => {
+        this.listViewRef.current.getGeoLocation()
+        this.setState({
+            isLoading: true
+        })
+        this.listViewRef.current.didTriggerSearch()
     }
 
     centreOnRefresh = () => {
@@ -109,7 +118,7 @@ class HomeContainer extends Component {
     render() {
         return (
             <View style={tailwind('bg-white h-full')}>
-                <Controls states = { this.state } ref={this.controlsRef} triggerIndexOnSearch={this.didPerformSearch}/>
+                <Controls states = { this.state } ref={this.controlsRef} triggerIndexOnSearch={this.didPerformSearch} triggerReloadLocation={this.triggerReloadLocation} />
                 <ListView states = { this.state } ref={this.listViewRef} triggerCentreOnRefresh={this.centreOnRefresh}/>
             </View>
         )

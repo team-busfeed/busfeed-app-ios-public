@@ -1,28 +1,40 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { View, Text, Image, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import tailwind from 'tailwind-rn'
 
-const styles = StyleSheet.create({
-    image: {
-        textAlign: 'center',
-        // tintColor: 'black', # to be used to change colour of logos   
-    },
-    test: {
-        borderColor: 'black', 
-        borderWidth: 5,
+export default class Navigation extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            selected: 0,
+        }
     }
-})  
 
-const Navigation = () => (
-    <View style={tailwind('flex flex-row')}>
-        <View style={tailwind('w-1/2')}>
-            <Icon name="map-marker" size={30} color="black" style={[styles.image]}/>
-        </View>
-        <View style={tailwind('w-1/2')}>
-            <Icon name="heart" size={30} color="black" style={[styles.image]}/>
-        </View>
-    </View> 
-)
+    didSelectNav = (selected) => {
+        this.setState({
+            selected: selected
+        })
 
-export default Navigation
+        if (selected === 1) {
+            this.props.states.busStops = []
+            this.props.triggerFavourites()
+        } else {
+            this.props.triggerRefresh()
+        }
+
+    }
+
+    render() {
+        return (
+            <View style={tailwind('flex flex-row mt-5 h-full')}>
+                <View style={this.state.selected == 0 ? tailwind('w-1/2') : tailwind('w-1/2 h-full')}>
+                    <Icon name="location-pin" size={30} style={this.state.selected == 0 ? tailwind('self-center text-blue-300') : tailwind('self-center text-gray-600')} onPress={() => this.didSelectNav(0)}/>
+                </View>
+                <View style={tailwind('w-1/2')}>
+                    <Icon name="favorite" size={30} style={this.state.selected == 1 ? tailwind('self-center text-red-500') : tailwind('self-center text-gray-600')} onPress={() => this.didSelectNav(1)}/>
+                </View>
+            </View> 
+        )
+    }
+}

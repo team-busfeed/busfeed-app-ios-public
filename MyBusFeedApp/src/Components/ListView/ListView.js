@@ -42,6 +42,8 @@ class ListView extends Component {
                 updatedGeolocation: true,
             })
 
+            this.props.states.isLoading = false
+
             console.log("LAT:" + info.coords.latitude)
             console.log("LONG:" + info.coords.longitude)
             console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
@@ -162,7 +164,7 @@ class ListView extends Component {
         }
 
         return (
-        <View style={tailwind('h-64 bg-white px-2 pb-7')}>
+        <View style={tailwind('h-1/2 bg-white px-2 pb-8')}>
             {this.isUpdated ? this.state.flatList : flatList}
         </View>
         )
