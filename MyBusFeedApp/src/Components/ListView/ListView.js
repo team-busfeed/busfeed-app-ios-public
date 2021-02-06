@@ -120,6 +120,7 @@ class ListView extends Component {
             keyExtractor={(item) => item.busstop_number}
             />
         }
+
         this.setState({
             flatList: flatList
         })

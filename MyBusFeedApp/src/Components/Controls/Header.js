@@ -43,7 +43,7 @@ export default class Header extends Component {
         .get("https://api.mybusfeed.com/location/getBusStopInformation/" + this.state.searchText)
         .then((response) => {
             console.log(response.data)
-            this.props.states.busStops = [response.data]
+            this.props.states.busStops = response.data
             this.props.triggerIndexOnSearch()
             this.props.triggerMapsOnSearch()
         }).catch((error) => {
