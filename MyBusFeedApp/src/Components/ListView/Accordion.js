@@ -9,6 +9,7 @@ import {
   UIManager,
   Button,
   ProgressViewIOSComponent,
+  Alert,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import externalStyle from '../../../style/externalStyle'
@@ -16,6 +17,7 @@ import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler'
 import BusTimeBlock from './BusTimeBlock'
 import tailwind from 'tailwind-rn'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default class Accordion extends Component {
   constructor(props) {
@@ -106,8 +108,45 @@ export default class Accordion extends Component {
     this.props.busTrackCountFunction()
   }
 
-    favouriteThisStop = () => {
-        console.log("Favourited!")
+    favouriteThisStop = async (busStopNumber) => {
+        try {
+            // await AsyncStorage.setItem('@favouriteBusStops', busStopNumber)
+            favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
+            favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
+
+            if (favouriteBusStopsList.indexOf(busStopNumber) == -1) {
+                favouriteBusStopsList.push(busStopNumber)
+                console.log("Favourited " + busStopNumber + "!")
+                Alert.alert(
+                    'Favourite bus stop',
+                    'Bus stop ' + busStopNumber + ' added to your favourites!',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') }
+                    ],
+                    { cancelable: false }
+                )
+            } else {
+                console.log("Already favourited!")
+                Alert.alert(
+                    'Favourite bus stop',
+                    'Bus stop ' + busStopNumber + ' already in favourites!',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') }
+                    ],
+                    { cancelable: false }
+                )
+            }
+
+            await AsyncStorage.setItem('@favouriteBusStops', JSON.stringify({"favourites": favouriteBusStopsList}))
+            // const value = await AsyncStorage.getItem('@storage_Key')
+            // if (value !== null) {
+            //     // value previously stored
+            //     console.log(value)
+            // }
+        } catch (e) {
+            // saving error
+            console.log("Error favouriting bus stop. Debug: " + e)
+        }
     }
 
   render() {
@@ -135,7 +174,7 @@ export default class Accordion extends Component {
                 }
                 size={20}
                 color="#5E5E5E"
-                onPress={() => this.favouriteThisStop()}
+                onPress={() => this.favouriteThisStop(this.props.title.busstop_number)}
             />
           </View>
           <Text style={[styles.title, styles.font]}>

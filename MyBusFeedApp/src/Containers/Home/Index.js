@@ -6,7 +6,9 @@ import { ListView } from '@/Components/ListView'
 import tailwind from 'tailwind-rn'
 import Geolocation from '@react-native-community/geolocation'
 import axios from 'axios'
-import DeviceInfo from 'react-native-device-info';
+import DeviceInfo from 'react-native-device-info'
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 class HomeContainer extends Component {
@@ -72,7 +74,7 @@ class HomeContainer extends Component {
         })
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
         this.getGeoLocation()
 
         var uniqueId = DeviceInfo.getUniqueId();
@@ -80,6 +82,14 @@ class HomeContainer extends Component {
         this.setState({
             appID: uniqueId
         })
+
+        const value = await AsyncStorage.getItem('@favouriteBusStops')
+        // if (value === null) {
+            // value previously stored
+            initialSetup = JSON.stringify({"favourites": []})
+            await AsyncStorage.setItem('@favouriteBusStops', initialSetup)
+            console.log(value)
+        // }
     }
 
     listViewRef = React.createRef()
