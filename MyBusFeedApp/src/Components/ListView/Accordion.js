@@ -106,6 +106,10 @@ export default class Accordion extends Component {
     this.props.busTrackCountFunction()
   }
 
+    favouriteThisStop = () => {
+        console.log("Favourited!")
+    }
+
   render() {
         var flatList = <FlatList
         data={this.state.busStops.services}
@@ -123,6 +127,17 @@ export default class Accordion extends Component {
           style={styles.row}
           onPress={() => this.onPressToggle()}
         >
+          <View style={tailwind("bg-blue-200 px-1 py-1 rounded-lg")}>
+            <Icon
+                style={tailwind("text-gray-700")}
+                name={
+                'favorite-border'
+                }
+                size={20}
+                color="#5E5E5E"
+                onPress={() => this.favouriteThisStop()}
+            />
+          </View>
           <Text style={[styles.title, styles.font]}>
             {this.props.title.busstop_number} {this.props.title.busstop_name}
           </Text>
