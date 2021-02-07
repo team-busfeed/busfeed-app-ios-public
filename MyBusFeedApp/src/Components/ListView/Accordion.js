@@ -79,7 +79,7 @@ export default class Accordion extends Component {
         })
 
         this.didTapRefresh = () => Object.keys(loadedServices).forEach(function(key) {
-            loadedServices[key].current.getBusTiming()
+            loadedServices[key].current.refreshBusTiming()
         })
 
         this.setState({

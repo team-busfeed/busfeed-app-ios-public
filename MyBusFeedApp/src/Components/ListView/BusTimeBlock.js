@@ -10,7 +10,7 @@ export default class BusTimeBlock extends Component {
     super(props)
     this.state = {
       data: props.data,
-      busTimingContent: true,
+      busTimingContent: false,
       busNumber: this.props.bus_number,
       busStopNumber: this.props.busstop_number,
       userProximity: this.props.userProximity,
@@ -324,6 +324,14 @@ export default class BusTimeBlock extends Component {
     .catch((error) => console.log("GeoERROR => " + error))
   }
 
+  refreshBusTiming = () => {
+    console.log("refreshBusTiming => " + this.state.busNumber);
+    console.log(this.state.busTimingContent);
+    if(this.state.busTimingContent){
+      this.getBusTiming()
+    }
+  }
+
   // Fetch bus timing
   getBusTiming() {
     console.log('====================================');
@@ -365,8 +373,8 @@ export default class BusTimeBlock extends Component {
         var nextBus1 = response.data.services[0].next_bus
         var nextBus2 = response.data.services[0].next_bus_2
 
-        nextBus1.estimated_arrival_text = nextBus1Timing >= 2 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr"
-        nextBus2.estimated_arrival_text = nextBus2Timing >= 2 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr"
+        nextBus1.estimated_arrival_text = nextBus1Timing > 2 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr"
+        nextBus2.estimated_arrival_text = nextBus2Timing > 2 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr"
         this.setState({
           nextBus1: nextBus1,
           nextBus2: nextBus2,
@@ -374,8 +382,8 @@ export default class BusTimeBlock extends Component {
           nextBus2Timing: nextBus2Timing
         })
 
-        console.log("nextBus1 => " + nextBus1Timing);
-        console.log("nextBus2 => " + nextBus2Timing);
+        console.log("nextBus1Timing for " + this.state.busNumber + " => " + nextBus1Timing);
+        console.log("nextBus2Timing for " + this.state.busNumber + " => " + nextBus2Timing);
 
         if (nextBus1Timing <= 2 && nextBus1Timing >= 0){
           this.setState({
@@ -432,7 +440,7 @@ export default class BusTimeBlock extends Component {
       <View style={styles.eachRow}>
         <Text style={styles.busNumber}>{this.state.busNumber}</Text>
 
-        {this.state.busTimingContent ? (
+        {!this.state.busTimingContent ? (
           <TouchableOpacity onPress={() => this.componentHideAndShow()}>
             <Icon name={'refresh'} size={30} color="#4F4F4F" />
           </TouchableOpacity>
