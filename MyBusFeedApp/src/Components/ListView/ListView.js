@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/Entypo'
 import Geolocation from '@react-native-community/geolocation'
 import axios from 'axios'
 import Accordion from './Accordion'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 class ListView extends Component {
   constructor(props) {
@@ -23,6 +24,31 @@ class ListView extends Component {
   }
 
     didTriggerSearch() {
+        this.props.states.isLoading = false
+        this.setState({
+            isUpdated: true
+        })
+    }
+
+    didTriggerFavourites = async () => {
+        favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
+        favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
+
+        if (favouriteBusStopsList.length != 0) {
+            axios
+            .post("https://api.mybusfeed.com/location/returnBusStopInformation/",
+            {
+                "busStops": favouriteBusStopsList
+            })
+            .then((response) => {
+                console.log(response.data)
+                this.props.states.busStops = response.data
+                this.updateFlatList()
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
+
         this.props.states.isLoading = false
         this.setState({
             isUpdated: true
@@ -77,6 +103,7 @@ class ListView extends Component {
                 })
             }
 
+            this.props.states.selected = 0
             this.props.triggerCentreOnRefresh()
         })
         .catch((error) => {
@@ -97,7 +124,7 @@ class ListView extends Component {
 
     updateFlatList() {
         if (this.props.states.busStops.length == 0) {
-            localVarBusStops = [{"type": "-1", "message": "No nearby bus stops."}]
+            localVarBusStops = [{"type": "-1", "message": "Nothing to display here..."}]
             flatList = <FlatList
             data={localVarBusStops}
             onRefresh={() => this.getGeoLocation()}
@@ -136,7 +163,7 @@ class ListView extends Component {
         } else {
 
             if (this.props.states.busStops.length == 0) {
-                localVarBusStops = [{"type": "-1", "message": "No nearby bus stops."}]
+                localVarBusStops = [{"type": "-1", "message": "Nothing to display here..."}]
                 flatList = <FlatList
                 data={localVarBusStops}
                 onRefresh={() => this.getGeoLocation()}

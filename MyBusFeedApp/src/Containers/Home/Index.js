@@ -25,6 +25,7 @@ class HomeContainer extends Component {
             isLoading: true,
             busStops: [],
             userProximity: false,
+            selected: 0,
         }
     }
     
@@ -115,10 +116,18 @@ class HomeContainer extends Component {
         this.controlsRef.current.didTriggerRefresh()
     }
 
+    didTapOnFavourites = () => {
+        this.setState({
+            isLoading: true
+        })
+        this.listViewRef.current.didTriggerFavourites()
+        this.controlsRef.current.didTriggerRefresh()
+    }
+
     render() {
         return (
             <View style={tailwind('bg-white h-full')}>
-                <Controls states = { this.state } ref={this.controlsRef} triggerIndexOnSearch={this.didPerformSearch} triggerReloadLocation={this.triggerReloadLocation} />
+                <Controls states = { this.state } ref={this.controlsRef} triggerFavouritesList={this.didTapOnFavourites} triggerIndexOnSearch={this.didPerformSearch} triggerReloadLocation={this.triggerReloadLocation} />
                 <ListView states = { this.state } ref={this.listViewRef} triggerCentreOnRefresh={this.centreOnRefresh}/>
             </View>
         )

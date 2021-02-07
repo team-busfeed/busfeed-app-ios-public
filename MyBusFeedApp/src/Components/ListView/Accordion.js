@@ -92,7 +92,6 @@ export default class Accordion extends Component {
           // },
         })
         console.log(this.state.busStops)
-        console.log(this.state.newServices)
       })
       .catch((error) => {
         console.log('error:', error)
