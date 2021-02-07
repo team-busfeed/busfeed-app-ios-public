@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import tailwind from 'tailwind-rn'
 
@@ -29,13 +29,13 @@ export default class Navigation extends Component {
 
     render() {
         return (
-            <View style={tailwind('flex flex-row mt-5 h-full')}>
-                <View style={this.props.states.selected == 0 ? tailwind('w-1/2') : tailwind('w-1/2 h-full')}>
+            <View style={tailwind('flex flex-row h-full')}>
+                <TouchableOpacity onPress={() => this.didSelectNav(0)} style={tailwind('w-1/2 pt-5')}>
                     <Icon name="location-pin" size={30} style={this.props.states.selected == 0 ? tailwind('self-center text-blue-300') : tailwind('self-center text-gray-600')} onPress={() => this.didSelectNav(0)}/>
-                </View>
-                <View style={tailwind('w-1/2')}>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.didSelectNav(1)} style={tailwind('w-1/2 pt-5')}>
                     <Icon name="favorite" size={30} style={this.props.states.selected ? tailwind('self-center text-red-500') : tailwind('self-center text-gray-600')} onPress={() => this.didSelectNav(1)}/>
-                </View>
+                </TouchableOpacity>
             </View> 
         )
     }
