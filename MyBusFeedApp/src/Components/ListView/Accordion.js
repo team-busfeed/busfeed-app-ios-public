@@ -29,6 +29,7 @@ export default class Accordion extends Component {
       newServices: {},
       latitude: props.data.latitude,
       longitude: props.data.longitude,
+      favIcon: "favorite-border",
     }
 
     if (Platform.OS === 'android') {
@@ -110,12 +111,14 @@ export default class Accordion extends Component {
     favouriteThisStop = async (busStopNumber) => {
         try {
             // await AsyncStorage.setItem('@favouriteBusStops', busStopNumber)
-            favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
-            favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
+            let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
+            let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
 
             if (favouriteBusStopsList.indexOf(busStopNumber) == -1) {
                 favouriteBusStopsList.push(busStopNumber)
                 console.log("Favourited " + busStopNumber + "!")
+                this.setState({favIcon: "favorite"})
+                
                 Alert.alert(
                     'Favourite bus stop',
                     'Bus stop ' + busStopNumber + ' added to your favourites!',
@@ -148,6 +151,36 @@ export default class Accordion extends Component {
         }
     }
 
+
+
+    async componentDidMount() {
+        
+        try {
+            // AsyncStorage.setItem('@favouriteBusStops', 1012)
+            console.log("here")
+
+            console.log(this.props.title.busstop_number)
+            let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
+            console.log("this is in store " + favouriteInStores)
+            let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
+            console.log("THIS IS FAV BUS STOP LIST " + favouriteBusStopsList)
+
+            if (favouriteBusStopsList.indexOf(this.props.title.busstop_number) == -1) {
+              console.log("false")
+            } else {
+              this.setState({favIcon: "favorite"})
+              console.log("true")
+            }
+
+        } catch (e) {
+            console.log ("error : " + e)  
+        }
+
+        // if (favouriteBusStopsList.indexOf(busStopNumber) == -1) {
+        //   console.log ("fetched")
+        // }
+    }
+
   render() {
         var flatList = <FlatList
         data={this.state.busStops.services}
@@ -167,12 +200,13 @@ export default class Accordion extends Component {
         >
           <View style={tailwind("bg-blue-200 px-1 py-1 rounded-lg")}>
             <Icon
-                style={tailwind("text-gray-700")}
+                // style={tailwind("text-gray-700")}
                 name={
-                'favorite-border'
+                  this.state.favIcon
                 }
                 size={20}
-                color="#5E5E5E"
+                // style={{ color: "green[500]" }}
+                style={this.state.favIcon === "favorite-border" ? tailwind("text-gray-700") : tailwind("text-red-700")}
                 onPress={() => this.favouriteThisStop(this.props.title.busstop_number)}
             />
           </View>
