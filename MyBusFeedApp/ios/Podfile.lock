@@ -252,8 +252,6 @@ PODS:
     - React
   - react-native-maps (0.27.1):
     - React
-  - react-native-notifications (3.4.2):
-    - React-Core
   - react-native-safe-area-context (3.1.9):
     - React-Core
   - react-native-webview (11.0.2):
@@ -383,7 +381,6 @@ DEPENDENCIES:
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
-  - react-native-notifications (from `../node_modules/react-native-notifications`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -468,8 +465,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
-  react-native-notifications:
-    :path: "../node_modules/react-native-notifications"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-webview:
@@ -548,7 +543,6 @@ SPEC CHECKSUMS:
   react-native-flipper: 40d6bbb5a6e5e685fd81868b1950dabed035366d
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
-  react-native-notifications: e914ff49de3b2268cfa1b5e2ad21fd27c36d5b7b
   react-native-safe-area-context: 86612d2c9a9e94e288319262d10b5f93f0b395f5
   react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
@@ -562,7 +556,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 8e9fb25724a0805107fc1acc9075e26f814df454
   ReactCommon: 4167844018c9ed375cc01a843e9ee564399e53c3
   ReactNativeBeaconsManager: dd0b01841445881989af5be9ab83153d1cdaa6b7
-  RNCAsyncStorage: 44539979e1f234262d64d3ce86ec21cceb1b2c5e
+  RNCAsyncStorage: 0701cb7395f06d744184641241888a0eec0e2f2a
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNDeviceInfo: 54401b60514387f9120ab8265be5ed9103d842b9
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
@@ -574,4 +568,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: edf2d4aece849493793e22caa99ad0045d319d39
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.9.1

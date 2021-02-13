@@ -85,12 +85,14 @@ class HomeContainer extends Component {
         })
 
         const value = await AsyncStorage.getItem('@favouriteBusStops')
-        // if (value === null) {
+        if (value === null) {
             // value previously stored
             initialSetup = JSON.stringify({"favourites": []})
             await AsyncStorage.setItem('@favouriteBusStops', initialSetup)
             console.log(value)
-        // }
+        } else {
+            await AsyncStorage.setItem('@favouriteBusStops', value)
+        }
     }
 
     listViewRef = React.createRef()
