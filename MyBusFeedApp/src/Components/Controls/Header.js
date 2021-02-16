@@ -64,8 +64,8 @@ export default class Header extends Component {
         .then((response) => {
             console.log(response.data)
             this.props.states.busStops = response.data
-            this.props.states.latitude = response.data[0].busstop_lat
-            this.props.states.longitude = response.data[0].busstop_lng
+            this.props.states.latitude = parseFloat(response.data[0].busstop_lat)
+            this.props.states.longitude = parseFloat(response.data[0].busstop_lng)
             this.props.triggerIndexOnSearch()
             this.props.triggerMapsOnSearch()
             this.resetSearchState()
