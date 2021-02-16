@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Webp.net-resizeimage (2).png",
+      "filename" : "mybusfeed-ios.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Webp.net-resizeimage (1).png",
+      "filename" : "mybusfeed-ios@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Webp.net-resizeimage.png",
+      "filename" : "mybusfeed-ios@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
