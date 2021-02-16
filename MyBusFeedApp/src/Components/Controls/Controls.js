@@ -1,37 +1,64 @@
-import React, { useState, Component } from 'react'
+import React, { Component } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
+import externalStyle from "../../../style/externalStyle"
 import { default as Header } from './Header'
 import { default as Map } from './Map'
 import { default as Navigation } from './Navigation'
 import tailwind from 'tailwind-rn'
 
-const styles = StyleSheet.create({
-    card: {
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
-
-        elevation: 4,
-
-        backgroundColor: 'white',
-        flex: 1,
-        borderRadius: 10,
-    }
-})
-
 class Controls extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            nothing: null
+        }
+    }
+
+    mapsRef = React.createRef()
+    headerRef = React.createRef()
+
+    triggerMaps = () => {
+        this.mapsRef.current.didMapsTriggerOnSearch()
+        this.mapsRef.current.refreshLocation()
+    }
+
+    didTriggerRefresh = () => {
+        this.mapsRef.current.didMapsTriggerOnRefresh()
+    }
+
+    didTriggerReloadLocation = () => {
+        this.props.triggerReloadLocation()
+    }
+
+    didTriggerFavourites = () => {
+        this.props.triggerFavouritesList()
+    }
+
+    triggerFavouritesMarkers = () => {
+        this.mapsRef.current.didTriggerFavouritesMap()
+    }
+
+    centreMap = () => {
+        this.props.triggerReloadLocation()
+    }
+
+    resetSearchState = () => {
+        this.headerRef.current.resetSearchState()
+    }
+
+    resetLocation = () => {
+        this.props.resetLocation()
+    }
+
 
     render() {
         return (
-            <View style={tailwind('h-3/5 bg-white px-4 mb-4 mt-4')}>
-                <View style={styles.card}>
-                    <Header/>
-                    <Map states = {this.props.states}/>
-                    <Navigation/>
+            <View style={tailwind('h-3/6 bg-white px-4 mb-4 mt-4')}>
+                <View style={externalStyle.controlsCard}>
+                    <Header states = {this.props.states} ref={this.headerRef} resetLocation={this.resetLocation} triggerCentreOnRefresh={this.centreMap} triggerMapsOnSearch={this.triggerMaps} triggerRefresh={this.didTriggerReloadLocation} triggerIndexOnSearch={this.props.triggerIndexOnSearch} />
+                    <Map states = {this.props.states} ref={this.mapsRef} triggerCentreOnRefresh={this.props.triggerCentreOnRefresh} />
+                    <Navigation states = {this.props.states} triggerFavourites={this.didTriggerFavourites} triggerMapsOnSearch={this.triggerMaps} triggerRefresh={this.didTriggerReloadLocation}/>
                 </View>
             </View>
         )

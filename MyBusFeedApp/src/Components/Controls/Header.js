@@ -1,28 +1,123 @@
-import React from 'react'
-import { View, Text, TextInput, Button } from 'react-native'
+import React, { Component } from 'react'
+import { View, Text, TextInput, Button, StyleSheet, Keyboard, TouchableOpacity } from 'react-native'
 import tailwind from 'tailwind-rn'
-import { WebView } from 'react-native-webview'
+import axios from 'axios'
+import Icon from 'react-native-vector-icons/FontAwesome'
+import Geolocation from '@react-native-community/geolocation'
 
-const Header = () => {
-  
-    return (
-        <View style={tailwind('m-3 bg-white')}>
-            <View style={tailwind('flex flex-row')}>
-                <View style={tailwind('w-4/5')}>
+const styles = StyleSheet.create({
+    controls: {
+        padding: 0, 
+        marginTop: 5,
+    },
+    searchBar: {
+        position: "relative"
+    }
+});
+
+export default class Header extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            isSearchInputHidden: true,
+            searchText: ""
+        }
+    }
+
+    resetSearchState() {
+        if (!this.state.isSearchInputHidden) {
+            this.setState(() => ({
+                isSearchInputHidden: true,
+            }))
+        }
+    }
+
+    didToggleSearchButton() {
+        console.log("=======================")
+        console.log("Did press search button")
+        console.log("=======================")
+
+        this.setState((previousState) => ({
+            isSearchInputHidden: !previousState.isSearchInputHidden,
+        }))
+    }
+
+    didTapCancel() {
+        console.log("=======================")
+        console.log("Did press cancel button")
+        console.log("=======================")
+
+        this.setState((previousState) => ({
+            isSearchInputHidden: !previousState.isSearchInputHidden,
+        }))
+
+        this.props.triggerRefresh()
+        this.props.triggerCentreOnRefresh()
+    }
+
+    didTriggerSearch() {
+        Keyboard.dismiss()
+        console.log(this.state.searchText)
+
+        axios
+        .get("https://api.mybusfeed.com/location/getBusStopInformation/" + this.state.searchText)
+        .then((response) => {
+            console.log(response.data)
+            this.props.states.busStops = response.data
+            this.props.states.latitude = parseFloat(response.data[0].busstop_lat)
+            this.props.states.longitude = parseFloat(response.data[0].busstop_lng)
+            this.props.triggerIndexOnSearch()
+            this.props.triggerMapsOnSearch()
+            this.resetSearchState()
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    render() {
+        controls = null
+        
+        if (this.state.isSearchInputHidden) {
+            controls =  
+            <View style={tailwind('flex flex-row justify-center items-center')}>
+                <View style={tailwind('w-4/5 py-1')}>
                     <Text style={tailwind('text-xl font-semibold text-gray-600 mx-2')}>
-                        Bus Locator
+                        MyBusFeed
                     </Text>
                 </View>
-                <View style={tailwind('w-1/5')}>
-                    
-                </View>
-                <View style={tailwind('w-1/5')}>
-                    
+                <View style={tailwind('flex flex-row w-1/5 justify-around')}>
+                    <TouchableOpacity onPress={() => this.didToggleSearchButton()}>
+                        <Icon name="search" size={20} color="grey"/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.props.resetLocation()}>
+                        <Icon name="location-arrow" size={20} style={tailwind('text-blue-500')}/>
+                    </TouchableOpacity>
                 </View>
             </View>
-            
-        </View>
-    )
+        } else {
+            controls = <View style={tailwind('flex flex-row justify-between items-center')}>
+                <View style={tailwind('w-5/6')}>
+                    <TextInput
+                        style={[tailwind('py-2 px-2 border border-gray-200 rounded-2xl bg-gray-100')]}
+                        onChangeText={(text) => this.setState({searchText: text})}
+                        onSubmitEditing={() => this.didTriggerSearch()}
+                        placeholder={"e.g. Marymount Stn or 05131..."}
+                        clearButtonMode={"while-editing"}
+                    />
+                    {/* <SearchBar
+                        placeholder={"e.g. Marymount Stn or 05131..."}
+                        onChangeText={(text) => this.setState({searchText: text})}
+                        value={this.state.searchText}/> */}
+                </View>
+                <TouchableOpacity style={tailwind('flex justify-end')} onPress={() => this.didTapCancel()}>
+                    <Text style={tailwind('text-blue-500')}>Cancel</Text>
+                </TouchableOpacity>
+            </View>
+        }
+        return (
+            <View style={tailwind('m-3 bg-white')}>
+                {controls}
+            </View>
+        )
+    }
 }
-  
-export default Header
