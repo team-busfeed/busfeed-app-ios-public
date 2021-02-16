@@ -208,7 +208,7 @@ export default class Accordion extends Component {
           style={styles.row}
           onPress={() => this.onPressToggle()}
         >
-          <View style={this.state.favIcon === "favorite-border" ? tailwind("bg-gray-200 px-1 py-1 rounded-lg") : tailwind("bg-gray-100 px-1 py-1 rounded-lg") }>
+          <TouchableOpacity style={this.state.favIcon === "favorite-border" ? tailwind("bg-gray-200 px-1 py-1 rounded-lg") : tailwind("bg-gray-100 px-1 py-1 rounded-lg") }>
             <Icon
                 // style={tailwind("text-gray-700")}
                 name={
@@ -219,7 +219,7 @@ export default class Accordion extends Component {
                 style={this.state.favIcon === "favorite-border" ? tailwind("text-gray-700") : tailwind("text-red-700")}
                 onPress={() => this.favouriteThisStop(this.props.title.busstop_number)}
             />
-          </View>
+          </TouchableOpacity>
           <Text style={[styles.title, styles.font]}>
             {this.props.title.busstop_number.length == 4 ? "0" + this.props.title.busstop_number : this.props.title.busstop_number}  –  {this.props.title.busstop_name}
           </Text>
