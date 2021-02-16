@@ -442,7 +442,7 @@ export default class BusTimeBlock extends Component {
 
         {!this.state.busTimingContent ? (
           <TouchableOpacity onPress={() => this.componentHideAndShow()}>
-            <Icon name={'directions-bus'} size={30} color="#4F4F4F" />
+            <Text style={tailwind('text-blue-500')}>Check this bus <Icon name={'chevron-right'} size={15} /></Text>
           </TouchableOpacity>
         ) : (
           <View style={tailwind('flex flex-row')}>

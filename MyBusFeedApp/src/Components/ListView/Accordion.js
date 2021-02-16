@@ -234,18 +234,16 @@ export default class Accordion extends Component {
         <View style={styles.parentHr} />
         {this.state.expanded && (
           <View style={styles.child}>
-            <View style={tailwind('flex flex-row')}>
-              <Text
-                onPress={() => this.didTapRefresh()}>Refresh</Text>
+            <TouchableOpacity style={tailwind('flex flex-row')} onPress={() => this.didTapRefresh()}>
+              <Text style={tailwind('text-blue-500 font-semibold')}>Refresh all bus timings</Text>
               <Icon
                 name={
                 'autorenew'
                 }
                 size={18}
-                color="#5E5E5E"
-                onPress={() => this.didTapRefresh()}
+                style={tailwind('text-blue-500')}
               />
-            </View>
+            </TouchableOpacity>
 
             {flatList}
           </View>
