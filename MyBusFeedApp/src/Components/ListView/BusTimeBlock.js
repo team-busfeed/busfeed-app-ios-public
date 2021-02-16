@@ -463,7 +463,7 @@ export default class BusTimeBlock extends Component {
 const styles = StyleSheet.create({
   eachRow: {
     padding: 15,
-    borderColor: '#cccccc',
+    borderColor: '#eeeeee',
     borderBottomWidth: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
