@@ -52,6 +52,7 @@ class Map extends Component {
             isUpdated: true
         })
         this.refreshMarker()
+        this.refreshLocation()
     }
 
     didMapsTriggerOnRefresh() {
@@ -59,6 +60,7 @@ class Map extends Component {
             isUpdated: true
         })
         this.refreshMarker()
+        this.refreshLocation()
     }
 
     refreshMarker() {

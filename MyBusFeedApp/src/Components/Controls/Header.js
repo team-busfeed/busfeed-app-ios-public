@@ -2,9 +2,8 @@ import React, { Component } from 'react'
 import { View, Text, TextInput, Button, StyleSheet, Keyboard } from 'react-native'
 import tailwind from 'tailwind-rn'
 import axios from 'axios'
-import { WebView } from 'react-native-webview'
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { SearchBar } from 'react-native-elements'
+import Geolocation from '@react-native-community/geolocation'
 
 const styles = StyleSheet.create({
     controls: {
@@ -44,8 +43,8 @@ export default class Header extends Component {
             isSearchInputHidden: !previousState.isSearchInputHidden,
         }))
 
-        this.props.triggerMapsOnSearch()
         this.props.triggerRefresh()
+        this.props.triggerCentreOnRefresh()
     }
 
     didTriggerSearch() {
@@ -57,6 +56,8 @@ export default class Header extends Component {
         .then((response) => {
             console.log(response.data)
             this.props.states.busStops = response.data
+            this.props.states.latitude = response.data[0].busstop_lat
+            this.props.states.longitude = response.data[0].busstop_lng
             this.props.triggerIndexOnSearch()
             this.props.triggerMapsOnSearch()
         }).catch((error) => {

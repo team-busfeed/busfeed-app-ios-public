@@ -50,6 +50,26 @@ class HomeContainer extends Component {
         {enableHighAccuracy: Platform.OS !== 'android', timeout: 20000, maximumAge: 0})
     }
 
+    refreshGeoLocation() {
+        Geolocation.getCurrentPosition((info) => {
+            console.log("========================")
+            console.log("Got current geolocation!")
+            console.log("========================")
+            this.setState({
+                latitude: info.coords.latitude,
+                longitude: info.coords.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+                updatedGeolocation: true,
+            })
+
+            console.log("LAT:" + info.coords.latitude)
+            console.log("LONG:" + info.coords.longitude)
+            console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
+        }, (error) => console.log('position error!!!', error),
+        {enableHighAccuracy: Platform.OS !== 'android', timeout: 20000, maximumAge: 0})
+    }
+
     getProximityBusStops() {
         console.log('Getting data from Location Service API')
         const fetchURL = "https://api.mybusfeed.com/location/getListOfBusStopNo/".concat(this.state.latitude,"-",this.state.longitude)
@@ -126,11 +146,15 @@ class HomeContainer extends Component {
         this.controlsRef.current.didTriggerRefresh()
     }
 
+    reloadMaps = () => {
+        this.refreshGeoLocation()
+    }
+
     render() {
         return (
             <View style={tailwind('bg-white h-full')}>
                 <Controls states = { this.state } ref={this.controlsRef} triggerFavouritesList={this.didTapOnFavourites} triggerIndexOnSearch={this.didPerformSearch} triggerReloadLocation={this.triggerReloadLocation} />
-                <ListView states = { this.state } ref={this.listViewRef} triggerCentreOnRefresh={this.centreOnRefresh}/>
+                <ListView states = { this.state } ref={this.listViewRef} reloadMaps={this.reloadMaps} updateMaps={this.reloadMaps} triggerCentreOnRefresh={this.centreOnRefresh}/>
             </View>
         )
     }

@@ -44,6 +44,7 @@ class ListView extends Component {
                 console.log(response.data)
                 this.props.states.busStops = response.data
                 this.updateFlatList()
+                this.props.updateMaps()
             }).catch((error) => {
                 console.log(error)
             })
@@ -73,7 +74,6 @@ class ListView extends Component {
             console.log("LAT:" + info.coords.latitude)
             console.log("LONG:" + info.coords.longitude)
             console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
-
 
             this.getProximityBusStops()
         }, (error) => console.log('position error!!!', error),
@@ -105,6 +105,8 @@ class ListView extends Component {
 
             this.props.states.selected = 0
             this.props.triggerCentreOnRefresh()
+
+            this.props.reloadMaps()
         })
         .catch((error) => {
             console.log('error:', error)
