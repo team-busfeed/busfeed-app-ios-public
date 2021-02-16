@@ -118,7 +118,9 @@ export default class Accordion extends Component {
             let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
             let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
 
-            if (favouriteBusStopsList.indexOf(busStopNumber) == -1) {
+            var indexOfFavourite = favouriteBusStopsList.indexOf(busStopNumber)
+
+            if (indexOfFavourite == -1) {
                 favouriteBusStopsList.push(busStopNumber)
                 console.log("Favourited " + busStopNumber + "!")
                 this.setState({favIcon: "favorite"})
@@ -132,15 +134,17 @@ export default class Accordion extends Component {
                     { cancelable: false }
                 )
             } else {
-                console.log("Already favourited!")
                 Alert.alert(
-                    'Favourite bus stop',
-                    'Bus stop ' + busStopNumber + ' already in favourites!',
+                    'Removing from favourites',
+                    'Bus stop ' + busStopNumber + ' removed from favourites!',
                     [
                         { text: 'OK', onPress: () => console.log('OK Pressed') }
                     ],
                     { cancelable: false }
                 )
+                delete favouriteBusStopsList[indexOfFavourite]
+
+                this.setState({favIcon: "favorite-border"})
             }
 
             await AsyncStorage.setItem('@favouriteBusStops', JSON.stringify({"favourites": favouriteBusStopsList}))
