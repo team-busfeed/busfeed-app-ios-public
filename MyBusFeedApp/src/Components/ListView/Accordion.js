@@ -142,7 +142,7 @@ export default class Accordion extends Component {
                     ],
                     { cancelable: false }
                 )
-                delete favouriteBusStopsList[indexOfFavourite]
+                favouriteBusStopsList.splice(indexOfFavourite, 1)
 
                 this.setState({favIcon: "favorite-border"})
             }
