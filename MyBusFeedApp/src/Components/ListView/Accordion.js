@@ -124,19 +124,21 @@ export default class Accordion extends Component {
                 favouriteBusStopsList.push(busStopNumber)
                 console.log("Favourited " + busStopNumber + "!")
                 this.setState({favIcon: "favorite"})
+                var paddedStopNumber = busStopNumber.length == 4 ? "0" + busStopNumber : busStopNumber
                 
                 Alert.alert(
                     'Favourite bus stop',
-                    'Bus stop ' + busStopNumber + ' added to your favourites!',
+                    'Bus stop ' + paddedStopNumber + ' added to your favourites!',
                     [
                         { text: 'OK'}
                     ],
                     { cancelable: false }
                 )
             } else {
+                var paddedStopNumber = busStopNumber.length == 4 ? "0" + busStopNumber : busStopNumber
                 Alert.alert(
                     'Removing from favourites',
-                    'Bus stop ' + busStopNumber + ' removed from favourites!',
+                    'Bus stop ' + paddedStopNumber + ' removed from favourites!',
                     [
                         { text: 'OK'}
                     ],
