@@ -68,7 +68,14 @@ export default class Accordion extends Component {
       .then((response) => {
         console.log("Fetched bus API data: " + JSON.stringify(response.data))
 
-        var resp = response.data.services
+        var comparator = function(a, b) {
+            return parseInt(a) - parseInt(b);
+        }
+
+        var resp = response.data.services.sort(comparator)
+        
+        console.log("HEEE HEE HEE")
+        console.log(resp)
 
         var loadedServices = {}
 
@@ -185,10 +192,12 @@ export default class Accordion extends Component {
         var flatList = <FlatList
         data={this.state.busStops.services}
         renderItem={({ item }) => (
-        <BusTimeBlock ref={this.state.newServices[item]
-        } bus_number={item} busstop_number={this.props.title.busstop_number} data={this.state.data} busTrackCountFunction={this.busTrackCountFunction} busTrackCount={this.props.busTrackCount}/>
-        )}
-        keyExtractor={(item) => item}
+        <BusTimeBlock ref={this.state.newServices[item]} 
+            bus_number={item} busstop_number={this.props.title.busstop_number} 
+            data={this.state.data} busTrackCountFunction={this.busTrackCountFunction} 
+            busTrackCount={this.props.busTrackCount}/>
+            )}
+            keyExtractor={(item) => item}
         />
 
     return (
