@@ -142,7 +142,7 @@ export default class Accordion extends Component {
                     ],
                     { cancelable: false }
                 )
-                favouriteBusStopsList.splice(indexOfFavourite)
+                delete favouriteBusStopsList[indexOfFavourite]
 
                 this.setState({favIcon: "favorite-border"})
             }
@@ -165,9 +165,13 @@ export default class Accordion extends Component {
         
         try {
             // AsyncStorage.setItem('@favouriteBusStops', 1012)
+            console.log("here")
 
+            console.log(this.props.title.busstop_number)
             let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
+            console.log("this is in store " + favouriteInStores)
             let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
+            console.log("THIS IS FAV BUS STOP LIST " + favouriteBusStopsList)
 
             if (favouriteBusStopsList.indexOf(this.props.title.busstop_number) == -1) {
               console.log("false")
