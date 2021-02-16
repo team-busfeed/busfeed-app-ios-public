@@ -38,7 +38,7 @@ class Controls extends Component {
         return (
             <View style={tailwind('h-3/6 bg-white px-4 mb-4 mt-4')}>
                 <View style={externalStyle.controlsCard}>
-                    <Header states = {this.props.states} triggerMapsOnSearch={this.triggerMaps} triggerIndexOnSearch={this.props.triggerIndexOnSearch} />
+                    <Header states = {this.props.states} triggerMapsOnSearch={this.triggerMaps} triggerRefresh={this.didTriggerReloadLocation} triggerIndexOnSearch={this.props.triggerIndexOnSearch} />
                     <Map states = {this.props.states} ref={this.mapsRef} triggerCentreOnRefresh={this.props.triggerCentreOnRefresh} />
                     <Navigation states = {this.props.states} triggerFavourites={this.didTriggerFavourites} triggerRefresh={this.didTriggerReloadLocation}/>
                 </View>

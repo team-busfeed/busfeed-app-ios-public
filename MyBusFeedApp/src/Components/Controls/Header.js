@@ -35,6 +35,19 @@ export default class Header extends Component {
         }))
     }
 
+    didTapCancel() {
+        console.log("=======================")
+        console.log("Did press cancel button")
+        console.log("=======================")
+
+        this.setState((previousState) => ({
+            isSearchInputHidden: !previousState.isSearchInputHidden,
+        }))
+
+        this.props.triggerMapsOnSearch()
+        this.props.triggerRefresh()
+    }
+
     didTriggerSearch() {
         Keyboard.dismiss()
         console.log(this.state.searchText)
@@ -87,7 +100,7 @@ export default class Header extends Component {
                         value={this.state.searchText}/> */}
                 </View>
                 <View style={tailwind('flex justify-end')}>
-                    <Text style={tailwind('text-blue-500')} onPress={() => this.didToggleSearchButton()}>Cancel</Text>
+                    <Text style={tailwind('text-blue-500')} onPress={() => this.didTapCancel()}>Cancel</Text>
                 </View>
             </View>
         }
