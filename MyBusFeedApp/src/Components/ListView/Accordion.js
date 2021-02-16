@@ -211,7 +211,7 @@ export default class Accordion extends Component {
             />
           </View>
           <Text style={[styles.title, styles.font]}>
-            {this.props.title.busstop_number} {this.props.title.busstop_name}
+            {this.props.title.busstop_number.length == 4 ? "0" + this.props.title.busstop_number : this.props.title.busstop_number} {this.props.title.busstop_name}
           </Text>
           <Icon
             name={
