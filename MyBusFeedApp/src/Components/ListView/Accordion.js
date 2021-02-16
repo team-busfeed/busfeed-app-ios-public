@@ -204,7 +204,7 @@ export default class Accordion extends Component {
           style={styles.row}
           onPress={() => this.onPressToggle()}
         >
-          <View style={tailwind("bg-blue-200 px-1 py-1 rounded-lg")}>
+          <View style={this.state.favIcon === "favorite-border" ? tailwind("bg-gray-200 px-1 py-1 rounded-lg") : tailwind("bg-gray-100 px-1 py-1 rounded-lg") }>
             <Icon
                 // style={tailwind("text-gray-700")}
                 name={
