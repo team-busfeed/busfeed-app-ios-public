@@ -63,6 +63,14 @@ class Map extends Component {
         this.refreshLocation()
     }
 
+    didTriggerFavouritesMap() {
+        this.setState({
+            isUpdated: true
+        })
+        this.refreshMarker()
+        this.refreshLocation()
+    }
+
     refreshMarker() {
 
         markers = null

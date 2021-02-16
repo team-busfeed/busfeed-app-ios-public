@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, TextInput, Button, StyleSheet, Keyboard } from 'react-native'
+import { View, Text, TextInput, Button, StyleSheet, Keyboard, TouchableOpacity } from 'react-native'
 import tailwind from 'tailwind-rn'
 import axios from 'axios'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -21,6 +21,14 @@ export default class Header extends Component {
         this.state = {
             isSearchInputHidden: true,
             searchText: ""
+        }
+    }
+
+    resetSearchState() {
+        if (!this.state.isSearchInputHidden) {
+            this.setState(() => ({
+                isSearchInputHidden: true,
+            }))
         }
     }
 
@@ -60,6 +68,7 @@ export default class Header extends Component {
             this.props.states.longitude = response.data[0].busstop_lng
             this.props.triggerIndexOnSearch()
             this.props.triggerMapsOnSearch()
+            this.resetSearchState()
         }).catch((error) => {
             console.log(error)
         })
@@ -77,12 +86,12 @@ export default class Header extends Component {
                     </Text>
                 </View>
                 <View style={tailwind('flex flex-row w-1/5 justify-around')}>
-                    <View>
-                        <Icon name="search" size={20} color="grey" onPress={() => this.didToggleSearchButton()}/>
-                    </View>
-                    <View>
-                        <Icon name="ellipsis-v" size={20} color="grey"/>
-                    </View>
+                    <TouchableOpacity onPress={() => this.didToggleSearchButton()}>
+                        <Icon name="search" size={20} color="grey"/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.props.resetLocation()}>
+                        <Icon name="location-arrow" size={20} style={tailwind('text-blue-500')}/>
+                    </TouchableOpacity>
                 </View>
             </View>
         } else {
@@ -100,9 +109,9 @@ export default class Header extends Component {
                         onChangeText={(text) => this.setState({searchText: text})}
                         value={this.state.searchText}/> */}
                 </View>
-                <View style={tailwind('flex justify-end')}>
-                    <Text style={tailwind('text-blue-500')} onPress={() => this.didTapCancel()}>Cancel</Text>
-                </View>
+                <TouchableOpacity style={tailwind('flex justify-end')} onPress={() => this.didTapCancel()}>
+                    <Text style={tailwind('text-blue-500')}>Cancel</Text>
+                </TouchableOpacity>
             </View>
         }
         return (

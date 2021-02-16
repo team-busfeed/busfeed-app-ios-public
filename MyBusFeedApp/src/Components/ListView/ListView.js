@@ -76,6 +76,7 @@ class ListView extends Component {
             console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
 
             this.getProximityBusStops()
+            this.props.resetSearchState()
         }, (error) => console.log('position error!!!', error),
         {enableHighAccuracy: Platform.OS !== 'android', timeout: 20000, maximumAge: 0})
     }

@@ -142,19 +142,30 @@ class HomeContainer extends Component {
         this.setState({
             isLoading: true
         })
+        // trigger listview
         this.listViewRef.current.didTriggerFavourites()
+        // trigger controls
         this.controlsRef.current.didTriggerRefresh()
     }
 
     reloadMaps = () => {
         this.refreshGeoLocation()
+        this.controlsRef.current.triggerFavouritesMarkers()
+    }
+
+    resetSearchState = () => {
+        this.controlsRef.current.resetSearchState()
+    }
+
+    resetLocation = () => {
+        this.listViewRef.current.getGeoLocation()
     }
 
     render() {
         return (
             <View style={tailwind('bg-white h-full')}>
-                <Controls states = { this.state } ref={this.controlsRef} triggerFavouritesList={this.didTapOnFavourites} triggerIndexOnSearch={this.didPerformSearch} triggerReloadLocation={this.triggerReloadLocation} />
-                <ListView states = { this.state } ref={this.listViewRef} reloadMaps={this.reloadMaps} updateMaps={this.reloadMaps} triggerCentreOnRefresh={this.centreOnRefresh}/>
+                <Controls states = { this.state } ref={this.controlsRef} resetLocation={this.resetLocation} triggerFavouritesList={this.didTapOnFavourites} triggerIndexOnSearch={this.didPerformSearch} triggerReloadLocation={this.triggerReloadLocation} />
+                <ListView states = { this.state } ref={this.listViewRef} resetSearchState={this.resetSearchState} reloadMaps={this.reloadMaps} updateMaps={this.reloadMaps} triggerCentreOnRefresh={this.centreOnRefresh}/>
             </View>
         )
     }
