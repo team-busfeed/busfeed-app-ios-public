@@ -152,7 +152,7 @@ class Map extends Component {
                                             {busStop.busstop_name}
                                         </Text>
                                         <Text style={styles.description}>
-                                            {"Stop Number: " + busStop.busstop_number}
+                                            {"Stop Number: "}{busStop.busstop_number.length == 4 ? "0" + busStop.busstop_number : busStop.busstop_number}
                                         </Text>
                                     </View>
                                 </View>
@@ -177,7 +177,6 @@ class Map extends Component {
                         longitudeDelta: 0.005,
                     }}
                     showsUserLocation={true}
-                    followsUserLocation={true}
                     showsMyLocationButton={true}
                     ref={map => {this.map = map}}
                 >
