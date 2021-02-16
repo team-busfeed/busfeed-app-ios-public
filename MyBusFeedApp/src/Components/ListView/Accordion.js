@@ -129,7 +129,7 @@ export default class Accordion extends Component {
                     'Favourite bus stop',
                     'Bus stop ' + busStopNumber + ' added to your favourites!',
                     [
-                        { text: 'OK', onPress: () => console.log('OK Pressed') }
+                        { text: 'OK'}
                     ],
                     { cancelable: false }
                 )
@@ -138,7 +138,7 @@ export default class Accordion extends Component {
                     'Removing from favourites',
                     'Bus stop ' + busStopNumber + ' removed from favourites!',
                     [
-                        { text: 'OK', onPress: () => console.log('OK Pressed') }
+                        { text: 'OK'}
                     ],
                     { cancelable: false }
                 )

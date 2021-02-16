@@ -80,7 +80,7 @@ export default class Header extends Component {
         if (this.state.isSearchInputHidden) {
             controls =  
             <View style={tailwind('flex flex-row justify-center items-center')}>
-                <View style={tailwind('w-4/5')}>
+                <View style={tailwind('w-4/5 py-1')}>
                     <Text style={tailwind('text-xl font-semibold text-gray-600 mx-2')}>
                         MyBusFeed
                     </Text>
@@ -98,7 +98,7 @@ export default class Header extends Component {
             controls = <View style={tailwind('flex flex-row justify-between items-center')}>
                 <View style={tailwind('w-5/6')}>
                     <TextInput
-                        style={[tailwind('py-1 px-2 border border-gray-400 rounded-2xl')]}
+                        style={[tailwind('py-2 px-2 border border-gray-200 rounded-2xl bg-gray-100')]}
                         onChangeText={(text) => this.setState({searchText: text})}
                         onSubmitEditing={() => this.didTriggerSearch()}
                         placeholder={"e.g. Marymount Stn or 05131..."}

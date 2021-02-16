@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import externalStyle from '../../../style/externalStyle'
 import tailwind from 'tailwind-rn'
-import Icon from 'react-native-vector-icons/Entypo'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import Geolocation from '@react-native-community/geolocation'
 import axios from 'axios'
 import Accordion from './Accordion'
@@ -174,7 +174,8 @@ class ListView extends Component {
                 refreshing={this.state.isLoading}
                 renderItem={({ item }) => (
                     <View style={tailwind('px-4 my-4')}>
-                        <Text style={tailwind('text-lg text-center')}>{item.message}</Text>
+                        <Text style={tailwind('text-gray-500 text-3xl text-center py-5')} size={60}>😔</Text>
+                        <Text style={tailwind('text-gray-500 text-lg text-center')}>{item.message}</Text>
                     </View>
                 )}
                 keyExtractor={(item) => item.type}
