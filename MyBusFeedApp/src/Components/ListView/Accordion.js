@@ -73,9 +73,6 @@ export default class Accordion extends Component {
         }
 
         var resp = response.data.services.sort(comparator)
-        
-        console.log("HEEE HEE HEE")
-        console.log(resp)
 
         var loadedServices = {}
 
