@@ -26,6 +26,7 @@ class HomeContainer extends Component {
             busStops: [],
             userProximity: false,
             selected: 0,
+            testState: true,
         }
     }
     
@@ -47,7 +48,7 @@ class HomeContainer extends Component {
             console.log("LONG:" + info.coords.longitude)
             console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
         }, (error) => console.log('position error!!!', error),
-        {enableHighAccuracy: Platform.OS !== 'android', timeout: 20000, maximumAge: 0})
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 0})
     }
 
     refreshGeoLocation() {
@@ -91,7 +92,7 @@ class HomeContainer extends Component {
             }
         })
         .catch((error) => {
-            console.log('error:', error)
+            console.log('indexjs getProximityBusStops error:', error)
         })
     }
 
