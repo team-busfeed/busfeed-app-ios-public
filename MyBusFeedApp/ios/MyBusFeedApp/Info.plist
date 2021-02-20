@@ -76,5 +76,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string></string>
+	</array>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Driver app can share your location with parents only when you are on a journy.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Driver app can share your location with parents only when you are on a journy.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>App easily can locate your position on map once you allow this.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Araksha Driver uses Motion for location optimizations.</string>
 </dict>
 </plist>

@@ -95,7 +95,7 @@ export default class BusTimeBlock extends Component {
       activitiesInterval: 10000,
       stopOnStillActivity: false,
       startForeground: true,
-      notificationsEnabled: true
+      notificationsEnabled: false
     });
 
     BackgroundGeolocation.checkStatus(status => {
@@ -116,12 +116,12 @@ export default class BusTimeBlock extends Component {
       console.log('[INFO] App is in background');
     });
 
-    BackgroundGeolocation.on('start', () => {
-      // service started successfully
-      // you should adjust your app UI for example change switch element to indicate
-      // that service is running
-      console.log('[DEBUG] BackgroundGeolocation has been started');
-    });
+    // BackgroundGeolocation.on('start', () => {
+    //   // service started successfully
+    //   // you should adjust your app UI for example change switch element to indicate
+    //   // that service is running
+    //   console.log('[DEBUG] BackgroundGeolocation has been started');
+    // });
   }
 
   componentDidUpdate(prevProp, prevState){
