@@ -78,9 +78,9 @@
 	<false/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string></string>
+		<string>location</string>
 	</array>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Driver app can share your location with parents only when you are on a journy.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Driver app can share your location with parents only when you are on a journy.</string>
