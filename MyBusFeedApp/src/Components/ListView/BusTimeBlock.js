@@ -86,7 +86,7 @@ export default class BusTimeBlock extends Component {
       distanceFilter: 50,
       notificationTitle: 'Background tracking',
       notificationText: 'enabled',
-      debug: true,
+      debug: false,
       startOnBoot: true,
       stopOnTerminate: true,
       locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
@@ -245,28 +245,32 @@ export default class BusTimeBlock extends Component {
         // 2. Get user Proximity
         this.getUserProximity()
         .then((data) => {
-          this.setState({ userProximity: data })
+          this.setState({ 
+            userProximity: data,
+            arrivalPause: false
+          })
 
           // 3. Geo logic
-          // console.log("userProximity data in arrivalPause=> " + data + this.state.busNumber)
           console.log("this.state.userProximity => " + this.state.userProximity + this.state.busNumber)
           if (this.state.userProximity == false){
             // If user left the bus stop
-            console.log("user left bus stop " + this.state.busNumber)
+            console.log("user left bus stop on bus " + this.state.busNumber)
             this.addToActualDemand(true)
           } else if (this.state.userProximity == true){
-            // If user remains in the bus stop
-            console.log("user remains in bus stop "  + this.state.busNumber)
-            this.addToActualDemand(false)
+            if (this.state.nextBus1.load == "LSD"){
+              // If user remains in the bus stop + bus crowded
+              console.log("user cannot board bus "  + this.state.busNumber)
+              this.addToActualDemand(false)
+            } else {
+              console.log("user not boarding bus " + this.state.busNumber)
+            }
+
             this.setState({
               constantPollOn: true,
             })
-            // this.getBusTiming()
             console.log('<><><><><>< constantBasicPoll Resume <><><><><><')
           }
-          this.setState({
-            arrivalPause: false
-          })
+
           console.log('++++++++++++++++++++++++++++++++++++');
           console.log('arrivalPause INTERVAL END');
           console.log('++++++++++++++++++++++++++++++++++++');
@@ -369,23 +373,6 @@ export default class BusTimeBlock extends Component {
     },error => console.log('Error', JSON.stringify(error)),
       {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
     )
-    // .then(
-    //   this.getUserProximity()
-    //   .then((data) => {
-    //     this.setState({ userProximity: data })
-        
-    //     // Call for bus timing
-    //     this.getBusTiming()
-
-    //     // Reveal bus timing
-    //     this.setState((previousState) => ({
-    //       busTimingContent: !previousState.busTimingContent,
-    //     }))
-
-    //   })
-    //   .catch((error) => console.log("userProximity Error => "+error))
-    // )
-    // .catch((error) => console.log("GeoERROR => " + error))
   }
 
   refreshBusTiming = () => {
@@ -405,6 +392,7 @@ export default class BusTimeBlock extends Component {
     var url = ''
     if (this.state.userProximity && this.state.expectedBusArrive == false) {
       var url = 'https://api.mybusfeed.com/demand/expected/add'
+      // To ensure expected is add only once
       this.setState({
         expectedBusArrive: true
       })
