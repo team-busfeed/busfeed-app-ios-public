@@ -1,6 +1,6 @@
 import React, { useState, Component } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { View, ActivityIndicator, Text, TextInput, Button } from 'react-native'
+import { View, ActivityIndicator, Text, TextInput, Button, Alert } from 'react-native'
 import { Controls } from '@/Components/Controls'
 import { ListView } from '@/Components/ListView'
 import tailwind from 'tailwind-rn'
@@ -77,6 +77,7 @@ class HomeContainer extends Component {
         axios
         .get(fetchURL)
         .then((response) => {
+            console.log("ASD")
             console.log("Fetched API data: " + JSON.stringify(response.data))
 
             if (response.data.status === "not_found") {
@@ -93,6 +94,14 @@ class HomeContainer extends Component {
         })
         .catch((error) => {
             console.log('indexjs getProximityBusStops error:', error)
+            Alert.alert(
+                'No internet connection',
+                'Please check if you\'re connected to the internet.',
+                [
+                    { text: 'OK'}
+                ],
+                { cancelable: false }
+            )
         })
     }
 
