@@ -100,7 +100,6 @@ export default class BLEreader extends Component {
   startDetection() {
     // BackgroundTimer.setInterval(() => {
       const { foundBeacon } = this.state
-      Beacons.requestWhenInUseAuthorization();
       console.log('====================================')
       console.log('BLEreader started')
       console.log('====================================')
@@ -184,7 +183,10 @@ export default class BLEreader extends Component {
         console.log(`Beacons ranging not started, error: ${error}`),
       )
 
-    Beacons.startUpdatingLocation();
+    if (Platform.OS !== 'android') {
+      Beacons.startUpdatingLocation();
+    } 
+    
     
     DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
       console.log('foundBeacon => ' + this.state.foundBeacon)
