@@ -343,7 +343,6 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     // this.testInterval()
-
     this.busTrackCountFunction()
     console.log('#############################################');
     console.log("Total bus polling => " + this.props.busTrackCount);

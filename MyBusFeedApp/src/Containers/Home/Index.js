@@ -9,7 +9,7 @@ import axios from 'axios'
 import DeviceInfo from 'react-native-device-info'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
+import BLEreader from '../../Components/BLE/BLEreader'
 
 class HomeContainer extends Component {
 
@@ -26,7 +26,7 @@ class HomeContainer extends Component {
             busStops: [],
             userProximity: false,
             selected: 0,
-            testState: true,
+            BLEState: true,
         }
     }
     
@@ -48,7 +48,7 @@ class HomeContainer extends Component {
             console.log("LONG:" + info.coords.longitude)
             console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
         }, (error) => console.log('position error!!!', error),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 0})
+        {enableHighAccuracy: Platform.OS !== 'android', timeout: 20000, maximumAge: 0})
     }
 
     refreshGeoLocation() {
@@ -106,6 +106,12 @@ class HomeContainer extends Component {
     }
 
     componentDidMount = async () => {
+        // if (this.state.BLEState == true){
+        //     this.setState({
+        //         BLEState: false
+        //     })
+        // }
+
         this.getGeoLocation()
 
         var uniqueId = DeviceInfo.getUniqueId();
@@ -172,8 +178,13 @@ class HomeContainer extends Component {
     }
 
     render() {
+        
+
+
         return (
             <View style={tailwind('bg-white h-full')}>
+                {/* {this.state.BLEState && <BLEreader />} */}
+                {/* <BLEreader /> */}
                 <Controls states = { this.state } ref={this.controlsRef} resetLocation={this.resetLocation} triggerFavouritesList={this.didTapOnFavourites} triggerIndexOnSearch={this.didPerformSearch} triggerReloadLocation={this.triggerReloadLocation} />
                 <ListView states = { this.state } ref={this.listViewRef} resetSearchState={this.resetSearchState} reloadMaps={this.reloadMaps} updateMaps={this.reloadMaps} triggerCentreOnRefresh={this.centreOnRefresh}/>
             </View>
