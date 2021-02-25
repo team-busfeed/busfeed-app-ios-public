@@ -9,7 +9,7 @@ import axios from 'axios'
 import DeviceInfo from 'react-native-device-info'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import BLEreader from '../../Components/BLE/BLEreader'
+// import BLEreader from '../../Components/BLE/BLEreader'
 
 class HomeContainer extends Component {
 

@@ -5,7 +5,6 @@ import { PersistGate } from 'redux-persist/lib/integration/react'
 import { store, persistor } from '@/Store'
 import { ApplicationNavigator } from '@/Navigators'
 import './Translations'
-import './Components/BLE/BLEreader'
 import BLEreader from './Components/BLE/BLEreader'
 
 const App = () => (

@@ -6,6 +6,7 @@ import {
   View,
   DeviceEventEmitter,
   PermissionsAndroid,
+
 } from 'react-native'
 
 import Beacons from 'react-native-beacons-manager'
@@ -45,7 +46,12 @@ export default class BLEreader extends Component {
   }
 
   componentDidMount() {
-    Beacons.detectIBeacons()
+    
+    if (Platform.OS === 'android') {
+      Beacons.detectIBeacons()
+    } else {
+      Beacons.requestWhenInUseAuthorization();
+    }
     //this.configurePushNotification();
     console.log('====================================');
     console.log("BLE componentDidMount");
@@ -94,6 +100,7 @@ export default class BLEreader extends Component {
   startDetection() {
     // BackgroundTimer.setInterval(() => {
       const { foundBeacon } = this.state
+      Beacons.requestWhenInUseAuthorization();
       console.log('====================================')
       console.log('BLEreader started')
       console.log('====================================')
@@ -167,16 +174,17 @@ export default class BLEreader extends Component {
   }
 
   startRanging() {
-    const { identifier, uuid } = this.state
+    const regionToRange = ({ identifier, uuid } = this.state)
+
 
     // Range beacons inside the region
-    Beacons.startRangingBeaconsInRegion(identifier, uuid)
+    Beacons.startRangingBeaconsInRegion(regionToRange)
       .then(() => console.log('Beacons ranging started succesfully'))
       .catch((error) =>
         console.log(`Beacons ranging not started, error: ${error}`),
       )
 
-    // Ranging:
+    Beacons.startUpdatingLocation();
     
     DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
       console.log('foundBeacon => ' + this.state.foundBeacon)
