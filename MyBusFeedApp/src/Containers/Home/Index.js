@@ -332,7 +332,7 @@ class HomeContainer extends Component {
                 if (Platform.OS !== 'android') {
 
                     PushNotificationIOS.presentLocalNotification({
-                        alertTitle: 'BusFeed',
+                        alertTitle: 'Bus stop detected!',
                         alertBody: 'You are near a bus stop 0' +
                             bustop +
                         ', check for your bus timing!',
@@ -351,7 +351,7 @@ class HomeContainer extends Component {
                     console.log('====================================');
                 } else {
                     PushNotification.localNotification({
-                        title: 'BusFeed',
+                        title: 'Bus stop detected!',
                         message:
                         'You are near a bus stop 0' +
                         bustop +
