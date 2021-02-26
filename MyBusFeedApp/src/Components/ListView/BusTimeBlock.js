@@ -252,11 +252,12 @@ export default class BusTimeBlock extends Component {
 
           // 3. Geo logic
           console.log("this.state.userProximity => " + this.state.userProximity + this.state.busNumber)
-          if (this.state.userProximity == false){
+          console.log("this.props.foundBeacon => " + this.props.foundBeacon)
+          if (this.state.userProximity == false || this.props.foundBeacon == false){
             // If user left the bus stop
             console.log("user left bus stop on bus " + this.state.busNumber)
             this.addToActualDemand(true)
-          } else if (this.state.userProximity == true){
+          } else if (this.state.userProximity == true || this.props.foundBeacon == true){
             if (this.state.nextBus1.load == "LSD"){
               // If user remains in the bus stop + bus crowded
               console.log("user cannot board bus "  + this.state.busNumber)
@@ -317,32 +318,12 @@ export default class BusTimeBlock extends Component {
     this.props.busTrackCountFunction()
   }
 
-  testInterval = () => {
-    BackgroundTimer.runBackgroundTimer(() => { 
-      //code that will be called every 3 seconds
-          console.log("testState => " + this.state.testState);
-          this.setState({
-              testState: !this.state.testState
-          })
-          
-          BackgroundGeolocation.getCurrentLocation(lastLocation => {
-            console.log(lastLocation)
-          }, (error) => {
-            setTimeout(() => {
-              Alert.alert('Error obtaining current location', JSON.stringify(error));
-            }, 100);
-          });
-      },
-    3000);
-  }
-
   // Reveal bus timing & make icon disssssapppppear
   componentHideAndShow = () => {
     console.log('====================================');
     console.log('componentHideAndShow');
     console.log('====================================');
 
-    // this.testInterval()
     this.busTrackCountFunction()
     console.log('#############################################');
     console.log("Total bus polling => " + this.props.busTrackCount);
@@ -389,9 +370,10 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     var url = ''
-    if (this.state.userProximity && this.state.expectedBusArrive == false) {
+    console.log("this.props.foundBeacon => " + this.props.foundBeacon)
+    if ((this.props.foundBeacon || this.state.userProximity) && this.state.expectedBusArrive == false) {
       var url = 'https://api.mybusfeed.com/demand/expected/add'
-      // To ensure expected is add only once
+      // To ensure expected count is added once only
       this.setState({
         expectedBusArrive: true
       })
