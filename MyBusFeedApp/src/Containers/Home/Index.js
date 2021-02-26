@@ -24,6 +24,11 @@ import BackgroundTimer from 'react-native-background-timer'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+
+
+const TIME_FORMAT = 'MM/DD/YYYY HH:mm:ss'
+
 class HomeContainer extends Component {
   constructor(props) {
     super(props)
@@ -38,12 +43,14 @@ class HomeContainer extends Component {
         userProximity: false,
         selected: 0,
         BLEState: true,
-        uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825',
+        uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
         identifier: 'iBeacon',
         major: 1,
         minor: 1,
         foundBeacon: false,
         bustop: 4121,
+        notificationPushed: false,
+        BLEstarted: false,
     }
   }
 
@@ -199,15 +206,22 @@ class HomeContainer extends Component {
     }
     startDetection() {
         // BackgroundTimer.setInterval(() => {
-        const { foundBeacon } = this.state
+        // const { foundBeacon } = this.state
         console.log('====================================')
         console.log('BLEreader started')
         console.log('====================================')
-        if (foundBeacon) {
-            this.startMonitoringBeacon()
-        } else {
-            this.startRanging()
+        if (!this.state.BLEstarted){
+            if (this.state.foundBeacon) {
+                this.startMonitoringBeacon()
+            } else {
+                this.startRanging()
+            }
+
+            this.setState({
+                BLEstarted: true
+            })
         }
+
         // return null
 
         console.log('====================================')
@@ -241,7 +255,7 @@ class HomeContainer extends Component {
 
     startMonitoringBeacon() {
         const regionToMonitor = ({ identifier, uuid, major, minor } = this.state)
-        this.doAction(identifier, uuid, minor, major, moment().format(TIME_FORMAT))
+        // this.doAction(identifier, uuid, minor, major, moment().format(TIME_FORMAT))
 
         Beacons.startMonitoringForRegion(regionToMonitor)
         .then(() => console.log('Beacons monitoring started succesfully'))
@@ -249,7 +263,11 @@ class HomeContainer extends Component {
             console.log(`Beacons monitoring not started, error: ${error}`),
         )
 
-        DeviceEventEmitter.addListener(
+        // DeviceEventEmitter.addListener('regionDidEnter', (regionToMonitor) => {
+        //     console.log('Entered new beacons region!', regionToMonitor) // Result of monitoring
+        // })
+
+        Beacons.BeaconsEventEmitter.addListener(
         'regionDidExit',
         ({ identifier, uuid, minor, major }) => {
             console.log('Test')
@@ -267,7 +285,15 @@ class HomeContainer extends Component {
             major,
             time,
             })
-            this.setState({ foundBeacon: false })
+
+            console.log('====================================');
+            console.log("notificationPushed - AFter => " + this.state.notificationPushed);
+            console.log('====================================');
+            this.setState({ 
+                foundBeacon: false,
+                notificationPushed: false,
+            })
+            this.startRanging();
         },
         )
     }
@@ -275,6 +301,9 @@ class HomeContainer extends Component {
     startRanging() {
         const regionToRange = ({ identifier, uuid } = this.state)
 
+        if (Platform.OS !== 'android') {
+            Beacons.requestWhenInUseAuthorization()
+        }
         // Range beacons inside the region
         Beacons.startRangingBeaconsInRegion(regionToRange)
         .then(() => console.log('Beacons ranging started succesfully'))
@@ -286,22 +315,43 @@ class HomeContainer extends Component {
             Beacons.startUpdatingLocation()
         }
 
-        DeviceEventEmitter.addListener('beaconsDidRange', (data) => {
+        Beacons.BeaconsEventEmitter.addListener('beaconsDidRange', (data) => {
         console.log('foundBeacon => ' + this.state.foundBeacon)
         console.log('beaconsDidRange data: ', data)
-        if (data.beacons.length > 0) {
-            const { foundBeacon } = this.state
+        // String(this.state.uuid) == String(data.beacons[0].uuid)
+        if (data.beacons.length > 0 ) {
+            // const { foundBeacon } = this.state
+            console.log("HELLLLLOO I AM INNNNNNNNNNNN")
             const { bustop } = this.state
-            if (!foundBeacon) {
-            PushNotification.localNotification({
-                title: 'BusFeed',
-                message:
-                'You are near a bus stop ' +
-                bustop +
-                ', check for your bus timing!',
-            })
+            if (!this.state.foundBeacon && !this.state.notificationPushed ) {
+                if (Platform.OS !== 'android') {
+                    PushNotificationIOS.addNotificationRequest({
+                        id: 'text',
+                        title: 'BusFeed',
+                        body:
+                        'You are near a bus stop 0' +
+                        bustop +
+                        ', check for your bus timing!',
+                    })
+                } else {
+                    PushNotification.localNotification({
+                        title: 'BusFeed',
+                        message:
+                        'You are near a bus stop 0' +
+                        bustop +
+                        ', check for your bus timing!',
+                    })
+                }
+
+           
+                console.log('====================================');
+                console.log("notificationPushed => " + this.state.notificationPushed);
+                console.log('====================================');
+                this.setState({
+                    notificationPushed: true
+                })
             }
-            Beacons.stopRangingBeaconsInRegion(identifier, uuid)
+            Beacons.stopRangingBeaconsInRegion(regionToRange)
             .then(() => console.log('Beacons ranging stopped succesfully'))
             .catch((error) =>
                 console.log(`Beacons ranging not stopped, error: ${error}`),
@@ -309,10 +359,11 @@ class HomeContainer extends Component {
             var beacon = this.nearestBeacon(data.beacons)
             console.log('Selected beacon: ', beacon)
             this.setState({
-            major: beacon.major,
-            minor: beacon.minor,
-            foundBeacon: true,
+                major: beacon.major,
+                minor: beacon.minor,
+                foundBeacon: true,
             })
+            this.startMonitoringBeacon()
         }
         // console.log('Fk off beacon')
         // Beacons.stopRangingBeaconsInRegion(identifier, uuid)
@@ -324,11 +375,11 @@ class HomeContainer extends Component {
         })
     }
 
-    doAction(identifier, uuid, minor, major, time) {
-        console.log('GUAN YIN MA BOPI')
-        console.log({ identifier, uuid, minor, major, time })
-        console.log('Pls WORK')
-    }
+    // doAction(identifier, uuid, minor, major, time) {
+    //     console.log('GUAN YIN MA BOPI')
+    //     console.log({ identifier, uuid, minor, major, time })
+    //     console.log('Pls WORK')
+    // }
 
     nearestBeacon(beacons) {
         console.log('beacons', beacons)
@@ -364,10 +415,10 @@ class HomeContainer extends Component {
         )
 
         // remove ranging event we registered at componentDidMount
-        DeviceEventEmitter.removeListener('beaconsDidRange')
+        Beacons.BeaconsEventEmitter.removeListener('beaconsDidRange')
         // remove beacons events we registered at componentDidMount
-        DeviceEventEmitter.removeListener('regionDidEnter')
-        DeviceEventEmitter.removeListener('regionDidExit')
+        Beacons.BeaconsEventEmitter.removeListener('regionDidEnter')
+        Beacons.BeaconsEventEmitter.removeListener('regionDidExit')
 
         console.log('UNMOUNT  END XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
     }
