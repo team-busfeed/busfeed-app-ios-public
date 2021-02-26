@@ -66,6 +66,9 @@ class HomeContainer extends Component {
         })
     }
 
+
+    
+
     getGeoLocation() {
         Geolocation.getCurrentPosition(
         (info) => {
@@ -197,7 +200,7 @@ class HomeContainer extends Component {
         } else {
         Beacons.requestWhenInUseAuthorization()
         }
-        //this.configurePushNotification();
+        this.configurePushNotification();
         console.log('====================================')
         console.log('BLE componentDidMount')
         console.log('====================================')
@@ -300,6 +303,7 @@ class HomeContainer extends Component {
         )
     }
 
+
     startRanging() {
         const regionToRange = ({ identifier, uuid } = this.state)
 
@@ -323,18 +327,28 @@ class HomeContainer extends Component {
         // String(this.state.uuid) == String(data.beacons[0].uuid)
         if (data.beacons.length > 0 ) {
             // const { foundBeacon } = this.state
-            console.log("HELLLLLOO I AM INNNNNNNNNNNN")
             const { bustop } = this.state
             if (!this.state.foundBeacon && !this.state.notificationPushed ) {
                 if (Platform.OS !== 'android') {
-                    PushNotificationIOS.addNotificationRequest({
-                        id: 'text',
-                        title: 'BusFeed',
-                        body:
-                        'You are near a bus stop 0' +
-                        bustop +
+
+                    PushNotificationIOS.presentLocalNotification({
+                        alertTitle: 'BusFeed',
+                        alertBody: 'You are near a bus stop 0' +
+                            bustop +
                         ', check for your bus timing!',
-                    })
+                        applicationIconBadgeNumber: 1,
+                    });
+                    // PushNotificationIOS.addNotificationRequest({
+                    //     id: 'text',
+                    //     title: 'BusFeed',
+                    //     body:
+                    //     'You are near a bus stop 0' +
+                    //     bustop +
+                    //     ', check for your bus timing!',
+                    // })
+                    console.log('====================================');
+                    console.log("Pushed to IOS")
+                    console.log('====================================');
                 } else {
                     PushNotification.localNotification({
                         title: 'BusFeed',
@@ -367,21 +381,9 @@ class HomeContainer extends Component {
             })
             this.startMonitoringBeacon()
         }
-        // console.log('Fk off beacon')
-        // Beacons.stopRangingBeaconsInRegion(identifier, uuid)
-        // .then(() => console.log('Beacons ranging stopped succesfully'))
-        // .catch((error) =>
-        //     console.log(`Beacons ranging not stopped, error: ${error}`),
-        // )
-        // DeviceEventEmitter.removeListener('beaconsDidRange')
         })
     }
 
-    // doAction(identifier, uuid, minor, major, time) {
-    //     console.log('GUAN YIN MA BOPI')
-    //     console.log({ identifier, uuid, minor, major, time })
-    //     console.log('Pls WORK')
-    // }
 
     nearestBeacon(beacons) {
         console.log('beacons', beacons)
