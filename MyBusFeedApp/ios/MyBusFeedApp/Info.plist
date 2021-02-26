@@ -81,12 +81,12 @@
 		<string>location</string>
 	</array>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Driver app can share your location with parents only when you are on a journy.</string>
+	<string>Your location will be used to fetch nearby bus stops.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Driver app can share your location with parents only when you are on a journy.</string>
+	<string>Your location will be used to fetch nearby bus stops.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>App easily can locate your position on map once you allow this.</string>
+	<string>Your location will be used to fetch nearby bus stops.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Araksha Driver uses Motion for location optimizations.</string>
+	<string>Your location will be used to fetch nearby bus stops.</string>
 </dict>
 </plist>
