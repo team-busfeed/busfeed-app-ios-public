@@ -1239,7 +1239,7 @@
   "resolved" "https://registry.npmjs.org/@react-native-community/masked-view/-/masked-view-0.1.10.tgz"
   "version" "0.1.10"
 
-"@react-native-community/push-notification-ios@^1.4.0":
+"@react-native-community/push-notification-ios@^1.2.0", "@react-native-community/push-notification-ios@^1.4.0":
   "integrity" "sha512-vxvkeampafjmtDoQBN8Q4azP21l6cMX93+OQZemyIWZmG++OjCVDQVitobf/kWLm5zyGwdylejbpMGo75qo7rA=="
   "resolved" "https://registry.npmjs.org/@react-native-community/push-notification-ios/-/push-notification-ios-1.8.0.tgz"
   "version" "1.8.0"
@@ -4744,7 +4744,7 @@
     "import-local" "^3.0.2"
     "jest-cli" "^26.6.3"
 
-"jetifier@^1.6.2":
+"jetifier@^1.6.2", "jetifier@^1.6.6":
   "integrity" "sha512-JNAkmPeB/GS2tCRqUzRPsTOHpGDah7xP18vGJfIjZC+W2sxEHbxgJxetIjIqhjQ3yYbYNEELkM/spKLtwoOSUQ=="
   "resolved" "https://registry.npmjs.org/jetifier/-/jetifier-1.6.6.tgz"
   "version" "1.6.6"
