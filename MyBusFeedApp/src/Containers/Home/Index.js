@@ -62,7 +62,7 @@ class HomeContainer extends Component {
                 sound: true,
             },
             popInitialNotification: true,
-            requestPermissions: true,
+            requestPermissions: Platform.OS === 'ios'
         })
     }
 
