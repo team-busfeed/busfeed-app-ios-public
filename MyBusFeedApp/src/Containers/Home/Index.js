@@ -176,6 +176,8 @@ class HomeContainer extends Component {
 
         var uniqueId = DeviceInfo.getUniqueId()
         console.log('uniqueId =>' + uniqueId)
+        console.log(DeviceInfo.getSystemVersion()
+        )
         this.setState({
         appID: uniqueId,
         })
@@ -488,6 +490,7 @@ class HomeContainer extends Component {
             reloadMaps={this.reloadMaps}
             updateMaps={this.reloadMaps}
             triggerCentreOnRefresh={this.centreOnRefresh}
+            foundBeacon = {this.state.foundBeacon}
             />
         </View>
         )
