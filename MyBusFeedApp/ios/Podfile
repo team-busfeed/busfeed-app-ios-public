@@ -19,6 +19,8 @@ target 'MyBusFeedApp' do
 
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
 
+  pod 'ReactNativeBeaconsManager', :path => '../node_modules/react-native-beacons-manager'
+
   target 'MyBusFeedAppTests' do
     inherit! :complete
     # Pods for testing

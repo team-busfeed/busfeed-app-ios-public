@@ -71,6 +71,10 @@ export default class Header extends Component {
             this.resetSearchState()
         }).catch((error) => {
             console.log(error)
+            this.props.states.busStops = []
+            this.props.triggerIndexOnSearch()
+            this.props.triggerMapsOnSearch()
+            this.resetSearchState()
         })
     }
 

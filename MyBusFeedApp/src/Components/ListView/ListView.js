@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, View, Alert } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import externalStyle from '../../../style/externalStyle'
 import tailwind from 'tailwind-rn'
@@ -111,6 +111,14 @@ class ListView extends Component {
         })
         .catch((error) => {
             console.log('error:', error)
+            Alert.alert(
+                'No internet connection',
+                'Please check if you\'re connected to the internet.',
+                [
+                    { text: 'OK'}
+                ],
+                { cancelable: false }
+            )
         })
     }
 
@@ -187,7 +195,7 @@ class ListView extends Component {
                 onRefresh={() => this.getGeoLocation()}
                 refreshing={this.state.isLoading}
                 renderItem={({ item }) => (
-                    <Accordion title={item} data={this.props.states} busTrackCountFunction={this.busTrackCountFunction} busTrackCount={this.state.busTrackCount}/>
+                    <Accordion title={item} data={this.props.states} busTrackCountFunction={this.busTrackCountFunction} busTrackCount={this.state.busTrackCount} foundBeacon={this.props.foundBeacon}/>
                 )}
                 keyExtractor={(item) => item.busstop_number}
                 />

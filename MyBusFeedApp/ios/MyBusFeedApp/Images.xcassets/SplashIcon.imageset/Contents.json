@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "mybusfeed-ios.png",
+      "filename" : "mybusfeed-ios-60.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "mybusfeed-ios@2x.png",
+      "filename" : "mybusfeed-ios-120.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "mybusfeed-ios@3x.png",
+      "filename" : "mybusfeed-ios-182.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
