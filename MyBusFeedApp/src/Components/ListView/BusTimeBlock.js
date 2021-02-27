@@ -98,6 +98,9 @@ export default class BusTimeBlock extends Component {
       notificationsEnabled: false
     });
 
+
+    
+
     BackgroundGeolocation.checkStatus(status => {
       // console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
       // console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
@@ -253,11 +256,11 @@ export default class BusTimeBlock extends Component {
           // 3. Geo logic
           console.log("this.state.userProximity => " + this.state.userProximity + this.state.busNumber)
           console.log("this.props.foundBeacon => " + this.props.foundBeacon)
-          if (this.state.userProximity == false || this.props.foundBeacon == false){
+          if (this.state.userProximity == false || (this.props.foundBeacon == false && this.props.beaconStart)){
             // If user left the bus stop
             console.log("user left bus stop on bus " + this.state.busNumber)
             this.addToActualDemand(true)
-          } else if (this.state.userProximity == true || this.props.foundBeacon == true){
+          } else if (this.state.userProximity == true || (this.props.foundBeacon == true && this.props.beaconStart)){
             if (this.state.nextBus1.load == "LSD"){
               // If user remains in the bus stop + bus crowded
               console.log("user cannot board bus "  + this.state.busNumber)
@@ -290,7 +293,7 @@ export default class BusTimeBlock extends Component {
     console.log('####################################');
 
     const moment = require("moment")
-    console.log("moment => " + moment().utcOffset("+08:00").format("dddd, MMMM Do YYYY, h:mm:ss a"))
+    console.log("moment => " + moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss"))
 
     axios
     .post("https://api.mybusfeed.com/demand/actual/add", {
@@ -299,7 +302,7 @@ export default class BusTimeBlock extends Component {
       bus_stop_no: this.state.busStopNumber,
       bus_no: this.state.busNumber,
       has_successfully_board: userBoardStatus,
-      created_time: moment().utcOffset("+08:00").format()
+      created_time: moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss")
     })
     .then((response) => {
       console.log(response.data)

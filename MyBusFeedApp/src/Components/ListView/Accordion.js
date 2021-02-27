@@ -198,7 +198,7 @@ export default class Accordion extends Component {
         <BusTimeBlock ref={this.state.newServices[item]} 
             bus_number={item} busstop_number={this.props.title.busstop_number} 
             data={this.state.data} busTrackCountFunction={this.busTrackCountFunction} 
-            busTrackCount={this.props.busTrackCount} foundBeacon={this.props.foundBeacon}/>
+            busTrackCount={this.props.busTrackCount} foundBeacon={this.props.foundBeacon} beaconStart={this.props.beaconStart}/>
             )}
             keyExtractor={(item) => item}
         />

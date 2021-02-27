@@ -26,6 +26,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
+import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+
 
 const TIME_FORMAT = 'MM/DD/YYYY HH:mm:ss'
 
@@ -43,7 +45,7 @@ class HomeContainer extends Component {
         userProximity: false,
         selected: 0,
         BLEState: true,
-        uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
+        uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825',
         identifier: 'iBeacon',
         major: 1,
         minor: 1,
@@ -51,6 +53,7 @@ class HomeContainer extends Component {
         bustop: 4121,
         notificationPushed: false,
         BLEstarted: false,
+        beaconStart: false,
     }
   }
 
@@ -205,7 +208,18 @@ class HomeContainer extends Component {
         console.log('BLE componentDidMount')
         console.log('====================================')
 
-        
+        BackgroundGeolocation.start();
+
+        BackgroundGeolocation.on('background', () => {
+            console.log('[INFO] App is in background');
+        });
+
+        BackgroundGeolocation.on('start', () => {
+        // service started successfully
+        // you should adjust your app UI for example change switch element to indicate
+        // that service is running
+            console.log('[DEBUG] BackgroundGeolocation has been started');
+        });
         this.startDetection()
 
     }
@@ -215,6 +229,9 @@ class HomeContainer extends Component {
         console.log('====================================')
         console.log('BLEreader started')
         console.log('====================================')
+
+
+
         if (!this.state.BLEstarted){
             if (this.state.foundBeacon) {
                 this.startMonitoringBeacon()
@@ -325,9 +342,14 @@ class HomeContainer extends Component {
         console.log('foundBeacon => ' + this.state.foundBeacon)
         console.log('beaconsDidRange data: ', data)
         // String(this.state.uuid) == String(data.beacons[0].uuid)
-        if (data.beacons.length > 0 ) {
+        console.log(this.state.uuid)
+        if (data.beacons.length > 0 && this.state.uuid === data.beacons[0].uuid){
             // const { foundBeacon } = this.state
+            console.log(data.beacons[0].uuid)
             const { bustop } = this.state
+            this.setState({
+                beaconStart: true
+            })
             if (!this.state.foundBeacon && !this.state.notificationPushed ) {
                 if (Platform.OS !== 'android') {
 
@@ -338,14 +360,6 @@ class HomeContainer extends Component {
                         ', check for your bus timing!',
                         applicationIconBadgeNumber: 1,
                     });
-                    // PushNotificationIOS.addNotificationRequest({
-                    //     id: 'text',
-                    //     title: 'BusFeed',
-                    //     body:
-                    //     'You are near a bus stop 0' +
-                    //     bustop +
-                    //     ', check for your bus timing!',
-                    // })
                     console.log('====================================');
                     console.log("Pushed to IOS")
                     console.log('====================================');
@@ -374,6 +388,7 @@ class HomeContainer extends Component {
             )
             var beacon = this.nearestBeacon(data.beacons)
             console.log('Selected beacon: ', beacon)
+            console.log(beacon.major)
             this.setState({
                 major: beacon.major,
                 minor: beacon.minor,
@@ -493,6 +508,7 @@ class HomeContainer extends Component {
             updateMaps={this.reloadMaps}
             triggerCentreOnRefresh={this.centreOnRefresh}
             foundBeacon = {this.state.foundBeacon}
+            beaconStart = {this.state.beaconStart}
             />
         </View>
         )

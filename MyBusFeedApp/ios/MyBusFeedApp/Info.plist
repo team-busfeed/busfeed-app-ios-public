@@ -51,8 +51,6 @@
 	<string>Your location will be used to fetch nearby bus stops.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location will be used to fetch nearby bus stops.</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Your location will be used to fetch nearby bus stops.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
