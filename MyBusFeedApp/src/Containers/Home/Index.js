@@ -358,7 +358,6 @@ class HomeContainer extends Component {
                         alertBody: 'You are near a bus stop 0' +
                             bustop +
                         ', check for your bus timing!',
-                        applicationIconBadgeNumber: 1,
                     });
                     console.log('====================================');
                     console.log("Pushed to IOS")
