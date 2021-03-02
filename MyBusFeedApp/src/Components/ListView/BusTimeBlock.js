@@ -284,7 +284,7 @@ export default class BusTimeBlock extends Component {
       },error => console.log('Error', JSON.stringify(error)),
         {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
       )
-    }, 120000) //120000 -> 2 min
+    }, 180000) //120000 -> 2 min
   }
 
   addToActualDemand = (userBoardStatus) => {
