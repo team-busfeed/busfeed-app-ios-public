@@ -52,7 +52,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location will be used to fetch nearby bus stops.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>This app will require to understand your motion relative to the bus stop you've boarded the bus from.</string>
+	<string>Motion activity detection increases battery efficiency by intelligently toggling location-tracking" off when your device is detected to be stationary</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
