@@ -102,6 +102,9 @@ class Map extends Component {
                                         {"Stop Number: " + busStop.busstop_number}
                                     </Text>
                                 </View>
+                                <View style={tailwind("w-10")}>
+                                    <Icon name="chevron-right" size={30} style={[tailwind("pl-5 flex text-gray-500"), styles.image]} />
+                                </View>
                             </TouchableOpacity>
                         </Callout>
                     </Marker>
@@ -177,6 +180,9 @@ class Map extends Component {
                                             <Text style={styles.description}>
                                                 {"Stop Number: "}{busStop.busstop_number.length == 4 ? "0" + busStop.busstop_number : busStop.busstop_number}
                                             </Text>
+                                        </View>
+                                        <View style={tailwind("w-10")}>
+                                            <Icon name="chevron-right" size={20} style={[tailwind("pl-5 flex text-gray-500"), styles.image]} />
                                         </View>
                                     </View>
                                 </Callout>
