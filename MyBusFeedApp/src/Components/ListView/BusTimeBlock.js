@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import tailwind from 'tailwind-rn'
 import BackgroundTimer from 'react-native-background-timer';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import { TELE_TOKEN } from '@env'
+
 
 
 export default class BusTimeBlock extends Component {
@@ -321,6 +323,18 @@ export default class BusTimeBlock extends Component {
     this.props.busTrackCountFunction()
   }
 
+  getTeleBot = () => {
+    axios
+    .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
+      chat_id: "-538084552",
+      text: `User <${this.state.data.appID}> queried for <${this.state.busNumber}> at <${this.state.busStopNumber}>`,
+    })
+    .then((response) => {
+      console.log("Telebot msg sent");
+      console.log(response)
+    })
+  }
+
   // Reveal bus timing & make icon disssssapppppear
   componentHideAndShow = () => {
     console.log('====================================');
@@ -328,6 +342,7 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     this.busTrackCountFunction()
+    this.getTeleBot()
     console.log('#############################################');
     console.log("Total bus polling => " + this.props.busTrackCount);
     console.log('#############################################');
