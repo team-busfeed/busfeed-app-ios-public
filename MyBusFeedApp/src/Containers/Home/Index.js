@@ -343,7 +343,7 @@ class HomeContainer extends Component {
         console.log('beaconsDidRange data: ', data)
         // String(this.state.uuid) == String(data.beacons[0].uuid)
         console.log(this.state.uuid)
-        if (data.beacons.length > 0 && this.state.uuid === data.beacons[0].uuid){
+        if (data.beacons.length > 0 && this.state.uuid === data.beacons[0].uuid.toLowerCase()){
             // const { foundBeacon } = this.state
             console.log(data.beacons[0].uuid)
             const { bustop } = this.state
