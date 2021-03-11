@@ -1,14 +1,17 @@
 import React, { useState, Component } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  View,
-  ActivityIndicator,
-  Text,
-  TextInput,
-  Button,
-  Alert,
-  DeviceEventEmitter,
-  PermissionsAndroid,
+    View,
+    ActivityIndicator,
+    Text,
+    TextInput,
+    Button,
+    Alert,
+    DeviceEventEmitter,
+    PermissionsAndroid,
+    Modal,
+    StyleSheet,
+    Pressable,
 } from 'react-native'
 import { Controls } from '@/Components/Controls'
 import { ListView } from '@/Components/ListView'
@@ -54,6 +57,9 @@ class HomeContainer extends Component {
         notificationPushed: false,
         BLEstarted: false,
         beaconStart: false,
+
+        tutorialState: 0,
+        modalVisible: false,
     }
   }
 
@@ -69,9 +75,7 @@ class HomeContainer extends Component {
         })
     }
 
-
     
-
     getGeoLocation() {
         Geolocation.getCurrentPosition(
         (info) => {
@@ -96,11 +100,11 @@ class HomeContainer extends Component {
             )
         },
         (error) => console.log('position error!!!', error),
-        {
-            enableHighAccuracy: Platform.OS !== 'android',
-            timeout: 20000,
-            maximumAge: 0,
-        },
+            {
+                enableHighAccuracy: Platform.OS !== 'android',
+                timeout: 20000,
+                maximumAge: 0,
+            },
         )
     }
 
@@ -190,18 +194,26 @@ class HomeContainer extends Component {
 
         const value = await AsyncStorage.getItem('@favouriteBusStops')
         if (value === null) {
-        // value previously stored
-        initialSetup = JSON.stringify({ favourites: [] })
-        await AsyncStorage.setItem('@favouriteBusStops', initialSetup)
-        console.log(value)
+            // value previously stored
+            initialSetup = JSON.stringify({ favourites: [] })
+            await AsyncStorage.setItem('@favouriteBusStops', initialSetup)
+            console.log(value)
         } else {
-        await AsyncStorage.setItem('@favouriteBusStops', value)
+            await AsyncStorage.setItem('@favouriteBusStops', value)
+        }
+
+        const didNotLaunchBefore = await AsyncStorage.getItem('@firstLaunch')
+        if (didNotLaunchBefore === null) {
+            // value previously stored
+            await AsyncStorage.setItem('@firstLaunch', "true")
+            console.log(didNotLaunchBefore)
+            this.setState({modalVisible: true})
         }
 
         if (Platform.OS === 'android') {
-        Beacons.detectIBeacons()
+            Beacons.detectIBeacons()
         } else {
-        Beacons.requestWhenInUseAuthorization()
+            Beacons.requestWhenInUseAuthorization()
         }
         this.configurePushNotification();
         console.log('====================================')
@@ -487,10 +499,68 @@ class HomeContainer extends Component {
         this.listViewRef.current.getGeoLocation()
     }
 
+    setFirstLaunchFalse = async () => {
+        await AsyncStorage.setItem('@firstLaunch', "false")
+    }
+
+    setModalVisible = () => {
+        this.setState({modalVisible: true})
+    }
+
     render() {
+
+        // set tutorial title here
+        titles = ["About MyBusFeed 😍"]
+
+        // set tutorial content here
+        content = ["MyBusFeed is an application that tells you when your next bus will arrive at any bus stop in Singapore using the data provided from Land Transport Authority (LTA)’s Datamall*.\n\n\
+The application is developed with your experience in mind. Additionally, we aim to transform your inputs into crowdsourced analytics in a non-intrusive manner. The additional steps that require you to click on multiple buses to check for bus arrival timings is a form of data crowdsourcing to measure the demand for each bus.\n\n\
+Your inputs will provide valuable insights for LTA to better plan bus dispatch frequencies to serve you better.\n\nPlease be aware that this application requires an internet connection, with bluetooth enabled, and location services set to “always allowed” for full functionality."]
+
+        aboutUs = <Modal
+        animationType="slide"
+        transparent={true}
+        visible={this.state.modalVisible}
+        onRequestClose={() => {
+            Alert.alert("Modal has been closed.")
+            this.setState({modalVisible: false})
+            this.setFirstLaunchFalse()
+        }}
+        >
+            <View style={tailwind("my-10"), styles.centeredView}>
+                <View style={styles.modalView}>
+                    <Text style={tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
+                    <Text style={tailwind("text-base text-gray-600 my-5")}>{content[this.state.tutorialState]}</Text>
+                    <Text style={tailwind("text-xs text-gray-600 my-5 italic")}>*LTA occassionally does maintenance which might return no results to bus timings.</Text>
+                    <View style={tailwind("flex")}>
+                        <Pressable
+                            style={tailwind("bg-blue-600 py-2 px-5 rounded-lg my-2")}
+                            onPress={() => {
+                                tutorialNum = this.state.tutorialState == titles.length - 1 ? this.state.tutorialState : this.state.tutorialState + 1
+                                this.setState({tutorialState: tutorialNum})
+
+                                if (this.state.tutorialState == titles.length - 1) {
+                                    this.setState({modalVisible: false})
+                                }
+                            }}
+                        >
+                            <Text style={tailwind("rounded-xl text-white text-center px-5 py-2")}>{this.state.tutorialState == titles.length - 1 ? "Done" : "Next"}</Text>
+                        </Pressable>
+                        <Pressable
+                            style={this.state.tutorialState == titles.length - 1 ? tailwind("hidden") : tailwind("bg-gray-900 py-2 px-5 rounded-lg")}
+                            onPress={() => this.setState({modalVisible: false})}
+                        >
+                            <Text style={tailwind("rounded-xl text-white text-center")}>Skip Overview</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+        
         return (
         <View style={tailwind('bg-white h-full')}>
             {/* {this.state.BLEState && <BLEreader />} */}
+            {aboutUs}
             <Controls
             states={this.state}
             ref={this.controlsRef}
@@ -498,6 +568,7 @@ class HomeContainer extends Component {
             triggerFavouritesList={this.didTapOnFavourites}
             triggerIndexOnSearch={this.didPerformSearch}
             triggerReloadLocation={this.triggerReloadLocation}
+            setModalVisible={this.setModalVisible}
             />
             <ListView
             states={this.state}
@@ -512,6 +583,29 @@ class HomeContainer extends Component {
         </View>
         )
     }
-    }
+}
+
+const styles = StyleSheet.create({
+    centeredView: {
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: "30%",
+        marginBottom: "20%",
+    },
+    modalView: {
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: -5
+        },
+        shadowOpacity: 0.35,
+        shadowRadius: 4,
+        elevation: 5
+    },
+})
 
 export default HomeContainer
