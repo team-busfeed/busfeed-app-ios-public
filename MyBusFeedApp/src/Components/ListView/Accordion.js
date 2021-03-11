@@ -230,7 +230,7 @@ export default class Accordion extends Component {
       console.log('====================================');
       console.log("actualBusStackFunction for => " + bus);
       console.log('====================================');
-      if (!actualBusStack.includes(bus)){
+      if (!this.state.actualBusStack.includes(bus)){
         this.state.actualBusStack.push(bus)
         console.log(this.state.actualBusStack);
 

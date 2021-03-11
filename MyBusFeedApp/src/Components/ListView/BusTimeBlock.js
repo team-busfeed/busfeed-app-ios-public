@@ -333,7 +333,7 @@ export default class BusTimeBlock extends Component {
     })
     .then((response) => {
       console.log("Telebot msg sent");
-      console.log(response)
+      // console.log(response)
     })
   }
 
