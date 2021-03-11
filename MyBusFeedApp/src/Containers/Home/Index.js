@@ -527,10 +527,10 @@ Your inputs will provide valuable insights for LTA to better plan bus dispatch f
             this.setFirstLaunchFalse()
         }}
         >
-            <View style={styles.centeredView}>
-                <View style={tailwind("h-full"), styles.modalView}>
+            <View style={tailwind("my-10"), styles.centeredView}>
+                <View style={styles.modalView}>
                     <Text style={tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
-                    <Text style={tailwind("text-base text-gray-600 my-5 text-justify")}>{content[this.state.tutorialState]}</Text>
+                    <Text style={tailwind("text-base text-gray-600 my-5")}>{content[this.state.tutorialState]}</Text>
                     <Text style={tailwind("text-xs text-gray-600 my-5 italic")}>*LTA occassionally does maintenance which might return no results to bus timings.</Text>
                     <View style={tailwind("flex")}>
                         <Pressable
@@ -544,7 +544,7 @@ Your inputs will provide valuable insights for LTA to better plan bus dispatch f
                                 }
                             }}
                         >
-                            <Text style={tailwind("rounded-xl text-white text-center")}>{this.state.tutorialState == titles.length - 1 ? "Done" : "Next"}</Text>
+                            <Text style={tailwind("rounded-xl text-white text-center px-5 py-2")}>{this.state.tutorialState == titles.length - 1 ? "Done" : "Next"}</Text>
                         </Pressable>
                         <Pressable
                             style={this.state.tutorialState == titles.length - 1 ? tailwind("hidden") : tailwind("bg-gray-900 py-2 px-5 rounded-lg")}
@@ -589,7 +589,8 @@ const styles = StyleSheet.create({
     centeredView: {
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 30
+        marginTop: "30%",
+        marginBottom: "20%",
     },
     modalView: {
         backgroundColor: "white",
@@ -598,8 +599,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
-            width: 10,
-            height: 10
+            width: 0,
+            height: -5
         },
         shadowOpacity: 0.35,
         shadowRadius: 4,

@@ -97,7 +97,7 @@ export default class Header extends Component {
                         <Icon name="location-arrow" size={20} style={tailwind('text-blue-500')}/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => this.props.setModalVisible()}>
-                        <Icon name="ellipsis-v" size={20} color="grey"/>
+                        <Icon style={tailwind("pl-2")} name="ellipsis-v" size={20} color="grey"/>
                     </TouchableOpacity>
                 </View>
             </View>
