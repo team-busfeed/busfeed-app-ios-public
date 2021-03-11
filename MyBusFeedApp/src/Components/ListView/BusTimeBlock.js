@@ -260,8 +260,10 @@ export default class BusTimeBlock extends Component {
           console.log("this.props.foundBeacon => " + this.props.foundBeacon)
           if (this.state.userProximity == false || (this.props.foundBeacon == false && this.props.beaconStart)){
             // If user left the bus stop
-            console.log("user left bus stop on bus " + this.state.busNumber)
-            this.addToActualDemand(true)
+            // console.log("user left bus stop on bus " + this.state.busNumber)
+            // this.addToActualDemand(true)
+            this.props.actualBusStackFunction([this.state.busNumber, this.state.nextBus1.load])
+
           } else if (this.state.userProximity == true || (this.props.foundBeacon == true && this.props.beaconStart)){
             if (this.state.nextBus1.load == "LSD"){
               // If user remains in the bus stop + bus crowded

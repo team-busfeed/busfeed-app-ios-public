@@ -18,6 +18,8 @@ import { FlatList } from 'react-native-gesture-handler'
 import BusTimeBlock from './BusTimeBlock'
 import tailwind from 'tailwind-rn'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import BackgroundTimer from 'react-native-background-timer';
+import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 
 export default class Accordion extends Component {
   constructor(props) {
@@ -30,6 +32,13 @@ export default class Accordion extends Component {
       latitude: props.data.latitude,
       longitude: props.data.longitude,
       favIcon: "favorite-border",
+      actualBusStack: [],
+      actualBusStackTimer: false,
+      busCrowdStatus: {
+        "SEA": 1,
+        "SDA": 2,
+        "LSD": 3
+      }
     }
 
     if (Platform.OS === 'android') {
@@ -191,6 +200,70 @@ export default class Accordion extends Component {
         // }
     }
 
+    addToActualDemand = (busNumber) => {
+      console.log('####################################');
+      console.log('addToActualDemand START => ' + busNumber);
+      console.log('####################################');
+  
+      const moment = require("moment")
+      console.log("moment => " + moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss"))
+  
+      axios
+      .post("https://api.mybusfeed.com/demand/actual/add", {
+        
+        app_id: this.state.data.appID,
+        bus_stop_no: this.props.title.busstop_number,
+        bus_no: busNumber,
+        has_successfully_board: true,
+        created_time: moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss")
+      })
+      .then((response) => {
+        console.log(response.data)
+  
+        console.log('####################################');
+        console.log('addToActualDemand END');
+        console.log('####################################');
+      })
+    }
+
+    actualBusStackFunction = (bus) => {
+      console.log('====================================');
+      console.log("actualBusStackFunction for => " + bus);
+      console.log('====================================');
+      if (!actualBusStack.includes(bus)){
+        this.state.actualBusStack.push(bus)
+        console.log(this.state.actualBusStack);
+
+        // Start 30s timer
+        if (!this.state.actualBusStackTimer){
+          this.setState({
+            actualBusStackTimer: true
+          })
+
+          console.log('====================================');
+          console.log("actualBusStackFunction timer start");
+
+          BackgroundTimer.setTimeout(() => {
+            var actualBusStack = this.state.actualBusStack
+            var leastCrowdBus = actualBusStack[0][0]
+            var leastCrowdBusStatus = actualBusStack[0][1]
+            for (i = 1; i < actualBusStack.length; i++){
+              if ( this.state.busCrowdStatus[actualBusStack[i][1]] < leastCrowdBusStatus ){
+                leastCrowdBus = actualBusStack[i][0]
+                leastCrowdBusStatus = this.state.busCrowdStatus[actualBusStack[i][1]]
+              }
+            }
+
+            console.log("leastCrowdBus => " + leastCrowdBus);
+            console.log('====================================');
+
+            this.state.actualBusStack = []
+            this.addToActualDemand(leastCrowdBus)
+          }, 30000); //300000 -> 5 minutes
+        }
+      }
+    }
+
   render() {
         var flatList = <FlatList
         data={this.state.busStops.services}
@@ -198,7 +271,7 @@ export default class Accordion extends Component {
         <BusTimeBlock ref={this.state.newServices[item]} 
             bus_number={item} busstop_number={this.props.title.busstop_number} 
             data={this.state.data} busTrackCountFunction={this.busTrackCountFunction} 
-            busTrackCount={this.props.busTrackCount} foundBeacon={this.props.foundBeacon} beaconStart={this.props.beaconStart}/>
+            busTrackCount={this.props.busTrackCount} foundBeacon={this.props.foundBeacon} beaconStart={this.props.beaconStart} actualBusStackFunction={this.actualBusStackFunction} />
             )}
             keyExtractor={(item) => item}
         />
