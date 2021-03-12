@@ -20,9 +20,12 @@ export default class Header extends Component {
         super(props)
         this.state = {
             isSearchInputHidden: true,
-            searchText: ""
+            searchText: "",
+            setKeyboardOnFocus: false
         }
     }
+
+    searchInputField = React.createRef()
 
     resetSearchState() {
         if (!this.state.isSearchInputHidden) {
@@ -40,6 +43,10 @@ export default class Header extends Component {
         this.setState((previousState) => ({
             isSearchInputHidden: !previousState.isSearchInputHidden,
         }))
+
+        this.setState({
+            setKeyboardOnFocus: true
+        })
     }
 
     didTapCancel() {
@@ -53,6 +60,10 @@ export default class Header extends Component {
 
         this.props.triggerRefresh()
         this.props.triggerCentreOnRefresh()
+
+        this.setState({
+            setKeyboardOnFocus: false
+        })
     }
 
     didTriggerSearch() {
@@ -110,6 +121,7 @@ export default class Header extends Component {
                         onSubmitEditing={() => this.didTriggerSearch()}
                         placeholder={"e.g. Marymount Stn or 05131..."}
                         clearButtonMode={"while-editing"}
+                        autoFocus={this.state.setKeyboardOnFocus}
                     />
                     {/* <SearchBar
                         placeholder={"e.g. Marymount Stn or 05131..."}
