@@ -361,7 +361,9 @@ class HomeContainer extends Component {
                 //truncate
                 var truncatedTempUUID = tempUUID.replace(/-/g, "")
                 console.log("truncatedTempUUID => " + truncatedTempUUID)
-
+                var url = "https://api.mybusfeed.com/beacon/getBeaconStatus/" + truncatedTempUUID
+                console.log(url)
+                // died here
                 // Make a request for a user with a given ID
                 axios.get('https://api.mybusfeed.com/beacon/getBeaconStatus/' + truncatedTempUUID)
                 .then( (res) => {
@@ -374,7 +376,8 @@ class HomeContainer extends Component {
                     if (res.data.Status != "Failed"){
                         // Take the Beacon Range - data.beacons[i].distance < beaconRange
                         if (tempdist < res.data.BeaconRange){
-
+                            
+                            this.pushNoti()
                             // Set bus stop into global
                             this.setState({
                                 bustop: res.data.BusStop_num,
@@ -383,7 +386,7 @@ class HomeContainer extends Component {
                                 foundBeacon: true,
                             })
 
-                            this.pushNoti()
+                            
 
                             Beacons.stopRangingBeaconsInRegion(regionToRange)
                             .then(() => console.log('Beacons ranging stopped succesfully'))
@@ -407,7 +410,7 @@ class HomeContainer extends Component {
     pushNoti() {
         if (!this.state.foundBeacon && !this.state.notificationPushed ) {
             if (Platform.OS !== 'android') {
-
+                
                 PushNotificationIOS.presentLocalNotification({
                     alertTitle: 'Bus stop detected!',
                     alertBody: 'You are near a bus stop 0' +
