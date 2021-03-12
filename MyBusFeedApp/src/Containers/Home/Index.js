@@ -53,7 +53,7 @@ class HomeContainer extends Component {
         major: 1,
         minor: 1,
         foundBeacon: false,
-        bustop: 4121,
+        bustop: null,
         notificationPushed: false,
         BLEstarted: false,
         beaconStart: false,
@@ -149,7 +149,6 @@ class HomeContainer extends Component {
         axios
         .get(fetchURL)
         .then((response) => {
-            console.log('ASD')
             console.log('Fetched API data: ' + JSON.stringify(response.data))
 
             if (response.data.status === 'not_found') {
@@ -241,8 +240,6 @@ class HomeContainer extends Component {
         console.log('====================================')
         console.log('BLEreader started')
         console.log('====================================')
-
-
 
         if (!this.state.BLEstarted){
             if (this.state.foundBeacon) {
@@ -353,76 +350,103 @@ class HomeContainer extends Component {
         Beacons.BeaconsEventEmitter.addListener('beaconsDidRange', (data) => {
         console.log('foundBeacon => ' + this.state.foundBeacon)
         console.log('beaconsDidRange data: ', data)
-        // String(this.state.uuid) == String(data.beacons[0].uuid)
-        console.log(this.state.uuid)
-        if (data.beacons.length > 0 && this.state.uuid === data.beacons[0].uuid.toLowerCase()){
-            // const { foundBeacon } = this.state
-            console.log(data.beacons[0].uuid)
-            const { bustop } = this.state
-            this.setState({
-                beaconStart: true
-            })
-            if (!this.state.foundBeacon && !this.state.notificationPushed ) {
-                if (Platform.OS !== 'android') {
+        if (data.beacons.length > 0 ){
+            // Run a for loop based on scan output - data.beacons
+            for (var i = 0; i < data.beacons.length; i++){
+                var tempUUID = data.beacons[i].uuid
+                var tempdist = data.beacons[i].distance
+                var beaconMajor = data.beacons[i].major
+                var beaconMinor = data.beacons[i].minor
+                console.log("tempdist " + tempdist)
+                //truncate
+                var truncatedTempUUID = tempUUID.replace(/-/g, "")
+                console.log("truncatedTempUUID => " + tempUUID.replace(/-/g, ""))
 
-                    PushNotificationIOS.presentLocalNotification({
-                        alertTitle: 'Bus stop detected!',
-                        alertBody: 'You are near a bus stop 0' +
-                            bustop +
-                        ', check for your bus timing!',
-                    });
+                // Make a request for a user with a given ID
+                axios.get('https://api.mybusfeed.com/beacon/getBeaconStatus/' + truncatedTempUUID)
+                .then( (res) => {
+                    // handle success
+                    // console.log(res);
                     console.log('====================================');
-                    console.log("Pushed to IOS")
+                    console.log("res.data " + res.data.BeaconRange)
+                    console.log(res)
                     console.log('====================================');
-                } else {
-                    PushNotification.localNotification({
-                        title: 'Bus stop detected!',
-                        message:
-                        'You are near a bus stop 0' +
-                        bustop +
-                        ', check for your bus timing!',
-                    })
-                }
 
-           
-                console.log('====================================');
-                console.log("notificationPushed => " + this.state.notificationPushed);
-                console.log('====================================');
-                this.setState({
-                    notificationPushed: true
+                    // Check that is it not empty
+                    if (res.data.Status != "Failed"){
+                        // Take the Beacon Range - data.beacons[i].distance < beaconRange
+                        console.log('====================================');
+                        console.log("fuck xw " + res.data.BeaconRange);
+                        console.log('====================================');
+                        if (tempdist < res.data.BeaconRange){
+                            console.log('====================================');
+                            console.log("Beacon 2nd for loop" + tempdist);
+                            console.log('====================================');
+
+                            // Set bus stop into global
+                            this.setState({
+                                bustop: res.data.BusStop_num,
+                                major: beaconMajor,
+                                minor: beaconMinor,
+                                foundBeacon: true,
+                            })
+
+                            this.pushNoti()
+
+                            Beacons.stopRangingBeaconsInRegion(regionToRange)
+                            .then(() => console.log('Beacons ranging stopped succesfully'))
+                            .catch((error) =>
+                                console.log(`Beacons ranging not stopped, error: ${error}`),
+                            )
+ 
+                            this.startMonitoringBeacon()
+                        }
+                    }
+                })
+                .catch( (error) => {
+                    // handle error
+                    console.log("BLE Error" + error);
                 })
             }
-            Beacons.stopRangingBeaconsInRegion(regionToRange)
-            .then(() => console.log('Beacons ranging stopped succesfully'))
-            .catch((error) =>
-                console.log(`Beacons ranging not stopped, error: ${error}`),
-            )
-            var beacon = this.nearestBeacon(data.beacons)
-            console.log('Selected beacon: ', beacon)
-            console.log(beacon.major)
-            this.setState({
-                major: beacon.major,
-                minor: beacon.minor,
-                foundBeacon: true,
-            })
-            this.startMonitoringBeacon()
         }
         })
     }
 
+    pushNoti() {
+        if (!this.state.foundBeacon && !this.state.notificationPushed ) {
+            if (Platform.OS !== 'android') {
 
-    nearestBeacon(beacons) {
-        console.log('beacons', beacons)
-        var i
-        var minDistIndex = 0
-        var minDist = Number.MAX_VALUE
-        for (i = 0; i < beacons.length; i++) {
-        if (beacons[i].distance < minDist) {
-            minDist = beacons[i].distance
-            minDistIndex = i
+                PushNotificationIOS.presentLocalNotification({
+                    alertTitle: 'Bus stop detected!',
+                    alertBody: 'You are near a bus stop 0' +
+                        bustop +
+                    ', check for your bus timing!',
+                });
+                console.log('====================================');
+                console.log("Pushed to IOS")
+                console.log('====================================');
+            } else {
+                PushNotification.localNotification({
+                    title: 'Bus stop detected!',
+                    message:
+                    'You are near a bus stop 0' +
+                    bustop +
+                    ', check for your bus timing!',
+                })
+            }
+
+            console.log('====================================');
+            console.log("notificationPushed => " + this.state.notificationPushed);
+            console.log('====================================');
+            this.setState({
+                notificationPushed: true
+            })
         }
-        }
-        return beacons[minDistIndex]
+
+        const { bustop } = this.state
+        this.setState({
+            beaconStart: true
+        })
     }
 
     componentWillUnMount() {
