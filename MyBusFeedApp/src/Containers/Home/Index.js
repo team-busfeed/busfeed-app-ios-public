@@ -376,8 +376,8 @@ class HomeContainer extends Component {
                     if (res.data.Status != "Failed"){
                         // Take the Beacon Range - data.beacons[i].distance < beaconRange
                         if (tempdist < res.data.BeaconRange){
+
                             
-                            this.pushNoti()
                             // Set bus stop into global
                             this.setState({
                                 bustop: res.data.BusStop_num,
@@ -385,6 +385,8 @@ class HomeContainer extends Component {
                                 minor: beaconMinor,
                                 foundBeacon: true,
                             })
+
+                            this.pushNoti()
 
                             
 
@@ -408,13 +410,13 @@ class HomeContainer extends Component {
     }
 
     pushNoti() {
-        if (!this.state.foundBeacon && !this.state.notificationPushed ) {
+        if (this.state.foundBeacon && !this.state.notificationPushed ) {
             if (Platform.OS !== 'android') {
                 
                 PushNotificationIOS.presentLocalNotification({
                     alertTitle: 'Bus stop detected!',
-                    alertBody: 'You are near a bus stop 0' +
-                        bustop +
+                    alertBody: 'You are near a bus stop ' +
+                        this.state.bustop +
                     ', check for your bus timing!',
                 });
                 console.log('====================================');
@@ -424,8 +426,8 @@ class HomeContainer extends Component {
                 PushNotification.localNotification({
                     title: 'Bus stop detected!',
                     message:
-                    'You are near a bus stop 0' +
-                    bustop +
+                    'You are near a bus stop ' +
+                    this.state.bustop +
                     ', check for your bus timing!',
                 })
             }
