@@ -530,14 +530,12 @@ Your inputs will provide valuable insights for LTA to better plan bus dispatch f
             <View style={tailwind("my-10"), styles.centeredView}>
                 <View style={styles.modalView}>
                     <Text style={tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
-                    <Text style={tailwind("text-base text-gray-600 my-5")}>{content[this.state.tutorialState]}</Text>
-                    <Text style={tailwind("text-xs text-gray-600 my-5 italic")}>*LTA occassionally does maintenance which might return no results to bus timings.</Text>
+                    <Text style={tailwind("text-xs text-gray-600 my-5 text-justify")}>{content[this.state.tutorialState]}</Text>
+                    <Text style={tailwind("text-xs text-gray-600 mb-5 italic text-justify")}>*LTA occassionally does maintenance which might return no results to bus timings.</Text>
                     <View style={tailwind("flex")}>
                         <Pressable
-                            style={tailwind("bg-blue-600 py-2 px-5 rounded-lg my-2")}
+                            style={tailwind("bg-blue-600 py-2 px-5 rounded-lg mt-2 mb-5")}
                             onPress={() => {
-                                tutorialNum = this.state.tutorialState == titles.length - 1 ? this.state.tutorialState : this.state.tutorialState + 1
-                                this.setState({tutorialState: tutorialNum})
 
                                 if (this.state.tutorialState == titles.length - 1) {
                                     this.setState({modalVisible: false})
@@ -589,18 +587,18 @@ const styles = StyleSheet.create({
     centeredView: {
         justifyContent: "center",
         alignItems: "center",
-        marginTop: "30%",
-        marginBottom: "20%",
+        marginTop: "35%",
+        height: "100%"
     },
     modalView: {
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,
         alignItems: "center",
-        shadowColor: "#000",
+        shadowColor: "#888",
         shadowOffset: {
             width: 0,
-            height: -5
+            height: -8
         },
         shadowOpacity: 0.35,
         shadowRadius: 4,

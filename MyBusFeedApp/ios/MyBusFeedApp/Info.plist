@@ -26,6 +26,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -50,9 +52,9 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Your location will be used to fetch nearby bus stops.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your location will be used to fetch nearby bus stops.</string>
+	<string>Your location will be used to fetch nearby bus stops in the background.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Motion activity detection increases battery efficiency by intelligently toggling location-tracking" off when your device is detected to be stationary</string>
+	<string>This increases battery efficiency by intelligently toggling "location-tracking" to off when your device is detected to be stationary.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
