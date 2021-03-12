@@ -360,28 +360,20 @@ class HomeContainer extends Component {
                 console.log("tempdist " + tempdist)
                 //truncate
                 var truncatedTempUUID = tempUUID.replace(/-/g, "")
-                console.log("truncatedTempUUID => " + tempUUID.replace(/-/g, ""))
+                console.log("truncatedTempUUID => " + truncatedTempUUID)
 
                 // Make a request for a user with a given ID
                 axios.get('https://api.mybusfeed.com/beacon/getBeaconStatus/' + truncatedTempUUID)
                 .then( (res) => {
                     // handle success
-                    // console.log(res);
                     console.log('====================================');
                     console.log("res.data " + res.data.BeaconRange)
-                    console.log(res)
                     console.log('====================================');
 
                     // Check that is it not empty
                     if (res.data.Status != "Failed"){
                         // Take the Beacon Range - data.beacons[i].distance < beaconRange
-                        console.log('====================================');
-                        console.log("fuck xw " + res.data.BeaconRange);
-                        console.log('====================================');
                         if (tempdist < res.data.BeaconRange){
-                            console.log('====================================');
-                            console.log("Beacon 2nd for loop" + tempdist);
-                            console.log('====================================');
 
                             // Set bus stop into global
                             this.setState({
