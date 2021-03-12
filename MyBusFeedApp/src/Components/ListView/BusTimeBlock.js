@@ -4,6 +4,7 @@ import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler'
 import Geolocation from '@react-native-community/geolocation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import tailwind from 'tailwind-rn'
 import BackgroundTimer from 'react-native-background-timer';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
@@ -507,11 +508,10 @@ export default class BusTimeBlock extends Component {
         ) : (
           <View style={tailwind('flex flex-row')}>
             <View style={this.state.nextBus1.load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus1.load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : this.state.nextBus1.load == "SDA" ? tailwind('border-b-4 border-yellow-500 mx-2') : tailwind('border-b-4 border-gray-500 mx-2')}>
-              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text} {this.state.nextBus1.feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={20} /> : null}</Text>
-              
+              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text} {this.state.nextBus1.feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={20} /> : null} {this.state.nextBus1.type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={20} /> : <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={20} /> }</Text>
             </View>
             <View style={this.state.nextBus2.load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus2.load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : this.state.nextBus2.load == "SDA" ? tailwind('border-b-4 border-yellow-500 mx-2') : tailwind('border-b-4 border-gray-500 mx-2')}>
-              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text} {this.state.nextBus2.feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={15} /> : null}</Text>
+              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text} {this.state.nextBus2.feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={15} /> : null} {this.state.nextBus2.type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={15} /> : <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={15} /> }</Text>
             </View>
           </View>
         )}
