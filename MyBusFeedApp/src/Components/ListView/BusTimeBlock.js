@@ -4,9 +4,12 @@ import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler'
 import Geolocation from '@react-native-community/geolocation'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import tailwind from 'tailwind-rn'
 import BackgroundTimer from 'react-native-background-timer';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import { TELE_TOKEN } from '@env'
+
 
 
 export default class BusTimeBlock extends Component {
@@ -97,6 +100,9 @@ export default class BusTimeBlock extends Component {
       startForeground: true,
       notificationsEnabled: false
     });
+
+
+    
 
     BackgroundGeolocation.checkStatus(status => {
       // console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
@@ -253,11 +259,13 @@ export default class BusTimeBlock extends Component {
           // 3. Geo logic
           console.log("this.state.userProximity => " + this.state.userProximity + this.state.busNumber)
           console.log("this.props.foundBeacon => " + this.props.foundBeacon)
-          if (this.state.userProximity == false || this.props.foundBeacon == false){
+          if (this.state.userProximity == false || (this.props.foundBeacon == false && this.props.beaconStart)){
             // If user left the bus stop
-            console.log("user left bus stop on bus " + this.state.busNumber)
-            this.addToActualDemand(true)
-          } else if (this.state.userProximity == true || this.props.foundBeacon == true){
+            // console.log("user left bus stop on bus " + this.state.busNumber)
+            // this.addToActualDemand(true)
+            this.props.actualBusStackFunction([this.state.busNumber, this.state.nextBus1.load])
+
+          } else if (this.state.userProximity == true || (this.props.foundBeacon == true && this.props.beaconStart)){
             if (this.state.nextBus1.load == "LSD"){
               // If user remains in the bus stop + bus crowded
               console.log("user cannot board bus "  + this.state.busNumber)
@@ -281,7 +289,7 @@ export default class BusTimeBlock extends Component {
       },error => console.log('Error', JSON.stringify(error)),
         {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
       )
-    }, 120000) //120000 -> 2 min
+    }, 180000) //120000 -> 2 min
   }
 
   addToActualDemand = (userBoardStatus) => {
@@ -290,7 +298,7 @@ export default class BusTimeBlock extends Component {
     console.log('####################################');
 
     const moment = require("moment")
-    console.log("moment => " + moment().utcOffset("+08:00").format("dddd, MMMM Do YYYY, h:mm:ss a"))
+    console.log("moment => " + moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss"))
 
     axios
     .post("https://api.mybusfeed.com/demand/actual/add", {
@@ -299,7 +307,7 @@ export default class BusTimeBlock extends Component {
       bus_stop_no: this.state.busStopNumber,
       bus_no: this.state.busNumber,
       has_successfully_board: userBoardStatus,
-      created_time: moment().utcOffset("+08:00").format()
+      created_time: moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss")
     })
     .then((response) => {
       console.log(response.data)
@@ -318,6 +326,18 @@ export default class BusTimeBlock extends Component {
     this.props.busTrackCountFunction()
   }
 
+  getTeleBot = () => {
+    axios
+    .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
+      chat_id: "-538084552",
+      text: `User <${this.state.data.appID}> queried for <${this.state.busNumber}> at <${this.state.busStopNumber}>`,
+    })
+    .then((response) => {
+      console.log("Telebot msg sent");
+      // console.log(response)
+    })
+  }
+
   // Reveal bus timing & make icon disssssapppppear
   componentHideAndShow = () => {
     console.log('====================================');
@@ -325,6 +345,7 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     this.busTrackCountFunction()
+    this.getTeleBot()
     console.log('#############################################');
     console.log("Total bus polling => " + this.props.busTrackCount);
     console.log('#############################################');
@@ -487,11 +508,10 @@ export default class BusTimeBlock extends Component {
         ) : (
           <View style={tailwind('flex flex-row')}>
             <View style={this.state.nextBus1.load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus1.load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : this.state.nextBus1.load == "SDA" ? tailwind('border-b-4 border-yellow-500 mx-2') : tailwind('border-b-4 border-gray-500 mx-2')}>
-              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text} {this.state.nextBus1.feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={20} /> : null}</Text>
-              
+              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text} {this.state.nextBus1.feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={20} /> : null} {this.state.nextBus1.type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={20} /> : <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={20} /> }</Text>
             </View>
             <View style={this.state.nextBus2.load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus2.load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : this.state.nextBus2.load == "SDA" ? tailwind('border-b-4 border-yellow-500 mx-2') : tailwind('border-b-4 border-gray-500 mx-2')}>
-              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text} {this.state.nextBus2.feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={15} /> : null}</Text>
+              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text} {this.state.nextBus2.feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={15} /> : null} {this.state.nextBus2.type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={15} /> : <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={15} /> }</Text>
             </View>
           </View>
         )}

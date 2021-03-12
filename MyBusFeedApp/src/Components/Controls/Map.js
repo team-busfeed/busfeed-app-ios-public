@@ -1,9 +1,10 @@
 import React, { useState, Component } from 'react'
-import { View, StyleSheet, Text, TouchableNativeFeedbackBase } from 'react-native'
+import { View, StyleSheet, Text, TouchableNativeFeedbackBase, TouchableOpacity } from 'react-native'
 import MapView, {Marker, Callout} from 'react-native-maps'
 import { default as Navigation } from './Navigation'
 import tailwind from 'tailwind-rn'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome'
+import axios from 'axios'
 
 // import CustomCallout from './CustomCallout'
 // import { Icon } from 'react-native-vector-icons/Icon'
@@ -87,8 +88,9 @@ class Map extends Component {
                         <Callout
                         tooltip={true}
                         style={styles.callout}
+                        onPress={() => this.didTriggerMarker(busStop.busstop_number)}
                         >
-                            <View style={tailwind('flex flex-row justify-center items-center')}>
+                            <TouchableOpacity style={tailwind('flex flex-row justify-center items-center')}>
                                 <View style={tailwind("w-10")}>
                                     <Icon name="bus" size={30} color="black" style={[tailwind("flex"), styles.image]}/>
                                 </View>
@@ -100,7 +102,10 @@ class Map extends Component {
                                         {"Stop Number: " + busStop.busstop_number}
                                     </Text>
                                 </View>
-                            </View>
+                                <View style={tailwind("w-10")}>
+                                    <Icon name="chevron-right" size={30} style={[tailwind("pl-5 flex text-gray-500"), styles.image]} />
+                                </View>
+                            </TouchableOpacity>
                         </Callout>
                     </Marker>
                 )
@@ -126,6 +131,26 @@ class Map extends Component {
         })
     }
 
+    didTriggerMarker = (selected) => {
+        console.log(selected)
+
+        axios
+        .get("https://api.mybusfeed.com/location/getBusStopInformation/" + selected)
+        .then((response) => {
+            console.log(response.data)
+            this.props.states.busStops = response.data
+            this.props.states.latitude = parseFloat(response.data[0].busstop_lat)
+            this.props.states.longitude = parseFloat(response.data[0].busstop_lng)
+            this.props.triggerIndexOnSearch()
+            this.didMapsTriggerOnRefresh()
+        }).catch((error) => {
+            console.log(error)
+            this.props.states.busStops = []
+            this.props.triggerIndexOnSearch()
+            this.didMapsTriggerOnRefresh()
+        })
+    }
+
     render() {
         markers = null
 
@@ -139,24 +164,28 @@ class Map extends Component {
                             title={busStop.busstop_name}
                             description={"Stop Number: " + busStop.busstop_number}
                         >
-                            <Callout
-                            tooltip={true}
-                            style={styles.callout}
-                            >
-                                <View style={tailwind('flex flex-row justify-center items-center')}>
-                                    <View style={tailwind("w-10")}>
-                                        <Icon name="bus" size={30} color="black" style={[tailwind("flex"), styles.image]}/>
+                                <Callout
+                                tooltip={true}
+                                style={styles.callout}
+                                onPress={() => this.didTriggerMarker(busStop.busstop_number)}
+                                >
+                                    <View style={tailwind('flex flex-row justify-center items-center')}>
+                                        <View style={tailwind("w-10")}>
+                                            <Icon name="bus" size={30} color="black" style={[tailwind("flex"), styles.image]}/>
+                                        </View>
+                                        <View>
+                                            <Text style={styles.title}>
+                                                {busStop.busstop_name}
+                                            </Text>
+                                            <Text style={styles.description}>
+                                                {"Stop Number: "}{busStop.busstop_number.length == 4 ? "0" + busStop.busstop_number : busStop.busstop_number}
+                                            </Text>
+                                        </View>
+                                        <View style={tailwind("w-10")}>
+                                            <Icon name="chevron-right" size={20} style={[tailwind("pl-5 flex text-gray-500"), styles.image]} />
+                                        </View>
                                     </View>
-                                    <View>
-                                        <Text style={styles.title}>
-                                            {busStop.busstop_name}
-                                        </Text>
-                                        <Text style={styles.description}>
-                                            {"Stop Number: "}{busStop.busstop_number.length == 4 ? "0" + busStop.busstop_number : busStop.busstop_number}
-                                        </Text>
-                                    </View>
-                                </View>
-                          </Callout>
+                                </Callout>
                         </Marker>
                     )
                 }

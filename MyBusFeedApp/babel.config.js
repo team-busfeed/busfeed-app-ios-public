@@ -1,5 +1,6 @@
 const presets = ['module:metro-react-native-babel-preset']
 const plugins = []
+  
 
 plugins.push([
   'module-resolver',
@@ -12,7 +13,11 @@ plugins.push([
   },
 ])
 
+plugins.push([
+      "module:react-native-dotenv",
+    ])
+
 module.exports = {
   presets,
-  plugins,
+  plugins
 }

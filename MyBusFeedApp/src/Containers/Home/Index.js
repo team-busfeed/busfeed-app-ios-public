@@ -1,14 +1,17 @@
 import React, { useState, Component } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  View,
-  ActivityIndicator,
-  Text,
-  TextInput,
-  Button,
-  Alert,
-  DeviceEventEmitter,
-  PermissionsAndroid,
+    View,
+    ActivityIndicator,
+    Text,
+    TextInput,
+    Button,
+    Alert,
+    DeviceEventEmitter,
+    PermissionsAndroid,
+    Modal,
+    StyleSheet,
+    Pressable,
 } from 'react-native'
 import { Controls } from '@/Components/Controls'
 import { ListView } from '@/Components/ListView'
@@ -25,6 +28,8 @@ import BackgroundTimer from 'react-native-background-timer'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+
+import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 
 
 const TIME_FORMAT = 'MM/DD/YYYY HH:mm:ss'
@@ -43,14 +48,18 @@ class HomeContainer extends Component {
         userProximity: false,
         selected: 0,
         BLEState: true,
-        uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
+        uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825',
         identifier: 'iBeacon',
         major: 1,
         minor: 1,
         foundBeacon: false,
-        bustop: 4121,
+        bustop: null,
         notificationPushed: false,
         BLEstarted: false,
+        beaconStart: false,
+
+        tutorialState: 0,
+        modalVisible: false,
     }
   }
 
@@ -66,9 +75,7 @@ class HomeContainer extends Component {
         })
     }
 
-
     
-
     getGeoLocation() {
         Geolocation.getCurrentPosition(
         (info) => {
@@ -93,11 +100,11 @@ class HomeContainer extends Component {
             )
         },
         (error) => console.log('position error!!!', error),
-        {
-            enableHighAccuracy: Platform.OS !== 'android',
-            timeout: 20000,
-            maximumAge: 0,
-        },
+            {
+                enableHighAccuracy: Platform.OS !== 'android',
+                timeout: 20000,
+                maximumAge: 0,
+            },
         )
     }
 
@@ -142,7 +149,6 @@ class HomeContainer extends Component {
         axios
         .get(fetchURL)
         .then((response) => {
-            console.log('ASD')
             console.log('Fetched API data: ' + JSON.stringify(response.data))
 
             if (response.data.status === 'not_found') {
@@ -187,25 +193,44 @@ class HomeContainer extends Component {
 
         const value = await AsyncStorage.getItem('@favouriteBusStops')
         if (value === null) {
-        // value previously stored
-        initialSetup = JSON.stringify({ favourites: [] })
-        await AsyncStorage.setItem('@favouriteBusStops', initialSetup)
-        console.log(value)
+            // value previously stored
+            initialSetup = JSON.stringify({ favourites: [] })
+            await AsyncStorage.setItem('@favouriteBusStops', initialSetup)
+            console.log(value)
         } else {
-        await AsyncStorage.setItem('@favouriteBusStops', value)
+            await AsyncStorage.setItem('@favouriteBusStops', value)
+        }
+
+        const didNotLaunchBefore = await AsyncStorage.getItem('@firstLaunch')
+        if (didNotLaunchBefore === null) {
+            // value previously stored
+            await AsyncStorage.setItem('@firstLaunch', "true")
+            console.log(didNotLaunchBefore)
+            this.setState({modalVisible: true})
         }
 
         if (Platform.OS === 'android') {
-        Beacons.detectIBeacons()
+            Beacons.detectIBeacons()
         } else {
-        Beacons.requestWhenInUseAuthorization()
+            Beacons.requestWhenInUseAuthorization()
         }
         this.configurePushNotification();
         console.log('====================================')
         console.log('BLE componentDidMount')
         console.log('====================================')
 
-        
+        BackgroundGeolocation.start();
+
+        BackgroundGeolocation.on('background', () => {
+            console.log('[INFO] App is in background');
+        });
+
+        BackgroundGeolocation.on('start', () => {
+        // service started successfully
+        // you should adjust your app UI for example change switch element to indicate
+        // that service is running
+            console.log('[DEBUG] BackgroundGeolocation has been started');
+        });
         this.startDetection()
 
     }
@@ -215,6 +240,7 @@ class HomeContainer extends Component {
         console.log('====================================')
         console.log('BLEreader started')
         console.log('====================================')
+
         if (!this.state.BLEstarted){
             if (this.state.foundBeacon) {
                 this.startMonitoringBeacon()
@@ -324,79 +350,95 @@ class HomeContainer extends Component {
         Beacons.BeaconsEventEmitter.addListener('beaconsDidRange', (data) => {
         console.log('foundBeacon => ' + this.state.foundBeacon)
         console.log('beaconsDidRange data: ', data)
-        // String(this.state.uuid) == String(data.beacons[0].uuid)
-        if (data.beacons.length > 0 ) {
-            // const { foundBeacon } = this.state
-            const { bustop } = this.state
-            if (!this.state.foundBeacon && !this.state.notificationPushed ) {
-                if (Platform.OS !== 'android') {
+        if (data.beacons.length > 0 ){
+            // Run a for loop based on scan output - data.beacons
+            for (var i = 0; i < data.beacons.length; i++){
+                var tempUUID = data.beacons[i].uuid
+                var tempdist = data.beacons[i].distance
+                var beaconMajor = data.beacons[i].major
+                var beaconMinor = data.beacons[i].minor
+                console.log("tempdist " + tempdist)
+                //truncate
+                var truncatedTempUUID = tempUUID.replace(/-/g, "")
+                console.log("truncatedTempUUID => " + truncatedTempUUID)
 
-                    PushNotificationIOS.presentLocalNotification({
-                        alertTitle: 'Bus stop detected!',
-                        alertBody: 'You are near a bus stop 0' +
-                            bustop +
-                        ', check for your bus timing!',
-                        applicationIconBadgeNumber: 1,
-                    });
-                    // PushNotificationIOS.addNotificationRequest({
-                    //     id: 'text',
-                    //     title: 'BusFeed',
-                    //     body:
-                    //     'You are near a bus stop 0' +
-                    //     bustop +
-                    //     ', check for your bus timing!',
-                    // })
+                // Make a request for a user with a given ID
+                axios.get('https://api.mybusfeed.com/beacon/getBeaconStatus/' + truncatedTempUUID)
+                .then( (res) => {
+                    // handle success
                     console.log('====================================');
-                    console.log("Pushed to IOS")
+                    console.log("res.data " + res.data.BeaconRange)
                     console.log('====================================');
-                } else {
-                    PushNotification.localNotification({
-                        title: 'Bus stop detected!',
-                        message:
-                        'You are near a bus stop 0' +
-                        bustop +
-                        ', check for your bus timing!',
-                    })
-                }
 
-           
-                console.log('====================================');
-                console.log("notificationPushed => " + this.state.notificationPushed);
-                console.log('====================================');
-                this.setState({
-                    notificationPushed: true
+                    // Check that is it not empty
+                    if (res.data.Status != "Failed"){
+                        // Take the Beacon Range - data.beacons[i].distance < beaconRange
+                        if (tempdist < res.data.BeaconRange){
+
+                            // Set bus stop into global
+                            this.setState({
+                                bustop: res.data.BusStop_num,
+                                major: beaconMajor,
+                                minor: beaconMinor,
+                                foundBeacon: true,
+                            })
+
+                            this.pushNoti()
+
+                            Beacons.stopRangingBeaconsInRegion(regionToRange)
+                            .then(() => console.log('Beacons ranging stopped succesfully'))
+                            .catch((error) =>
+                                console.log(`Beacons ranging not stopped, error: ${error}`),
+                            )
+ 
+                            this.startMonitoringBeacon()
+                        }
+                    }
+                })
+                .catch( (error) => {
+                    // handle error
+                    console.log("BLE Error" + error);
                 })
             }
-            Beacons.stopRangingBeaconsInRegion(regionToRange)
-            .then(() => console.log('Beacons ranging stopped succesfully'))
-            .catch((error) =>
-                console.log(`Beacons ranging not stopped, error: ${error}`),
-            )
-            var beacon = this.nearestBeacon(data.beacons)
-            console.log('Selected beacon: ', beacon)
-            this.setState({
-                major: beacon.major,
-                minor: beacon.minor,
-                foundBeacon: true,
-            })
-            this.startMonitoringBeacon()
         }
         })
     }
 
+    pushNoti() {
+        if (!this.state.foundBeacon && !this.state.notificationPushed ) {
+            if (Platform.OS !== 'android') {
 
-    nearestBeacon(beacons) {
-        console.log('beacons', beacons)
-        var i
-        var minDistIndex = 0
-        var minDist = Number.MAX_VALUE
-        for (i = 0; i < beacons.length; i++) {
-        if (beacons[i].distance < minDist) {
-            minDist = beacons[i].distance
-            minDistIndex = i
+                PushNotificationIOS.presentLocalNotification({
+                    alertTitle: 'Bus stop detected!',
+                    alertBody: 'You are near a bus stop 0' +
+                        bustop +
+                    ', check for your bus timing!',
+                });
+                console.log('====================================');
+                console.log("Pushed to IOS")
+                console.log('====================================');
+            } else {
+                PushNotification.localNotification({
+                    title: 'Bus stop detected!',
+                    message:
+                    'You are near a bus stop 0' +
+                    bustop +
+                    ', check for your bus timing!',
+                })
+            }
+
+            console.log('====================================');
+            console.log("notificationPushed => " + this.state.notificationPushed);
+            console.log('====================================');
+            this.setState({
+                notificationPushed: true
+            })
         }
-        }
-        return beacons[minDistIndex]
+
+        const { bustop } = this.state
+        this.setState({
+            beaconStart: true
+        })
     }
 
     componentWillUnMount() {
@@ -473,10 +515,66 @@ class HomeContainer extends Component {
         this.listViewRef.current.getGeoLocation()
     }
 
+    setFirstLaunchFalse = async () => {
+        await AsyncStorage.setItem('@firstLaunch', "false")
+    }
+
+    setModalVisible = () => {
+        this.setState({modalVisible: true})
+    }
+
     render() {
+
+        // set tutorial title here
+        titles = ["About MyBusFeed 😍"]
+
+        // set tutorial content here
+        content = ["MyBusFeed is an application that tells you when your next bus will arrive at any bus stop in Singapore using the data provided from Land Transport Authority (LTA)’s Datamall*.\n\n\
+The application is developed with your experience in mind. Additionally, we aim to transform your inputs into crowdsourced analytics in a non-intrusive manner. The additional steps that require you to click on multiple buses to check for bus arrival timings is a form of data crowdsourcing to measure the demand for each bus.\n\n\
+Your inputs will provide valuable insights for LTA to better plan bus dispatch frequencies to serve you better.\n\nPlease be aware that this application requires an internet connection, with bluetooth enabled, and location services set to “always allowed” for full functionality."]
+
+        aboutUs = <Modal
+        animationType="slide"
+        transparent={true}
+        visible={this.state.modalVisible}
+        onRequestClose={() => {
+            Alert.alert("Modal has been closed.")
+            this.setState({modalVisible: false})
+            this.setFirstLaunchFalse()
+        }}
+        >
+            <View style={tailwind("my-10"), styles.centeredView}>
+                <View style={styles.modalView}>
+                    <Text style={tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
+                    <Text style={tailwind("text-xs text-gray-600 my-5 text-justify")}>{content[this.state.tutorialState]}</Text>
+                    <Text style={tailwind("text-xs text-gray-600 mb-5 italic text-justify")}>*LTA occassionally does maintenance which might return no results to bus timings.</Text>
+                    <View style={tailwind("flex")}>
+                        <Pressable
+                            style={tailwind("bg-blue-600 py-2 px-5 rounded-lg mt-2 mb-5")}
+                            onPress={() => {
+
+                                if (this.state.tutorialState == titles.length - 1) {
+                                    this.setState({modalVisible: false})
+                                }
+                            }}
+                        >
+                            <Text style={tailwind("rounded-xl text-white text-center px-5 py-2")}>{this.state.tutorialState == titles.length - 1 ? "Done" : "Next"}</Text>
+                        </Pressable>
+                        <Pressable
+                            style={this.state.tutorialState == titles.length - 1 ? tailwind("hidden") : tailwind("bg-gray-900 py-2 px-5 rounded-lg")}
+                            onPress={() => this.setState({modalVisible: false})}
+                        >
+                            <Text style={tailwind("rounded-xl text-white text-center")}>Skip Overview</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+        
         return (
         <View style={tailwind('bg-white h-full')}>
             {/* {this.state.BLEState && <BLEreader />} */}
+            {aboutUs}
             <Controls
             states={this.state}
             ref={this.controlsRef}
@@ -484,6 +582,7 @@ class HomeContainer extends Component {
             triggerFavouritesList={this.didTapOnFavourites}
             triggerIndexOnSearch={this.didPerformSearch}
             triggerReloadLocation={this.triggerReloadLocation}
+            setModalVisible={this.setModalVisible}
             />
             <ListView
             states={this.state}
@@ -493,10 +592,34 @@ class HomeContainer extends Component {
             updateMaps={this.reloadMaps}
             triggerCentreOnRefresh={this.centreOnRefresh}
             foundBeacon = {this.state.foundBeacon}
+            beaconStart = {this.state.beaconStart}
             />
         </View>
         )
     }
-    }
+}
+
+const styles = StyleSheet.create({
+    centeredView: {
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: "35%",
+        height: "100%"
+    },
+    modalView: {
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#888",
+        shadowOffset: {
+            width: 0,
+            height: -8
+        },
+        shadowOpacity: 0.35,
+        shadowRadius: 4,
+        elevation: 5
+    },
+})
 
 export default HomeContainer

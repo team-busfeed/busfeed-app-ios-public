@@ -20,9 +20,12 @@ export default class Header extends Component {
         super(props)
         this.state = {
             isSearchInputHidden: true,
-            searchText: ""
+            searchText: "",
+            setKeyboardOnFocus: false
         }
     }
+
+    searchInputField = React.createRef()
 
     resetSearchState() {
         if (!this.state.isSearchInputHidden) {
@@ -40,6 +43,10 @@ export default class Header extends Component {
         this.setState((previousState) => ({
             isSearchInputHidden: !previousState.isSearchInputHidden,
         }))
+
+        this.setState({
+            setKeyboardOnFocus: true
+        })
     }
 
     didTapCancel() {
@@ -53,6 +60,10 @@ export default class Header extends Component {
 
         this.props.triggerRefresh()
         this.props.triggerCentreOnRefresh()
+
+        this.setState({
+            setKeyboardOnFocus: false
+        })
     }
 
     didTriggerSearch() {
@@ -84,17 +95,20 @@ export default class Header extends Component {
         if (this.state.isSearchInputHidden) {
             controls =  
             <View style={tailwind('flex flex-row justify-center items-center')}>
-                <View style={tailwind('w-4/5 py-1')}>
+                <View style={tailwind('flex flex-row w-4/6 py-1')}>
                     <Text style={tailwind('text-xl font-semibold text-gray-600 mx-2')}>
                         MyBusFeed
                     </Text>
                 </View>
-                <View style={tailwind('flex flex-row w-1/5 justify-around')}>
+                <View style={tailwind('flex flex-row w-1/3 justify-around')}>
                     <TouchableOpacity onPress={() => this.didToggleSearchButton()}>
                         <Icon name="search" size={20} color="grey"/>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => this.props.resetLocation()}>
                         <Icon name="location-arrow" size={20} style={tailwind('text-blue-500')}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.props.setModalVisible()}>
+                        <Icon style={tailwind("pl-2")} name="ellipsis-v" size={20} color="grey"/>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -107,6 +121,7 @@ export default class Header extends Component {
                         onSubmitEditing={() => this.didTriggerSearch()}
                         placeholder={"e.g. Marymount Stn or 05131..."}
                         clearButtonMode={"while-editing"}
+                        autoFocus={this.state.setKeyboardOnFocus}
                     />
                     {/* <SearchBar
                         placeholder={"e.g. Marymount Stn or 05131..."}

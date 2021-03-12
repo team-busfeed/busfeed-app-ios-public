@@ -745,7 +745,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = MyBusFeedApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -769,7 +769,7 @@
 				DEVELOPMENT_TEAM = 7Y9FJTUZ28;
 				INFOPLIST_FILE = MyBusFeedApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
