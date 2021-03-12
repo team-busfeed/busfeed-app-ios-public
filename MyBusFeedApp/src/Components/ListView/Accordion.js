@@ -38,7 +38,8 @@ export default class Accordion extends Component {
         "SEA": 1,
         "SDA": 2,
         "LSD": 3
-      }
+      },
+      allBusesDidLeave: false,
     }
 
     if (Platform.OS === 'android') {
@@ -106,6 +107,12 @@ export default class Accordion extends Component {
           // },
         })
         console.log(this.state.busStops)
+
+        if (this.state.busStops.services.length == 0) {
+            this.setState({
+                allBusesDidLeave: true
+            })
+        }
       })
       .catch((error) => {
         console.log('error:', error)
@@ -265,6 +272,21 @@ export default class Accordion extends Component {
     }
 
   render() {
+
+    if (this.state.allBusesDidLeave) {
+        var refreshButton = null
+        var flatList = <View><Text style={tailwind("font-bold text-gray-500 text-lg text-center")}>All buses had left... 😭</Text></View>
+    } else {
+        var refreshButton = <TouchableOpacity style={tailwind('flex flex-row')} onPress={() => this.didTapRefresh()}>
+        <Text style={tailwind('text-blue-500 font-semibold')}>Refresh all bus timings</Text>
+        <Icon
+          name={
+          'autorenew'
+          }
+          size={18}
+          style={tailwind('text-blue-500')}
+        />
+      </TouchableOpacity>
         var flatList = <FlatList
         data={this.state.busStops.services}
         renderItem={({ item }) => (
@@ -275,6 +297,7 @@ export default class Accordion extends Component {
             )}
             keyExtractor={(item) => item}
         />
+    }
 
     return (
       <View>
@@ -309,16 +332,7 @@ export default class Accordion extends Component {
         <View style={styles.parentHr} />
         {this.state.expanded && (
           <View style={styles.child}>
-            <TouchableOpacity style={tailwind('flex flex-row')} onPress={() => this.didTapRefresh()}>
-              <Text style={tailwind('text-blue-500 font-semibold')}>Refresh all bus timings</Text>
-              <Icon
-                name={
-                'autorenew'
-                }
-                size={18}
-                style={tailwind('text-blue-500')}
-              />
-            </TouchableOpacity>
+            {refreshButton}
 
             {flatList}
           </View>
