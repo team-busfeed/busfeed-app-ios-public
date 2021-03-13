@@ -104,30 +104,27 @@ export default class BusTimeBlock extends Component {
 
     
 
-    BackgroundGeolocation.checkStatus(status => {
-      // console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
-      // console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
-      // console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
+    // BackgroundGeolocation.checkStatus(status => {
+    //   // console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
+    //   // console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
+    //   // console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
 
-      // you don't need to check status before start (this is just the example)
-      if (!status.isRunning) {
-        BackgroundGeolocation.start(); //triggers start on start event
-      }
-    });
+    //   // you don't need to check status before start (this is just the example)
+    //   if (!status.isRunning) {
+    //     BackgroundGeolocation.start(); //triggers start on start event
+    //   }
+    // });
 
-    // you can also just start without checking for status
-    // BackgroundGeolocation.start();
+    // BackgroundGeolocation.on('background', () => {
+    //   console.log('[INFO] App is in background');
+    // });
 
-    BackgroundGeolocation.on('background', () => {
-      console.log('[INFO] App is in background');
-    });
-
-    BackgroundGeolocation.on('start', () => {
-      // service started successfully
-      // you should adjust your app UI for example change switch element to indicate
-      // that service is running
-      console.log('[DEBUG] BackgroundGeolocation has been started');
-    });
+    // BackgroundGeolocation.on('start', () => {
+    //   // service started successfully
+    //   // you should adjust your app UI for example change switch element to indicate
+    //   // that service is running
+    //   console.log('[DEBUG] BackgroundGeolocation has been started');
+    // });
   }
 
   componentDidUpdate(prevProp, prevState){
@@ -228,7 +225,7 @@ export default class BusTimeBlock extends Component {
         {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
       )
       // console.log('userProximity DATA in constantBasicPoll state 2 => ' + this.state.userProximity)
-    }, 30000); //30000 -> 30 sec
+    }, 5000); //30000 -> 30 sec
 
     this.setState({ intervalId: intervalId })
   }
@@ -349,11 +346,94 @@ export default class BusTimeBlock extends Component {
     console.log("Total bus polling => " + this.props.busTrackCount);
     console.log('#############################################');
 
-    BackgroundGeolocation.getCurrentLocation((info) => {
-      console.log("Component Geo info => " + info.latitude + " " + info.longitude);
+    // =============== Method 1 ==================
+
+    // BackgroundGeolocation.getCurrentLocation((info) => {
+    //   console.log("Component Geo info => " + info.latitude + " " + info.longitude);
+    //   this.setState({
+    //     latitude: info.latitude,
+    //     longitude: info.longitude,
+    //   })
+
+    //   this.getUserProximity()
+    //   .then((data) => {
+    //     this.setState({ userProximity: data })
+        
+    //     // Call for bus timing
+    //     this.getBusTiming()
+
+    //     // Reveal bus timing
+    //     this.setState({
+    //       busTimingContent: true,
+    //     })
+
+    //     // this.setState((previousState) => ({
+    //     //   busTimingContent: !previousState.busTimingContent,
+    //     // }))
+
+    //   }).catch((error) => console.log("userProximity Error => "+error))
+
+    // },error => console.log('Error', JSON.stringify(error)),
+    //   {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+    // )
+
+    // ============ Method 2 ==================
+
+    // BackgroundGeolocation.on('location', (location) => {
+    //   console.log('====================================');
+    //   console.log("Background2");
+    //   console.log('====================================');
+    //   // handle your locations here
+    //   // to perform long running operation on iOS
+    //   // you need to create background task
+    //   console.log("Component Geo info => " + location.latitude + " " + location.longitude);
+
+    //   BackgroundGeolocation.startTask(taskKey => {
+    //     // execute long running task
+    //     // eg. ajax post location
+    //     // IMPORTANT: task has to be ended by endTask
+
+    //     console.log('====================================');
+    //     console.log("Background2 task");
+    //     console.log('====================================');
+
+    //     this.setState({
+    //       latitude: location.latitude,
+    //       longitude: location.longitude,
+    //     })
+  
+    //     this.getUserProximity()
+    //     .then((data) => {
+    //       this.setState({ userProximity: data })
+          
+    //       // Call for bus timing
+    //       this.getBusTiming()
+  
+    //       // Reveal bus timing
+    //       this.setState({
+    //         busTimingContent: true,
+    //       })
+  
+    //       // this.setState((previousState) => ({
+    //       //   busTimingContent: !previousState.busTimingContent,
+    //       // }))
+  
+    //     }).catch((error) => console.log("userProximity Error => "+error))
+
+    //     BackgroundGeolocation.endTask(taskKey);
+    //   });
+    // });
+
+
+    // ==================== Method 3: To test if background geolocation is the problem====================
+    Geolocation.getCurrentPosition((info) => {
+      console.log('====================================');
+      console.log("GEOLOCATION METHOD 3");
+      console.log('====================================');
+      console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
       this.setState({
-        latitude: info.latitude,
-        longitude: info.longitude,
+        latitude: info.coords.latitude,
+        longitude: info.coords.longitude,
       })
 
       this.getUserProximity()
@@ -367,17 +447,17 @@ export default class BusTimeBlock extends Component {
         this.setState({
           busTimingContent: true,
         })
+    }
+      ,(error) => console.log('position error!!!', error),
+      {
+        enableHighAccuracy: Platform.OS !== 'android',
+        timeout: 20000,
+        maximumAge: 0,
+      })
+    })
 
-        // this.setState((previousState) => ({
-        //   busTimingContent: !previousState.busTimingContent,
-        // }))
-
-      }).catch((error) => console.log("userProximity Error => "+error))
-
-    },error => console.log('Error', JSON.stringify(error)),
-      {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
-    )
   }
+  
 
   refreshBusTiming = () => {
     if(this.state.busTimingContent){
@@ -453,7 +533,7 @@ export default class BusTimeBlock extends Component {
         }else if (this.props.busTrackCount <= 3){
 
           // Constant poll from 4 min to "Arr" State
-          if (nextBus1Timing <= 4 && nextBus1Timing >= 2){
+          if (nextBus1Timing <= 10 && nextBus1Timing >= 2){
             this.setState({
               constantPollOn: true,
               arrivalPause: false,

@@ -101,7 +101,7 @@ class HomeContainer extends Component {
         },
         (error) => console.log('position error!!!', error),
             {
-                enableHighAccuracy: true,
+                enableHighAccuracy: Platform.OS !== 'android',
                 timeout: 20000,
                 maximumAge: 0,
             },
@@ -219,10 +219,24 @@ class HomeContainer extends Component {
         console.log('BLE componentDidMount')
         console.log('====================================')
 
-        BackgroundGeolocation.start();
+        // BackgroundGeolocation.start();
+        BackgroundGeolocation.checkStatus(status => {
+            console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
+            console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
+            console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
+      
+            // you don't need to check status before start (this is just the example)
+            if (!status.isRunning) {
+              BackgroundGeolocation.start(); //triggers start on start event
+            }
+          });
 
         BackgroundGeolocation.on('background', () => {
-            console.log('[INFO] App is in background');
+            console.log('[INFO] App is in background index');
+        });
+
+        BackgroundGeolocation.on('foreground', () => {
+            console.log('[INFO] App is in foreground');
         });
 
         BackgroundGeolocation.on('start', () => {
@@ -231,8 +245,8 @@ class HomeContainer extends Component {
         // that service is running
             console.log('[DEBUG] BackgroundGeolocation has been started');
         });
-        this.startDetection()
 
+        this.startDetection()
     }
     startDetection() {
         // BackgroundTimer.setInterval(() => {
