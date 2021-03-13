@@ -364,9 +364,13 @@ export default class BusTimeBlock extends Component {
         this.getBusTiming()
 
         // Reveal bus timing
-        this.setState((previousState) => ({
-          busTimingContent: !previousState.busTimingContent,
-        }))
+        this.setState({
+          busTimingContent: true,
+        })
+
+        // this.setState((previousState) => ({
+        //   busTimingContent: !previousState.busTimingContent,
+        // }))
 
       }).catch((error) => console.log("userProximity Error => "+error))
 
@@ -376,8 +380,6 @@ export default class BusTimeBlock extends Component {
   }
 
   refreshBusTiming = () => {
-    console.log("refreshBusTiming => " + this.state.busNumber);
-    console.log(this.state.busTimingContent);
     if(this.state.busTimingContent){
       this.getBusTiming()
     }
