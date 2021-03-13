@@ -345,7 +345,6 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     this.busTrackCountFunction()
-    this.getTeleBot()
     console.log('#############################################');
     console.log("Total bus polling => " + this.props.busTrackCount);
     console.log('#############################################');
@@ -398,6 +397,7 @@ export default class BusTimeBlock extends Component {
       this.setState({
         expectedBusArrive: true
       })
+      this.getTeleBot()
     } else {
       var url = 'https://api.mybusfeed.com/demand/bus-timing'
     }
