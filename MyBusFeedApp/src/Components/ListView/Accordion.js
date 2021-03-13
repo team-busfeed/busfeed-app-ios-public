@@ -108,7 +108,7 @@ export default class Accordion extends Component {
         })
         console.log(this.state.busStops)
 
-        if (this.state.busStops.services.length == 0) {
+        if (this.state.busStops.services === null) {
             this.setState({
                 allBusesDidLeave: true
             })
