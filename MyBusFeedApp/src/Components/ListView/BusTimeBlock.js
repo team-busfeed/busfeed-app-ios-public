@@ -238,7 +238,8 @@ export default class BusTimeBlock extends Component {
     })
     .then((response) => {
       console.log(response.data)
-      // console.log('userProximity DATA in addToActualDemand => ' + this.state.userProximity)
+      var msg = `[ACTUAL DEMAND]: User <${this.state.data.appID}> for <${this.state.busNumber}> at <${this.state.busStopNumber}>`
+      this.getTeleBot(msg)
 
       console.log('####################################');
       console.log('addToActualDemand END');
@@ -253,11 +254,11 @@ export default class BusTimeBlock extends Component {
     this.props.busTrackCountFunction()
   }
 
-  getTeleBot = () => {
+  getTeleBot = (msg) => {
     axios
     .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
       chat_id: "-538084552",
-      text: `User <${this.state.data.appID}> queried for <${this.state.busNumber}> at <${this.state.busStopNumber}>`,
+      text: msg,
     })
     .then((response) => {
       console.log("Telebot msg sent");
@@ -333,7 +334,7 @@ export default class BusTimeBlock extends Component {
     }
     ,(error) => console.log('position error!!!', error),
     {
-      enableHighAccuracy: Platform.OS !== 'android',
+      enableHighAccuracy: Platform.OS !== 'android', //set to true if android emulator have location issues
       timeout: 60000,
       maximumAge: 0,
     })
@@ -359,7 +360,8 @@ export default class BusTimeBlock extends Component {
       this.setState({
         expectedBusArrive: true
       })
-      this.getTeleBot()
+      var msg = `<EXPECTED DEMAND>: User <${this.state.data.appID}> queried for <${this.state.busNumber}> at <${this.state.busStopNumber}>`
+      this.getTeleBot(msg)
     } else {
       var url = 'https://api.mybusfeed.com/demand/bus-timing'
     }

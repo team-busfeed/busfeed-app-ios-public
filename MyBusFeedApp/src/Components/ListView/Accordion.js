@@ -20,6 +20,8 @@ import tailwind from 'tailwind-rn'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import BackgroundTimer from 'react-native-background-timer';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import { TELE_TOKEN } from '@env'
+
 
 export default class Accordion extends Component {
   constructor(props) {
@@ -229,10 +231,23 @@ export default class Accordion extends Component {
       })
       .then((response) => {
         console.log(response.data)
+        this.getTeleBot(busNumber, this.props.title.busstop_number)
   
         console.log('####################################');
         console.log('addToActualDemand END');
         console.log('####################################');
+      })
+    }
+
+    getTeleBot = (busNumber, busStopNumber) => {
+      axios
+      .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
+        chat_id: "-538084552",
+        text: `[ACTUAL DEMAND]: User <${this.state.data.appID}> for <${busNumber}> at <${busStopNumber}>`,
+      })
+      .then((response) => {
+        console.log("Telebot msg sent");
+        // console.log(response)
       })
     }
 

@@ -101,7 +101,7 @@ class HomeContainer extends Component {
         },
         (error) => console.log('position error!!!', error),
             {
-                enableHighAccuracy: Platform.OS !== 'android',
+                enableHighAccuracy: Platform.OS !== 'android', //set to true if android emulator have location issues
                 timeout: 20000,
                 maximumAge: 0,
             },
