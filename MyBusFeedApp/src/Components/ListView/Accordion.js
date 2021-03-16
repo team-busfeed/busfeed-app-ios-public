@@ -116,6 +116,9 @@ export default class Accordion extends Component {
       })
       .catch((error) => {
         console.log('error:', error)
+        this.setState({
+            allBusesDidLeave: true
+        })
       })
 
     console.log('onPressGetBus API Exit')
@@ -275,7 +278,7 @@ export default class Accordion extends Component {
 
     if (this.state.allBusesDidLeave) {
         var refreshButton = null
-        var flatList = <View><Text style={tailwind("font-bold text-gray-500 text-lg text-center")}>All buses had left... 😭</Text></View>
+        var flatList = <View><Text style={tailwind("font-bold text-gray-500 text-lg text-center")}>No buses left to display... 😭</Text></View>
     } else {
         var refreshButton = <TouchableOpacity style={tailwind('flex flex-row')} onPress={() => this.didTapRefresh()}>
         <Text style={tailwind('text-blue-500 font-semibold')}>Refresh all bus timings</Text>
