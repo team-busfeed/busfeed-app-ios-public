@@ -30,7 +30,7 @@ export default class BusTimeBlock extends Component {
       pollURL: "",
       expectedBusArrive: false,
       constantPollLimitOn: false,
-      busTrackCount: this.props.busTrackCount,
+      busTrackCount: 0,
       specialTimeOut: false,
       testState: true,
     }
@@ -252,6 +252,10 @@ export default class BusTimeBlock extends Component {
     console.log("busTrackCountFunction bustimeblock");
     console.log('====================================');
     this.props.busTrackCountFunction()
+
+    this.setState({
+      busTrackCount: this.props.busTrackCount
+    })
   }
 
   getTeleBot = (msg) => {
@@ -275,6 +279,7 @@ export default class BusTimeBlock extends Component {
     this.busTrackCountFunction()
     console.log('#############################################');
     console.log("Total bus polling => " + this.props.busTrackCount);
+    console.log("Total bus polling => " + this.state.busTrackCount);
     console.log('#############################################');
 
     // =============== Method 1 ==================
@@ -354,13 +359,13 @@ export default class BusTimeBlock extends Component {
 
     var url = ''
     console.log("this.props.foundBeacon => " + this.props.foundBeacon)
-    if ((this.props.foundBeacon || this.state.userProximity) && this.state.expectedBusArrive == false) {
+    if ( (this.props.foundBeacon || this.state.userProximity) && this.state.expectedBusArrive == false && this.state.busTrackCount <= 2) {
       var url = 'https://api.mybusfeed.com/demand/expected/add'
       // To ensure expected count is added once only
       this.setState({
         expectedBusArrive: true
       })
-      var msg = `<EXPECTED DEMAND>: User <${this.state.data.appID}> queried for <${this.state.busNumber}> at <${this.state.busStopNumber}>`
+      var msg = `<EXPECTED DEMAND <${this.state.busTrackCount}>>: User <${this.state.data.appID}> queried for <${this.state.busNumber}> at <${this.state.busStopNumber}>`
       this.getTeleBot(msg)
     } else {
       var url = 'https://api.mybusfeed.com/demand/bus-timing'
@@ -405,7 +410,7 @@ export default class BusTimeBlock extends Component {
           })
 
         // Only poll for 3 bus max
-        }else if (this.props.busTrackCount <= 3){
+        }else if (this.state.busTrackCount <= 2){
 
           // Constant poll from 4 min to "Arr" State
           if (nextBus1Timing <= 4 && nextBus1Timing >= 2){
@@ -425,6 +430,7 @@ export default class BusTimeBlock extends Component {
         }else{
           console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
           console.log('Max polling hit =>' + this.props.busTrackCount);
+          console.log('Max polling hit =>' + this.state.busTrackCount);
           console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         }
       })
