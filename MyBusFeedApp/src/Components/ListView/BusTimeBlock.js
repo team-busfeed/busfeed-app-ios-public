@@ -83,7 +83,9 @@ export default class BusTimeBlock extends Component {
       console.log('====================================');
       console.log("constantPollLimitOn 5min for => " + this.state.busNumber);
       console.log('====================================');
-      BackgroundTimer.setTimeout(() => {
+      console.log("Start > 5 mins timer move within range")
+      BackgroundTimer.runBackgroundTimer(() => {
+        console.log("End >5 mins timer")
         if (this.state.userProximity == false){
           this.setState({
             constantPollOn: false
@@ -93,7 +95,9 @@ export default class BusTimeBlock extends Component {
           constantPollLimitOn: false
         })
       }, 300000); //300000 -> 5 minutes
+    BackgroundTimer.stopBackgroundTimer();
     }
+
 
     if (this.state.specialTimeOut != prevState.specialTimeOut && this.state.specialTimeOut==true){
       console.log('====================================');
@@ -105,7 +109,9 @@ export default class BusTimeBlock extends Component {
       }
       console.log("timeoutMin => " + timeoutMin)
 
-      BackgroundTimer.setTimeout(() => {
+      console.log("Start timer till 4 mins")
+      BackgroundTimer.runBackgroundTimer(() => {
+        console.log("End timer till 4 mins")
         console.log('specialTimeOut Interval kicks in');
         this.setState({
           specialTimeOut: false
@@ -116,7 +122,7 @@ export default class BusTimeBlock extends Component {
         console.log("specialTimeOut OFF => " + this.state.specialTimeOut);
         console.log('====================================');
       }, timeoutMin);
-
+    BackgroundTimer.stopBackgroundTimer();
     }
   }
 
@@ -124,8 +130,12 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
     console.log('constantBasicPoll INTERVAL for => ' + this.state.busNumber);
     console.log('====================================');
-
+    console.log("Lai Basic Poll background")
+    if (Platform.OS =="ios") {
+        BackgroundTimer.start();
+    }
     let intervalId = BackgroundTimer.setInterval(() => {
+      console.log("Hoseh basic poll lai lai lai")
       BackgroundGeolocation.getCurrentLocation((info) => {
         console.log("Component Geo info => " + info.latitude + " " + info.longitude);
         this.setState({
@@ -166,9 +176,13 @@ export default class BusTimeBlock extends Component {
     console.log('++++++++++++++++++++++++++++++++++++');
 
     BackgroundTimer.clearInterval(this.state.intervalId)
+    BackgroundTimer.stopBackgroundTimer();
+    
     console.log('<><><><><>< constantBasicPoll Cleared <><><><><><'  + this.state.busNumber)
-    BackgroundTimer.setTimeout(() => {
+    console.log("Time to go into arrival pause")
+    BackgroundTimer.runBackgroundTimer(() => {
       // 1. Get Geolocation
+      console.log("Swee la steady backgound arrival pause")
       BackgroundGeolocation.getCurrentLocation((info) => {
         this.setState({
           latitude: info.latitude,

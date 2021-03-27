@@ -362,8 +362,8 @@ class HomeContainer extends Component {
         }
 
         Beacons.BeaconsEventEmitter.addListener('beaconsDidRange', (data) => {
-        console.log('foundBeacon => ' + this.state.foundBeacon)
-        console.log('beaconsDidRange data: ', data)
+        // console.log('foundBeacon => ' + this.state.foundBeacon)
+        // console.log('beaconsDidRange data: ', data)
         if (data.beacons.length > 0 ){
             // Run a for loop based on scan output - data.beacons
             for (var i = 0; i < data.beacons.length; i++){
