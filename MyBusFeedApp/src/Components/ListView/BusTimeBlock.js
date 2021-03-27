@@ -130,12 +130,10 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
     console.log('constantBasicPoll INTERVAL for => ' + this.state.busNumber);
     console.log('====================================');
-    console.log("Lai Basic Poll background")
     if (Platform.OS =="ios") {
         BackgroundTimer.start();
     }
     let intervalId = BackgroundTimer.setInterval(() => {
-      console.log("Hoseh basic poll lai lai lai")
       BackgroundGeolocation.getCurrentLocation((info) => {
         console.log("Component Geo info => " + info.latitude + " " + info.longitude);
         this.setState({
@@ -179,10 +177,8 @@ export default class BusTimeBlock extends Component {
     BackgroundTimer.stopBackgroundTimer();
     
     console.log('<><><><><>< constantBasicPoll Cleared <><><><><><'  + this.state.busNumber)
-    console.log("Time to go into arrival pause")
     BackgroundTimer.runBackgroundTimer(() => {
       // 1. Get Geolocation
-      console.log("Swee la steady backgound arrival pause")
       BackgroundGeolocation.getCurrentLocation((info) => {
         this.setState({
           latitude: info.latitude,
@@ -292,45 +288,12 @@ export default class BusTimeBlock extends Component {
 
     this.busTrackCountFunction()
     console.log('#############################################');
-    console.log("Total bus polling => " + this.props.busTrackCount);
     console.log("Total bus polling => " + this.state.busTrackCount);
     console.log('#############################################');
 
-    // =============== Method 1 ==================
-
-    // BackgroundGeolocation.getCurrentLocation((info) => {
-    //   console.log("Component Geo info => " + info.latitude + " " + info.longitude);
-    //   this.setState({
-    //     latitude: info.latitude,
-    //     longitude: info.longitude,
-    //   })
-
-    //   this.getUserProximity()
-    //   .then((data) => {
-    //     this.setState({ userProximity: data })
-        
-    //     // Call for bus timing
-    //     this.getBusTiming()
-
-    //     // Reveal bus timing
-    //     this.setState({
-    //       busTimingContent: true,
-    //     })
-
-    //     // this.setState((previousState) => ({
-    //     //   busTimingContent: !previousState.busTimingContent,
-    //     // }))
-
-    //   }).catch((error) => console.log("userProximity Error => "+error))
-
-    // },error => console.log('Error', JSON.stringify(error)),
-    //   {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
-    // )
-
-    // ==================== Method 3: To test if background geolocation is the problem====================
     Geolocation.getCurrentPosition((info) => {
       console.log('====================================');
-      console.log("GEOLOCATION METHOD 3");
+      console.log("GEOLOCATION");
       console.log('====================================');
       console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
       this.setState({
@@ -443,7 +406,6 @@ export default class BusTimeBlock extends Component {
           }
         }else{
           console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-          console.log('Max polling hit =>' + this.props.busTrackCount);
           console.log('Max polling hit =>' + this.state.busTrackCount);
           console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         }
@@ -466,7 +428,7 @@ export default class BusTimeBlock extends Component {
       '-',
       this.state.busStopNumber,
     )
-    console.log("fetchURL =>" + fetchURL);
+    // console.log("fetchURL =>" + fetchURL);
     return axios
       .get(fetchURL)
       .then((response) => response.data.status)

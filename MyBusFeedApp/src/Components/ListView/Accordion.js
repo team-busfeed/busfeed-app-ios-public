@@ -74,11 +74,11 @@ export default class Accordion extends Component {
   GetBus = () => {
     console.log('onPressGetBus API')
     const baseFetchURL = 'https://api.mybusfeed.com/demand/bus-stop/'
-    console.log(this.props.title.busstop_number)
+    // console.log(this.props.title.busstop_number)
     axios
       .get(baseFetchURL.concat(this.props.title.busstop_number))
       .then((response) => {
-        console.log("Fetched bus API data: " + JSON.stringify(response.data))
+        // console.log("Fetched bus API data: " + JSON.stringify(response.data))
 
         var comparator = function(a, b) {
             return parseInt(a) - parseInt(b);
@@ -108,7 +108,7 @@ export default class Accordion extends Component {
           //   services: ['169', '860', '811'],
           // },
         })
-        console.log(this.state.busStops)
+        // console.log(this.state.busStops)
 
         if (this.state.busStops.services === null) {
             this.setState({
@@ -188,23 +188,22 @@ export default class Accordion extends Component {
         
         try {
             // AsyncStorage.setItem('@favouriteBusStops', 1012)
-            console.log("here")
 
-            console.log(this.props.title.busstop_number)
+            // console.log(this.props.title.busstop_number)
             let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
-            console.log("this is in store " + favouriteInStores)
+            // console.log("this is in store " + favouriteInStores)
             let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
-            console.log("THIS IS FAV BUS STOP LIST " + favouriteBusStopsList)
+            // console.log("THIS IS FAV BUS STOP LIST " + favouriteBusStopsList)
 
             if (favouriteBusStopsList.indexOf(this.props.title.busstop_number) == -1) {
-              console.log("false")
+              // console.log("false")
             } else {
               this.setState({favIcon: "favorite"})
-              console.log("true")
+              // console.log("true")
             }
 
         } catch (e) {
-            console.log ("error : " + e)  
+            // console.log ("error : " + e)  
         }
 
         // if (favouriteBusStopsList.indexOf(busStopNumber) == -1) {
@@ -218,7 +217,7 @@ export default class Accordion extends Component {
       console.log('####################################');
   
       const moment = require("moment")
-      console.log("moment => " + moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss"))
+      // console.log("moment => " + moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss"))
   
       axios
       .post("https://api.mybusfeed.com/demand/actual/add", {
@@ -230,7 +229,7 @@ export default class Accordion extends Component {
         created_time: moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss")
       })
       .then((response) => {
-        console.log(response.data)
+        console.log("addToActualDemand resp =>" + response.data)
         this.getTeleBot(busNumber, this.props.title.busstop_number)
   
         console.log('####################################');
@@ -257,7 +256,7 @@ export default class Accordion extends Component {
       console.log('====================================');
       if (!this.state.actualBusStack.includes(bus)){
         this.state.actualBusStack.push(bus)
-        console.log(this.state.actualBusStack);
+        // console.log(this.state.actualBusStack);
 
         // Start 30s timer
         if (!this.state.actualBusStackTimer){
