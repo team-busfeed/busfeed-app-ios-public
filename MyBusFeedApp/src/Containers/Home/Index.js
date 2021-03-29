@@ -170,6 +170,9 @@ class HomeContainer extends Component {
         //         BLEState: false
         //     })
         // }
+        if (Platform.OS =="ios") {
+            BackgroundTimer.start();
+        }
 
         this.getGeoLocation()
 
