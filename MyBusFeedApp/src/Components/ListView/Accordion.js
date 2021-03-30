@@ -49,16 +49,18 @@ export default class Accordion extends Component {
     }
   }
 
+  // Execute functions when user press the component
   onPressToggle = () => {
     this.toggleExpand()
     this.GetBus()
   }
 
-  // Set accordion toggle state
+  // Set bust stop list (accordion) toggle state
   toggleExpand = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
     this.setState({ expanded: !this.state.expanded })
   }
+
 
   callBusAPI = () => {
     Object.keys(services).map((function(key) {
@@ -72,13 +74,12 @@ export default class Accordion extends Component {
 
   // Fetch the list of bus based on busstop_number given
   GetBus = () => {
-    console.log('onPressGetBus API')
     const baseFetchURL = 'https://api.mybusfeed.com/demand/bus-stop/'
-    // console.log(this.props.title.busstop_number)
+
+    // Retrieve all bus number for a bus stop
     axios
       .get(baseFetchURL.concat(this.props.title.busstop_number))
       .then((response) => {
-        // console.log("Fetched bus API data: " + JSON.stringify(response.data))
 
         var comparator = function(a, b) {
             return parseInt(a) - parseInt(b);
@@ -100,15 +101,8 @@ export default class Accordion extends Component {
         })
 
         this.setState({
-          // ACTUAL VALUE
           busStops: response.data,
-
-          // HARDCODED VALUE - use when bus services is null
-          // busStops: {
-          //   services: ['169', '860', '811'],
-          // },
         })
-        // console.log(this.state.busStops)
 
         if (this.state.busStops.services === null) {
             this.setState({
@@ -126,6 +120,7 @@ export default class Accordion extends Component {
     console.log('onPressGetBus API Exit')
   }
 
+  // Track total count of bus that user wants to view bus timing. Used to cap expected demand per user at 3
   busTrackCountFunction = () => {
     console.log('====================================');
     console.log("busTrackCountFunction accordion");
@@ -133,160 +128,159 @@ export default class Accordion extends Component {
     this.props.busTrackCountFunction()
   }
 
-    favouriteThisStop = async (busStopNumber) => {
-        try {
-            // await AsyncStorage.setItem('@favouriteBusStops', busStopNumber)
-            let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
-            let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
+  // Function to add busstop to favourite storage
+  favouriteThisStop = async (busStopNumber) => {
+      try {
+          // await AsyncStorage.setItem('@favouriteBusStops', busStopNumber)
+          let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
+          let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
 
-            var indexOfFavourite = favouriteBusStopsList.indexOf(busStopNumber)
+          var indexOfFavourite = favouriteBusStopsList.indexOf(busStopNumber)
 
-            if (indexOfFavourite == -1) {
-                favouriteBusStopsList.push(busStopNumber)
-                console.log("Favourited " + busStopNumber + "!")
-                this.setState({favIcon: "favorite"})
-                var paddedStopNumber = busStopNumber.length == 4 ? "0" + busStopNumber : busStopNumber
-                
-                Alert.alert(
-                    'Favourite bus stop',
-                    'Bus stop ' + paddedStopNumber + ' added to your favourites!',
-                    [
-                        { text: 'OK'}
-                    ],
-                    { cancelable: false }
-                )
-            } else {
-                var paddedStopNumber = busStopNumber.length == 4 ? "0" + busStopNumber : busStopNumber
-                Alert.alert(
-                    'Removing from favourites',
-                    'Bus stop ' + paddedStopNumber + ' removed from favourites!',
-                    [
-                        { text: 'OK'}
-                    ],
-                    { cancelable: false }
-                )
-                favouriteBusStopsList.splice(indexOfFavourite, 1)
-
-                this.setState({favIcon: "favorite-border"})
-            }
-
-            await AsyncStorage.setItem('@favouriteBusStops', JSON.stringify({"favourites": favouriteBusStopsList}))
-            // const value = await AsyncStorage.getItem('@storage_Key')
-            // if (value !== null) {
-            //     // value previously stored
-            //     console.log(value)
-            // }
-        } catch (e) {
-            // saving error
-            console.log("Error favouriting bus stop. Debug: " + e)
-        }
-    }
-
-
-
-    async componentDidMount() {
-        
-        try {
-            // AsyncStorage.setItem('@favouriteBusStops', 1012)
-
-            // console.log(this.props.title.busstop_number)
-            let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
-            // console.log("this is in store " + favouriteInStores)
-            let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
-            // console.log("THIS IS FAV BUS STOP LIST " + favouriteBusStopsList)
-
-            if (favouriteBusStopsList.indexOf(this.props.title.busstop_number) == -1) {
-              // console.log("false")
-            } else {
+          if (indexOfFavourite == -1) {
+              favouriteBusStopsList.push(busStopNumber)
+              console.log("Favourited " + busStopNumber + "!")
               this.setState({favIcon: "favorite"})
-              // console.log("true")
+              var paddedStopNumber = busStopNumber.length == 4 ? "0" + busStopNumber : busStopNumber
+              
+              Alert.alert(
+                  'Favourite bus stop',
+                  'Bus stop ' + paddedStopNumber + ' added to your favourites!',
+                  [
+                      { text: 'OK'}
+                  ],
+                  { cancelable: false }
+              )
+          } else {
+              var paddedStopNumber = busStopNumber.length == 4 ? "0" + busStopNumber : busStopNumber
+              Alert.alert(
+                  'Removing from favourites',
+                  'Bus stop ' + paddedStopNumber + ' removed from favourites!',
+                  [
+                      { text: 'OK'}
+                  ],
+                  { cancelable: false }
+              )
+              favouriteBusStopsList.splice(indexOfFavourite, 1)
+
+              this.setState({favIcon: "favorite-border"})
+          }
+
+          await AsyncStorage.setItem('@favouriteBusStops', JSON.stringify({"favourites": favouriteBusStopsList}))
+          // const value = await AsyncStorage.getItem('@storage_Key')
+          // if (value !== null) {
+          //     // value previously stored
+          //     console.log(value)
+          // }
+      } catch (e) {
+          // saving error
+          console.log("Error favouriting bus stop. Debug: " + e)
+      }
+  }
+
+  async componentDidMount() {
+    try {
+      // AsyncStorage.setItem('@favouriteBusStops', 1012)
+
+      // console.log(this.props.title.busstop_number)
+      let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
+      // console.log("this is in store " + favouriteInStores)
+      let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
+      // console.log("THIS IS FAV BUS STOP LIST " + favouriteBusStopsList)
+
+      if (favouriteBusStopsList.indexOf(this.props.title.busstop_number) == -1) {
+        // console.log("false")
+      } else {
+        this.setState({favIcon: "favorite"})
+        // console.log("true")
+      }
+
+    } catch (e) {
+      // console.log ("error : " + e)  
+    }
+  }
+
+  // Add 1 count to actual demand database
+  // @param - Bus number
+  addToActualDemand = (busNumber) => {
+    console.log('####################################');
+    console.log('addToActualDemand START => ' + busNumber);
+    console.log('####################################');
+
+    const moment = require("moment")
+
+    axios
+    .post("https://api.mybusfeed.com/demand/actual/add", {
+      
+      app_id: this.state.data.appID,
+      bus_stop_no: this.props.title.busstop_number,
+      bus_no: busNumber,
+      has_successfully_board: true,
+      created_time: moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss")
+    })
+    .then((response) => {
+      console.log("addToActualDemand resp =>" + response.data)
+      this.getTeleBot(busNumber, this.props.title.busstop_number)
+
+      console.log('####################################');
+      console.log('addToActualDemand END');
+      console.log('####################################');
+    })
+  }
+
+  // Call telebot API to send a text - For ground truth data collection
+  // @param - Bus number, Bus stop number
+  getTeleBot = (busNumber, busStopNumber) => {
+    axios
+    .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
+      chat_id: "-538084552",
+      text: `[ACTUAL DEMAND]: User <${this.state.data.appID}> for <${busNumber}> at <${busStopNumber}>`,
+    })
+    .then((response) => {
+      console.log("Telebot msg sent");
+    })
+  }
+
+  // To hold busses, that arrives at similar timing, in an temp array to determine which bus user has left with & add to actual demand count accordingly
+  // Assumption - user will leave the with the least crowded bus; if crowd level is the same, user will leave with the first bus.
+  // @param - bus number
+  actualBusStackFunction = (bus) => {
+    // console.log('====================================');
+    // console.log("actualBusStackFunction for => " + bus);
+    // console.log('====================================');
+    if (!this.state.actualBusStack.includes(bus)){
+      this.state.actualBusStack.push(bus)
+
+      // Start 30s timer
+      if (!this.state.actualBusStackTimer){
+        this.setState({
+          actualBusStackTimer: true
+        })
+
+        console.log('====================================');
+        console.log("actualBusStackFunction timer start");
+
+        // Logic to select least crowded bus
+        BackgroundTimer.setTimeout(() => {
+          var actualBusStack = this.state.actualBusStack
+          var leastCrowdBus = actualBusStack[0][0]
+          var leastCrowdBusStatus = actualBusStack[0][1]
+          for (i = 1; i < actualBusStack.length; i++){
+            if ( this.state.busCrowdStatus[actualBusStack[i][1]] < leastCrowdBusStatus ){
+              leastCrowdBus = actualBusStack[i][0]
+              leastCrowdBusStatus = this.state.busCrowdStatus[actualBusStack[i][1]]
             }
+          }
 
-        } catch (e) {
-            // console.log ("error : " + e)  
-        }
-
-        // if (favouriteBusStopsList.indexOf(busStopNumber) == -1) {
-        //   console.log ("fetched")
-        // }
-    }
-
-    addToActualDemand = (busNumber) => {
-      console.log('####################################');
-      console.log('addToActualDemand START => ' + busNumber);
-      console.log('####################################');
-  
-      const moment = require("moment")
-      // console.log("moment => " + moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss"))
-  
-      axios
-      .post("https://api.mybusfeed.com/demand/actual/add", {
-        
-        app_id: this.state.data.appID,
-        bus_stop_no: this.props.title.busstop_number,
-        bus_no: busNumber,
-        has_successfully_board: true,
-        created_time: moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss")
-      })
-      .then((response) => {
-        console.log("addToActualDemand resp =>" + response.data)
-        this.getTeleBot(busNumber, this.props.title.busstop_number)
-  
-        console.log('####################################');
-        console.log('addToActualDemand END');
-        console.log('####################################');
-      })
-    }
-
-    getTeleBot = (busNumber, busStopNumber) => {
-      axios
-      .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
-        chat_id: "-538084552",
-        text: `[ACTUAL DEMAND]: User <${this.state.data.appID}> for <${busNumber}> at <${busStopNumber}>`,
-      })
-      .then((response) => {
-        console.log("Telebot msg sent");
-        // console.log(response)
-      })
-    }
-
-    actualBusStackFunction = (bus) => {
-      console.log('====================================');
-      console.log("actualBusStackFunction for => " + bus);
-      console.log('====================================');
-      if (!this.state.actualBusStack.includes(bus)){
-        this.state.actualBusStack.push(bus)
-        // console.log(this.state.actualBusStack);
-
-        // Start 30s timer
-        if (!this.state.actualBusStackTimer){
-          this.setState({
-            actualBusStackTimer: true
-          })
-
+          console.log("leastCrowdBus => " + leastCrowdBus);
           console.log('====================================');
-          console.log("actualBusStackFunction timer start");
 
-          BackgroundTimer.setTimeout(() => {
-            var actualBusStack = this.state.actualBusStack
-            var leastCrowdBus = actualBusStack[0][0]
-            var leastCrowdBusStatus = actualBusStack[0][1]
-            for (i = 1; i < actualBusStack.length; i++){
-              if ( this.state.busCrowdStatus[actualBusStack[i][1]] < leastCrowdBusStatus ){
-                leastCrowdBus = actualBusStack[i][0]
-                leastCrowdBusStatus = this.state.busCrowdStatus[actualBusStack[i][1]]
-              }
-            }
-
-            console.log("leastCrowdBus => " + leastCrowdBus);
-            console.log('====================================');
-
-            this.state.actualBusStack = []
-            this.addToActualDemand(leastCrowdBus)
-          }, 30000); //300000 -> 5 minutes
-        }
+          this.state.actualBusStack = []
+          this.addToActualDemand(leastCrowdBus)
+        }, 30000); //300000 -> 5 minutes
       }
     }
+  }
 
   render() {
 

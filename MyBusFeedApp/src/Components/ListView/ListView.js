@@ -56,11 +56,9 @@ class ListView extends Component {
         })
     }
 
+    // Get user current location, Return list of bus stops around user proximity according to their geolocation
     getGeoLocation() {
         Geolocation.getCurrentPosition((info) => {
-            console.log("========================")
-            console.log("Got current geolocation!")
-            console.log("========================")
             this.setState({
                 latitude: info.coords.latitude,
                 longitude: info.coords.longitude,
@@ -81,6 +79,7 @@ class ListView extends Component {
         {enableHighAccuracy: Platform.OS !== 'android', timeout: 20000, maximumAge: 0})
     }
 
+    //  Return list of bus stops around user proximity according to their geolocation
     getProximityBusStops() {
         this.props.states.busStops = []
         console.log("========================")
@@ -122,6 +121,7 @@ class ListView extends Component {
         })
     }
 
+    // Track total count of bus that user wants to view bus timing. Used to cap expected demand per user at 3
     busTrackCountFunction = () => {
         var count = this.state.busTrackCount
         var count2 = count + 1
@@ -133,6 +133,7 @@ class ListView extends Component {
         console.log('====================================');
     }
 
+    // Alternative display when there are no bus stop around user proximity
     updateFlatList() {
         if (this.props.states.busStops.length == 0) {
             localVarBusStops = [{"type": "-1", "message": "Nothing to display here..."}]
@@ -165,7 +166,6 @@ class ListView extends Component {
             flatList: flatList
         })
     }
-
 
     render() {
         flatList = null

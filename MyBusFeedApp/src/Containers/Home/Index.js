@@ -46,7 +46,6 @@ class HomeContainer extends Component {
         isLoading: true,
         busStops: [],
         userProximity: false,
-        selected: 0,
         BLEState: true,
         uuid: 'fda50693-a4e2-4fb1-afcf-c6eb07647825',
         identifier: 'iBeacon',
@@ -57,12 +56,12 @@ class HomeContainer extends Component {
         notificationPushed: false,
         BLEstarted: false,
         beaconStart: false,
-
         tutorialState: 0,
         modalVisible: false,
     }
   }
 
+    // Push notification configuration
     configurePushNotification() {
         PushNotification.configure({
             permissions: {
@@ -75,7 +74,7 @@ class HomeContainer extends Component {
         })
     }
 
-    
+    // Get user current location, call function to set list of bus stops around user proximity
     getGeoLocation() {
         Geolocation.getCurrentPosition(
         (info) => {
@@ -100,6 +99,7 @@ class HomeContainer extends Component {
         )
     }
 
+    // Re-fetch and update user current location
     refreshGeoLocation() {
         Geolocation.getCurrentPosition(
         (info) => {
@@ -129,8 +129,8 @@ class HomeContainer extends Component {
         )
     }
 
+    //  Return list of bus stops around user proximity according to their geolocation
     getProximityBusStops() {
-        // console.log('Getting data from Location Service API')
         const fetchURL = 'https://api.mybusfeed.com/location/getListOfBusStopNo/'.concat(
         this.state.latitude,
         '-',
@@ -139,14 +139,13 @@ class HomeContainer extends Component {
         axios
         .get(fetchURL)
         .then((response) => {
-            // console.log('Fetched API data: ' + JSON.stringify(response.data))
-
             if (response.data.status === 'not_found') {
             this.setState({
                 isLoading: false,
                 busStops: [],
             })
             } else {
+            
             this.setState({
                 isLoading: false,
                 busStops: response.data,
@@ -165,31 +164,27 @@ class HomeContainer extends Component {
     }
 
     componentDidMount = async () => {
-        // if (this.state.BLEState == true){
-        //     this.setState({
-        //         BLEState: false
-        //     })
-        // }
+
+        // Start background timer for IOS
         if (Platform.OS =="ios") {
             BackgroundTimer.start();
         }
 
+        // Get user current location, call function to set list of bus stops around user proximity
         this.getGeoLocation()
 
+        // Get user mobile id
         var uniqueId = DeviceInfo.getUniqueId()
-        console.log('uniqueId =>' + uniqueId)
-        // console.log(DeviceInfo.getSystemVersion()
-        // )
         this.setState({
-        appID: uniqueId,
+            appID: uniqueId,
         })
 
+        // Retrieve user favourite bus stops
         const value = await AsyncStorage.getItem('@favouriteBusStops')
         if (value === null) {
             // value previously stored
             initialSetup = JSON.stringify({ favourites: [] })
             await AsyncStorage.setItem('@favouriteBusStops', initialSetup)
-            // console.log(value)
         } else {
             await AsyncStorage.setItem('@favouriteBusStops', value)
         }
@@ -198,10 +193,10 @@ class HomeContainer extends Component {
         if (didNotLaunchBefore === null) {
             // value previously stored
             await AsyncStorage.setItem('@firstLaunch', "true")
-            // console.log(didNotLaunchBefore)
             this.setState({modalVisible: true})
         }
 
+        // Start iBeacon detecting logic
         if (Platform.OS === 'android') {
             Beacons.detectIBeacons()
         } else {
@@ -209,11 +204,7 @@ class HomeContainer extends Component {
         }
         this.configurePushNotification();
 
-        // BackgroundGeolocation.start();
         BackgroundGeolocation.checkStatus(status => {
-            // console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
-            // console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
-            // console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
       
             // you don't need to check status before start (this is just the example)
             if (!status.isRunning) {
@@ -230,14 +221,16 @@ class HomeContainer extends Component {
         });
 
         BackgroundGeolocation.on('start', () => {
-        // service started successfully
-        // you should adjust your app UI for example change switch element to indicate
-        // that service is running
+            // service started successfully
+            // you should adjust your app UI for example change switch element to indicate
+            // that service is running
             console.log('[DEBUG] BackgroundGeolocation has been started');
         });
 
         this.startDetection()
     }
+
+    // iBeacon BLE detecting logic; Detect any surround BLE
     startDetection() {
         console.log('====================================')
         console.log('BLEreader started')
@@ -258,6 +251,7 @@ class HomeContainer extends Component {
         return null
     }
 
+    // Request permission - Deprecated
     async checkPermission() {
         try {
         const granted = await PermissionsAndroid.request(
@@ -279,19 +273,15 @@ class HomeContainer extends Component {
         }
     }
 
+    // iBeacon BLE monitoring logic; Adds a listener to track user within the BLE range;
     startMonitoringBeacon() {
         const regionToMonitor = ({ identifier, uuid, major, minor } = this.state)
-        // this.doAction(identifier, uuid, minor, major, moment().format(TIME_FORMAT))
 
         Beacons.startMonitoringForRegion(regionToMonitor)
         .then(() => console.log('Beacons monitoring started succesfully'))
         .catch((error) =>
             console.log(`Beacons monitoring not started, error: ${error}`),
         )
-
-        // DeviceEventEmitter.addListener('regionDidEnter', (regionToMonitor) => {
-        //     console.log('Entered new beacons region!', regionToMonitor) // Result of monitoring
-        // })
 
         Beacons.BeaconsEventEmitter.addListener(
         'regionDidExit',
@@ -305,11 +295,11 @@ class HomeContainer extends Component {
             )
             DeviceEventEmitter.removeListener('regionDidEnter')
             console.log('monitoring - regionDidExit data: ', {
-            identifier,
-            uuid,
-            minor,
-            major,
-            time,
+                identifier,
+                uuid,
+                minor,
+                major,
+                time,
             })
 
             console.log('====================================');
@@ -324,7 +314,7 @@ class HomeContainer extends Component {
         )
     }
 
-
+    // iBeacon BLE monitoring logic; Adds a listener to track user within the BLE range; Check if iBeacon detected is valid and user is within BLE range
     startRanging() {
         const regionToRange = ({ identifier, uuid } = this.state)
 
@@ -396,6 +386,7 @@ class HomeContainer extends Component {
         })
     }
 
+    // Push notification to user (Maximum 1 notification per app launch)
     pushNoti() {
         if (this.state.foundBeacon && !this.state.notificationPushed ) {
             if (Platform.OS !== 'android') {
@@ -506,6 +497,7 @@ class HomeContainer extends Component {
         await AsyncStorage.setItem('@firstLaunch', "false")
     }
 
+    // Maintain modal state
     setModalVisible = () => {
         this.setState({modalVisible: true})
     }
@@ -518,7 +510,7 @@ class HomeContainer extends Component {
         // set tutorial content here
         content = ["MyBusFeed is an application that tells you when your next bus will arrive at any bus stop in Singapore using the data provided from Land Transport Authority (LTA)’s Datamall*.\n\n\
 The application is developed with your experience in mind. Additionally, we aim to transform your inputs into crowdsourced analytics in a non-intrusive manner. The additional steps that require you to click on multiple buses to check for bus arrival timings is a form of data crowdsourcing to measure the demand for each bus.\n\n\
-Your inputs will provide valuable insights for LTA to better plan bus dispatch frequencies to serve you better.\n\nPlease be aware that this application requires an internet connection, with bluetooth enabled, and location services set to “always allowed” for full functionality."]
+Your inputs will provide valuable insights for us to better plan bus dispatch frequencies to serve you better.\n\nPlease be aware that this application requires an internet connection, with bluetooth enabled, and location services set to “always allowed” for full functionality."]
 
         aboutUs = <Modal
         animationType="slide"
