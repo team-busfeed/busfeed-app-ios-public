@@ -79,9 +79,7 @@ class HomeContainer extends Component {
     getGeoLocation() {
         Geolocation.getCurrentPosition(
         (info) => {
-            console.log('========================')
-            console.log('Got current geolocation!')
-            console.log('========================')
+
             this.setState({
             latitude: info.coords.latitude,
             longitude: info.coords.longitude,
@@ -91,17 +89,11 @@ class HomeContainer extends Component {
             })
 
             this.getProximityBusStops()
-            console.log('LAT:' + info.coords.latitude)
-            console.log('LONG:' + info.coords.longitude)
-            console.log(
-            this.state.updatedGeolocation
-                ? 'Updated to real-time geolocation values!'
-                : 'Using default geolocation values',
-            )
+
         },
         (error) => console.log('position error!!!', error),
             {
-                enableHighAccuracy: Platform.OS !== 'android',
+                enableHighAccuracy: Platform.OS !== 'android', //set to true if android emulator have location issues
                 timeout: 20000,
                 maximumAge: 0,
             },
@@ -111,9 +103,7 @@ class HomeContainer extends Component {
     refreshGeoLocation() {
         Geolocation.getCurrentPosition(
         (info) => {
-            console.log('========================')
-            console.log('Got current geolocation!')
-            console.log('========================')
+
             this.setState({
             latitude: info.coords.latitude,
             longitude: info.coords.longitude,
@@ -140,7 +130,7 @@ class HomeContainer extends Component {
     }
 
     getProximityBusStops() {
-        console.log('Getting data from Location Service API')
+        // console.log('Getting data from Location Service API')
         const fetchURL = 'https://api.mybusfeed.com/location/getListOfBusStopNo/'.concat(
         this.state.latitude,
         '-',
@@ -149,7 +139,7 @@ class HomeContainer extends Component {
         axios
         .get(fetchURL)
         .then((response) => {
-            console.log('Fetched API data: ' + JSON.stringify(response.data))
+            // console.log('Fetched API data: ' + JSON.stringify(response.data))
 
             if (response.data.status === 'not_found') {
             this.setState({
@@ -180,13 +170,16 @@ class HomeContainer extends Component {
         //         BLEState: false
         //     })
         // }
+        if (Platform.OS =="ios") {
+            BackgroundTimer.start();
+        }
 
         this.getGeoLocation()
 
         var uniqueId = DeviceInfo.getUniqueId()
         console.log('uniqueId =>' + uniqueId)
-        console.log(DeviceInfo.getSystemVersion()
-        )
+        // console.log(DeviceInfo.getSystemVersion()
+        // )
         this.setState({
         appID: uniqueId,
         })
@@ -196,7 +189,7 @@ class HomeContainer extends Component {
             // value previously stored
             initialSetup = JSON.stringify({ favourites: [] })
             await AsyncStorage.setItem('@favouriteBusStops', initialSetup)
-            console.log(value)
+            // console.log(value)
         } else {
             await AsyncStorage.setItem('@favouriteBusStops', value)
         }
@@ -205,7 +198,7 @@ class HomeContainer extends Component {
         if (didNotLaunchBefore === null) {
             // value previously stored
             await AsyncStorage.setItem('@firstLaunch', "true")
-            console.log(didNotLaunchBefore)
+            // console.log(didNotLaunchBefore)
             this.setState({modalVisible: true})
         }
 
@@ -215,14 +208,25 @@ class HomeContainer extends Component {
             Beacons.requestWhenInUseAuthorization()
         }
         this.configurePushNotification();
-        console.log('====================================')
-        console.log('BLE componentDidMount')
-        console.log('====================================')
 
-        BackgroundGeolocation.start();
+        // BackgroundGeolocation.start();
+        BackgroundGeolocation.checkStatus(status => {
+            // console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
+            // console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
+            // console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
+      
+            // you don't need to check status before start (this is just the example)
+            if (!status.isRunning) {
+              BackgroundGeolocation.start(); //triggers start on start event
+            }
+          });
 
         BackgroundGeolocation.on('background', () => {
-            console.log('[INFO] App is in background');
+            console.log('[INFO] App is in background index');
+        });
+
+        BackgroundGeolocation.on('foreground', () => {
+            console.log('[INFO] App is in foreground');
         });
 
         BackgroundGeolocation.on('start', () => {
@@ -231,12 +235,10 @@ class HomeContainer extends Component {
         // that service is running
             console.log('[DEBUG] BackgroundGeolocation has been started');
         });
-        this.startDetection()
 
+        this.startDetection()
     }
     startDetection() {
-        // BackgroundTimer.setInterval(() => {
-        // const { foundBeacon } = this.state
         console.log('====================================')
         console.log('BLEreader started')
         console.log('====================================')
@@ -253,13 +255,6 @@ class HomeContainer extends Component {
             })
         }
 
-        // return null
-
-        console.log('====================================')
-        console.log('Interval 10000')
-        console.log('====================================')
-
-        // }, 10000)
         return null
     }
 
@@ -348,8 +343,8 @@ class HomeContainer extends Component {
         }
 
         Beacons.BeaconsEventEmitter.addListener('beaconsDidRange', (data) => {
-        console.log('foundBeacon => ' + this.state.foundBeacon)
-        console.log('beaconsDidRange data: ', data)
+        // console.log('foundBeacon => ' + this.state.foundBeacon)
+        // console.log('beaconsDidRange data: ', data)
         if (data.beacons.length > 0 ){
             // Run a for loop based on scan output - data.beacons
             for (var i = 0; i < data.beacons.length; i++){
@@ -357,10 +352,9 @@ class HomeContainer extends Component {
                 var tempdist = data.beacons[i].distance
                 var beaconMajor = data.beacons[i].major
                 var beaconMinor = data.beacons[i].minor
-                console.log("tempdist " + tempdist)
-                //truncate
+
                 var truncatedTempUUID = tempUUID.replace(/-/g, "")
-                console.log("truncatedTempUUID => " + truncatedTempUUID)
+                var url = "https://api.mybusfeed.com/beacon/getBeaconStatus/" + truncatedTempUUID
 
                 // Make a request for a user with a given ID
                 axios.get('https://api.mybusfeed.com/beacon/getBeaconStatus/' + truncatedTempUUID)
@@ -390,13 +384,11 @@ class HomeContainer extends Component {
                             .catch((error) =>
                                 console.log(`Beacons ranging not stopped, error: ${error}`),
                             )
- 
                             this.startMonitoringBeacon()
                         }
                     }
                 })
                 .catch( (error) => {
-                    // handle error
                     console.log("BLE Error" + error);
                 })
             }
@@ -405,31 +397,26 @@ class HomeContainer extends Component {
     }
 
     pushNoti() {
-        if (!this.state.foundBeacon && !this.state.notificationPushed ) {
+        if (this.state.foundBeacon && !this.state.notificationPushed ) {
             if (Platform.OS !== 'android') {
-
+                
                 PushNotificationIOS.presentLocalNotification({
                     alertTitle: 'Bus stop detected!',
-                    alertBody: 'You are near a bus stop 0' +
-                        bustop +
+                    alertBody: 'You are near a bus stop ' +
+                        this.state.bustop +
                     ', check for your bus timing!',
                 });
-                console.log('====================================');
-                console.log("Pushed to IOS")
-                console.log('====================================');
+
             } else {
                 PushNotification.localNotification({
                     title: 'Bus stop detected!',
                     message:
-                    'You are near a bus stop 0' +
-                    bustop +
+                    'You are near a bus stop ' +
+                    this.state.bustop +
                     ', check for your bus timing!',
                 })
             }
 
-            console.log('====================================');
-            console.log("notificationPushed => " + this.state.notificationPushed);
-            console.log('====================================');
             this.setState({
                 notificationPushed: true
             })
@@ -442,7 +429,7 @@ class HomeContainer extends Component {
     }
 
     componentWillUnMount() {
-        console.log('UNMOUNT  BEGIN XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+        console.log('UNMOUNT BEGIN XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
         const { uuid, identifier } = this.state
         const region = { identifier, uuid }
 

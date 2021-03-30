@@ -41,7 +41,7 @@ class ListView extends Component {
                 "busStops": favouriteBusStopsList
             })
             .then((response) => {
-                console.log(response.data)
+                // console.log(response.data)
                 this.props.states.busStops = response.data
                 this.updateFlatList()
                 this.props.updateMaps()
@@ -73,7 +73,7 @@ class ListView extends Component {
 
             console.log("LAT:" + info.coords.latitude)
             console.log("LONG:" + info.coords.longitude)
-            console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
+            // console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
 
             this.getProximityBusStops()
             this.props.resetSearchState()
@@ -90,7 +90,7 @@ class ListView extends Component {
         axios
         .get(fetchURL)
         .then((response) => {
-            console.log("Fetched API data: " + JSON.stringify(response.data))
+            // console.log("Fetched API data: " + JSON.stringify(response.data))
 
             if (response.data.status === "not_found") {
                 this.props.states.busStops = []

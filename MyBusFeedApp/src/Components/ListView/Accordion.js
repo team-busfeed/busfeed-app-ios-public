@@ -20,6 +20,8 @@ import tailwind from 'tailwind-rn'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import BackgroundTimer from 'react-native-background-timer';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import { TELE_TOKEN } from '@env'
+
 
 export default class Accordion extends Component {
   constructor(props) {
@@ -72,11 +74,11 @@ export default class Accordion extends Component {
   GetBus = () => {
     console.log('onPressGetBus API')
     const baseFetchURL = 'https://api.mybusfeed.com/demand/bus-stop/'
-    console.log(this.props.title.busstop_number)
+    // console.log(this.props.title.busstop_number)
     axios
       .get(baseFetchURL.concat(this.props.title.busstop_number))
       .then((response) => {
-        console.log("Fetched bus API data: " + JSON.stringify(response.data))
+        // console.log("Fetched bus API data: " + JSON.stringify(response.data))
 
         var comparator = function(a, b) {
             return parseInt(a) - parseInt(b);
@@ -106,9 +108,9 @@ export default class Accordion extends Component {
           //   services: ['169', '860', '811'],
           // },
         })
-        console.log(this.state.busStops)
+        // console.log(this.state.busStops)
 
-        if (this.state.busStops.services.length == 0) {
+        if (this.state.busStops.services === null) {
             this.setState({
                 allBusesDidLeave: true
             })
@@ -116,6 +118,9 @@ export default class Accordion extends Component {
       })
       .catch((error) => {
         console.log('error:', error)
+        this.setState({
+            allBusesDidLeave: true
+        })
       })
 
     console.log('onPressGetBus API Exit')
@@ -183,23 +188,22 @@ export default class Accordion extends Component {
         
         try {
             // AsyncStorage.setItem('@favouriteBusStops', 1012)
-            console.log("here")
 
-            console.log(this.props.title.busstop_number)
+            // console.log(this.props.title.busstop_number)
             let favouriteInStores = await AsyncStorage.getItem('@favouriteBusStops')
-            console.log("this is in store " + favouriteInStores)
+            // console.log("this is in store " + favouriteInStores)
             let favouriteBusStopsList = JSON.parse(favouriteInStores).favourites
-            console.log("THIS IS FAV BUS STOP LIST " + favouriteBusStopsList)
+            // console.log("THIS IS FAV BUS STOP LIST " + favouriteBusStopsList)
 
             if (favouriteBusStopsList.indexOf(this.props.title.busstop_number) == -1) {
-              console.log("false")
+              // console.log("false")
             } else {
               this.setState({favIcon: "favorite"})
-              console.log("true")
+              // console.log("true")
             }
 
         } catch (e) {
-            console.log ("error : " + e)  
+            // console.log ("error : " + e)  
         }
 
         // if (favouriteBusStopsList.indexOf(busStopNumber) == -1) {
@@ -213,7 +217,7 @@ export default class Accordion extends Component {
       console.log('####################################');
   
       const moment = require("moment")
-      console.log("moment => " + moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss"))
+      // console.log("moment => " + moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss"))
   
       axios
       .post("https://api.mybusfeed.com/demand/actual/add", {
@@ -225,11 +229,24 @@ export default class Accordion extends Component {
         created_time: moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss")
       })
       .then((response) => {
-        console.log(response.data)
+        console.log("addToActualDemand resp =>" + response.data)
+        this.getTeleBot(busNumber, this.props.title.busstop_number)
   
         console.log('####################################');
         console.log('addToActualDemand END');
         console.log('####################################');
+      })
+    }
+
+    getTeleBot = (busNumber, busStopNumber) => {
+      axios
+      .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
+        chat_id: "-538084552",
+        text: `[ACTUAL DEMAND]: User <${this.state.data.appID}> for <${busNumber}> at <${busStopNumber}>`,
+      })
+      .then((response) => {
+        console.log("Telebot msg sent");
+        // console.log(response)
       })
     }
 
@@ -239,7 +256,7 @@ export default class Accordion extends Component {
       console.log('====================================');
       if (!this.state.actualBusStack.includes(bus)){
         this.state.actualBusStack.push(bus)
-        console.log(this.state.actualBusStack);
+        // console.log(this.state.actualBusStack);
 
         // Start 30s timer
         if (!this.state.actualBusStackTimer){
@@ -275,7 +292,7 @@ export default class Accordion extends Component {
 
     if (this.state.allBusesDidLeave) {
         var refreshButton = null
-        var flatList = <View><Text style={tailwind("font-bold text-gray-500 text-lg text-center")}>All buses had left... 😭</Text></View>
+        var flatList = <View><Text style={tailwind("font-bold text-gray-500 text-lg text-center")}>No buses left to display... 😭</Text></View>
     } else {
         var refreshButton = <TouchableOpacity style={tailwind('flex flex-row')} onPress={() => this.didTapRefresh()}>
         <Text style={tailwind('text-blue-500 font-semibold')}>Refresh all bus timings</Text>

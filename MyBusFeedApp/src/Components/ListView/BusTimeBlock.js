@@ -30,58 +30,13 @@ export default class BusTimeBlock extends Component {
       pollURL: "",
       expectedBusArrive: false,
       constantPollLimitOn: false,
-      busTrackCount: this.props.busTrackCount,
+      busTrackCount: 0,
       specialTimeOut: false,
       testState: true,
-      // HARDCODED VALUE - To be used when there are no bus available to fetch (when coding late at night)
-      hardcodeServices: {
-        services: [
-          {
-            service_no: '88',
-            operator: 'SBST',
-            next_bus: {
-              origin_code: '77009',
-              destination_code: '52009',
-              estimated_arrival: '2021-02-01T15:31:00+08:00',
-              latitude: '1.379359',
-              longitude: '103.92117033333334',
-              visit_number: '1',
-              load: 'SEA',
-              feature: 'WAB',
-              type: 'DD',
-            },
-            next_bus_2: {
-              origin_code: '77009',
-              destination_code: '52009',
-              estimated_arrival: '2021-01-31T01:45:00+08:00',
-              latitude: '1.3827318333333334',
-              longitude: '103.93599933333333',
-              visit_number: '1',
-              load: 'SEA',
-              feature: 'WAB',
-              type: 'DD',
-            },
-            next_bus_3: {
-              origin_code: '77009',
-              destination_code: '52009',
-              estimated_arrival: '2021-01-24T04:58:00+08:00',
-              latitude: '0',
-              longitude: '0',
-              visit_number: '1',
-              load: 'SEA',
-              feature: 'WAB',
-              type: 'DD',
-            },
-          },
-        ],
-      }
     }
   }
 
   componentDidMount(){
-    console.log('====================================');
-    console.log("bustimeblock this.state.data.appID -> " + this.state.data.appID);
-    console.log('====================================');
 
     BackgroundGeolocation.configure({
       desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
@@ -101,32 +56,12 @@ export default class BusTimeBlock extends Component {
       notificationsEnabled: false
     });
 
-
-    
-
-    BackgroundGeolocation.checkStatus(status => {
-      // console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
-      // console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
-      // console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
-
-      // you don't need to check status before start (this is just the example)
-      if (!status.isRunning) {
-        BackgroundGeolocation.start(); //triggers start on start event
-      }
-    });
-
-    // you can also just start without checking for status
-    // BackgroundGeolocation.start();
-
-    BackgroundGeolocation.on('background', () => {
-      console.log('[INFO] App is in background');
-    });
-
     BackgroundGeolocation.on('start', () => {
-      // service started successfully
-      // you should adjust your app UI for example change switch element to indicate
-      // that service is running
-      console.log('[DEBUG] BackgroundGeolocation has been started');
+      console.log('[INFO] BackgroundGeolocation service has been started => ' + this.state.busNumber);
+    });
+
+    BackgroundGeolocation.on('stop', () => {
+      console.log('[INFO] BackgroundGeolocation service has been stopped => ' + this.state.busNumber);
     });
   }
 
@@ -141,7 +76,8 @@ export default class BusTimeBlock extends Component {
       console.log('====================================');
       console.log('constantBasicPoll OFF for => '  + this.state.busNumber);
       console.log('====================================');
-      BackgroundTimer.clearInterval(this.state.intervalId)
+
+      BackgroundTimer.clearInterval(this.state.constantBasicPollintervalId)
     }
     
     if (this.state.arrivalPause != prevState.arrivalPause && this.state.arrivalPause==true && this.state.userProximity == true) {
@@ -156,7 +92,9 @@ export default class BusTimeBlock extends Component {
       console.log('====================================');
       console.log("constantPollLimitOn 5min for => " + this.state.busNumber);
       console.log('====================================');
-      BackgroundTimer.setTimeout(() => {
+      console.log("Start > 5 mins timer move within range")
+      let constantPollLimitOnintervalId = BackgroundTimer.setInterval(() => {
+        console.log("End >5 mins timer")
         if (this.state.userProximity == false){
           this.setState({
             constantPollOn: false
@@ -165,12 +103,19 @@ export default class BusTimeBlock extends Component {
         this.setState({
           constantPollLimitOn: false
         })
+        // BackgroundTimer.stopBackgroundTimer();
+        BackgroundTimer.clearInterval(this.state.constantPollLimitOnintervalId)
+
       }, 300000); //300000 -> 5 minutes
+
+      this.setState({ constantPollLimitOnintervalId: constantPollLimitOnintervalId })
+
+      console.log("constantPollLimitOn BackgroundTimer.stopBackgroundTimer(); => bus" + this.state.busNumber);
     }
 
     if (this.state.specialTimeOut != prevState.specialTimeOut && this.state.specialTimeOut==true){
       console.log('====================================');
-      console.log("specialTimeOut ON for => " + this.state.busNumber);
+      console.log("specialTimeOut ON for => bus" + this.state.busNumber);
       console.log('====================================');
       var timeoutMin = 4 * 1000 * 60 //default timeout 4 min
       if (this.state.nextBus1Timing > 4){
@@ -178,7 +123,9 @@ export default class BusTimeBlock extends Component {
       }
       console.log("timeoutMin => " + timeoutMin)
 
-      BackgroundTimer.setTimeout(() => {
+      console.log("Start specialTimeOut timer till 4 mins => bus" + this.state.busNumber)
+      let specialTimeOutintervalId = BackgroundTimer.setInterval(() => {
+        console.log("End specialTimeOut timer till 4 mins => bus" + this.state.busNumber)
         console.log('specialTimeOut Interval kicks in');
         this.setState({
           specialTimeOut: false
@@ -188,8 +135,15 @@ export default class BusTimeBlock extends Component {
         console.log('====================================');
         console.log("specialTimeOut OFF => " + this.state.specialTimeOut);
         console.log('====================================');
+
+        // BackgroundTimer.stopBackgroundTimer();
+        BackgroundTimer.clearInterval(this.state.specialTimeOutintervalId)
+
       }, timeoutMin);
 
+      this.setState({ specialTimeOutintervalId: specialTimeOutintervalId })
+
+    console.log("specialTimeOut BackgroundTimer.stopBackgroundTimer(); => bus" + this.state.busNumber);
     }
   }
 
@@ -197,8 +151,10 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
     console.log('constantBasicPoll INTERVAL for => ' + this.state.busNumber);
     console.log('====================================');
-
-    let intervalId = BackgroundTimer.setInterval(() => {
+    // if (Platform.OS =="ios") {
+    //     BackgroundTimer.start();
+    // }
+    let constantBasicPollintervalId = BackgroundTimer.setInterval(() => {
       BackgroundGeolocation.getCurrentLocation((info) => {
         console.log("Component Geo info => " + info.latitude + " " + info.longitude);
         this.setState({
@@ -210,7 +166,7 @@ export default class BusTimeBlock extends Component {
         this.getUserProximity()
         .then((data) => {
           this.setState({ userProximity: data })
-          console.log('userProximity DATA in constantBasicPoll data => ' + data  + this.state.busNumber)
+          // console.log('userProximity DATA in constantBasicPoll data => ' + data  + this.state.busNumber)
           console.log('userProximity DATA in constantBasicPoll state => ' + this.state.userProximity + this.state.busNumber)
 
           // Update bus timing
@@ -224,23 +180,25 @@ export default class BusTimeBlock extends Component {
           }
         })
 
-      },error => console.log('Error', JSON.stringify(error)),
+      },error => console.log('Geolocation in bustimeblock Error', JSON.stringify(error)),
         {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
       )
       // console.log('userProximity DATA in constantBasicPoll state 2 => ' + this.state.userProximity)
     }, 30000); //30000 -> 30 sec
 
-    this.setState({ intervalId: intervalId })
+    this.setState({ constantBasicPollintervalId: constantBasicPollintervalId })
   }
 
   arrivalPause = () => {
     console.log('++++++++++++++++++++++++++++++++++++');
-    console.log('arrivalPause INTERVAL START => '  + this.state.busNumber);
+    console.log('3min arrivalPause INTERVAL START => '  + this.state.busNumber);
     console.log('++++++++++++++++++++++++++++++++++++');
 
-    BackgroundTimer.clearInterval(this.state.intervalId)
-    console.log('<><><><><>< constantBasicPoll Cleared <><><><><><'  + this.state.busNumber)
-    BackgroundTimer.setTimeout(() => {
+    BackgroundTimer.clearInterval(this.state.constantBasicPollintervalId)
+    // BackgroundTimer.stopBackgroundTimer();
+
+    console.log('<><><><><>< constantBasicPoll Cleared => bus'  + this.state.busNumber + "<><><><><><")
+    let arrivalPauseintervalId = BackgroundTimer.setInterval(() => {
       // 1. Get Geolocation
       BackgroundGeolocation.getCurrentLocation((info) => {
         this.setState({
@@ -280,6 +238,8 @@ export default class BusTimeBlock extends Component {
             console.log('<><><><><>< constantBasicPoll Resume <><><><><><')
           }
 
+          BackgroundTimer.clearInterval(this.state.arrivalPauseintervalId)
+
           console.log('++++++++++++++++++++++++++++++++++++');
           console.log('arrivalPause INTERVAL END');
           console.log('++++++++++++++++++++++++++++++++++++');
@@ -289,7 +249,10 @@ export default class BusTimeBlock extends Component {
       },error => console.log('Error', JSON.stringify(error)),
         {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
       )
-    }, 180000) //120000 -> 2 min
+    }, 180000) //180000 -> 3 min
+
+    this.setState({ arrivalPauseintervalId: arrivalPauseintervalId })
+    console.log("arrivalPauseintervalId set");
   }
 
   addToActualDemand = (userBoardStatus) => {
@@ -311,7 +274,8 @@ export default class BusTimeBlock extends Component {
     })
     .then((response) => {
       console.log(response.data)
-      // console.log('userProximity DATA in addToActualDemand => ' + this.state.userProximity)
+      var msg = `[ACTUAL DEMAND]: User <${this.state.data.appID}> for <${this.state.busNumber}> at <${this.state.busStopNumber}>`
+      this.getTeleBot(msg)
 
       console.log('####################################');
       console.log('addToActualDemand END');
@@ -320,17 +284,21 @@ export default class BusTimeBlock extends Component {
   }
 
   busTrackCountFunction = () => {
-    console.log('====================================');
-    console.log("busTrackCountFunction bustimeblock");
-    console.log('====================================');
+    // console.log('====================================');
+    // console.log("busTrackCountFunction bustimeblock");
+    // console.log('====================================');
     this.props.busTrackCountFunction()
+
+    this.setState({
+      busTrackCount: this.props.busTrackCount
+    })
   }
 
-  getTeleBot = () => {
+  getTeleBot = (msg) => {
     axios
     .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
       chat_id: "-538084552",
-      text: `User <${this.state.data.appID}> queried for <${this.state.busNumber}> at <${this.state.busStopNumber}>`,
+      text: msg,
     })
     .then((response) => {
       console.log("Telebot msg sent");
@@ -345,16 +313,18 @@ export default class BusTimeBlock extends Component {
     console.log('====================================');
 
     this.busTrackCountFunction()
-    this.getTeleBot()
     console.log('#############################################');
-    console.log("Total bus polling => " + this.props.busTrackCount);
+    console.log("Total bus polling => " + this.state.busTrackCount);
     console.log('#############################################');
 
-    BackgroundGeolocation.getCurrentLocation((info) => {
-      console.log("Component Geo info => " + info.latitude + " " + info.longitude);
+    Geolocation.getCurrentPosition((info) => {
+      console.log('====================================');
+      console.log("GEOLOCATION");
+      console.log('====================================');
+      console.log("Component Geo info => " + info.coords.latitude + " " + info.coords.longitude);
       this.setState({
-        latitude: info.latitude,
-        longitude: info.longitude,
+        latitude: info.coords.latitude,
+        longitude: info.coords.longitude,
       })
 
       this.getUserProximity()
@@ -365,20 +335,20 @@ export default class BusTimeBlock extends Component {
         this.getBusTiming()
 
         // Reveal bus timing
-        this.setState((previousState) => ({
-          busTimingContent: !previousState.busTimingContent,
-        }))
-
-      }).catch((error) => console.log("userProximity Error => "+error))
-
-    },error => console.log('Error', JSON.stringify(error)),
-      {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
-    )
+        this.setState({
+          busTimingContent: true,
+        })
+      })
+    }
+    ,(error) => console.log('position error!!!', error),
+    {
+      enableHighAccuracy: Platform.OS !== 'android', //set to true if android emulator have location issues
+      timeout: 60000,
+      maximumAge: 0,
+    })
   }
 
   refreshBusTiming = () => {
-    console.log("refreshBusTiming => " + this.state.busNumber);
-    console.log(this.state.busTimingContent);
     if(this.state.busTimingContent){
       this.getBusTiming()
     }
@@ -392,12 +362,14 @@ export default class BusTimeBlock extends Component {
 
     var url = ''
     console.log("this.props.foundBeacon => " + this.props.foundBeacon)
-    if ((this.props.foundBeacon || this.state.userProximity) && this.state.expectedBusArrive == false) {
+    if ( (this.props.foundBeacon || this.state.userProximity) && this.state.expectedBusArrive == false && this.state.busTrackCount <= 2) {
       var url = 'https://api.mybusfeed.com/demand/expected/add'
       // To ensure expected count is added once only
       this.setState({
         expectedBusArrive: true
       })
+      var msg = `<EXPECTED DEMAND ${this.state.busTrackCount}>: User <${this.state.data.appID}> queried for <${this.state.busNumber}> at <${this.state.busStopNumber}>`
+      this.getTeleBot(msg)
     } else {
       var url = 'https://api.mybusfeed.com/demand/bus-timing'
     }
@@ -413,13 +385,6 @@ export default class BusTimeBlock extends Component {
         bus_no: this.state.busNumber,
       })
       .then((response) => {
-        // console.log(response.data.services[0].next_bus.estimated_arrival)
-
-        // for hardcoded values
-        // var nextBus1Timing = moment(this.state.hardcodeServices.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
-        // var nextBus2Timing = moment(this.state.hardcodeServices.services[0].next_bus_2.estimated_arrival).diff(moment(), 'minutes')
-        // var nextBus1 = this.state.hardcodeServices.services[0].next_bus
-        // var nextBus2 = this.state.hardcodeServices.services[0].next_bus_2
 
         //actual values
         var nextBus1Timing = moment(response.data.services[0].next_bus.estimated_arrival).diff(moment(), 'minutes')
@@ -448,7 +413,7 @@ export default class BusTimeBlock extends Component {
           })
 
         // Only poll for 3 bus max
-        }else if (this.props.busTrackCount <= 3){
+        }else if (this.state.busTrackCount <= 2){
 
           // Constant poll from 4 min to "Arr" State
           if (nextBus1Timing <= 4 && nextBus1Timing >= 2){
@@ -467,7 +432,7 @@ export default class BusTimeBlock extends Component {
           }
         }else{
           console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-          console.log('Max polling hit =>' + this.props.busTrackCount);
+          console.log('Max polling hit =>' + this.state.busTrackCount);
           console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
         }
       })
@@ -478,9 +443,9 @@ export default class BusTimeBlock extends Component {
 
   // To see if user is in range of bus stop
   getUserProximity() {
-    console.log('====================================');
-    console.log('getUserProximity');
-    console.log('====================================');
+    // console.log('====================================');
+    // console.log('getUserProximity');
+    // console.log('====================================');
 
     const fetchURL = 'https://api.mybusfeed.com/location/getBusStopNo/'.concat(
       this.state.latitude,
@@ -489,7 +454,7 @@ export default class BusTimeBlock extends Component {
       '-',
       this.state.busStopNumber,
     )
-    console.log("fetchURL =>" + fetchURL);
+    // console.log("fetchURL =>" + fetchURL);
     return axios
       .get(fetchURL)
       .then((response) => response.data.status)
