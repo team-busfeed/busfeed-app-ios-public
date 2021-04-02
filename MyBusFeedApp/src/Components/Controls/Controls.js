@@ -19,12 +19,11 @@ class Controls extends Component {
     headerRef = React.createRef()
 
     triggerMaps = () => {
-        this.mapsRef.current.didMapsTriggerOnSearch()
-        this.mapsRef.current.refreshLocation()
+        this.mapsRef.current.didTriggerMarkerReload()
     }
 
     didTriggerRefresh = () => {
-        this.mapsRef.current.didMapsTriggerOnRefresh()
+        this.mapsRef.current.didTriggerMarkerReload()
     }
 
     didTriggerReloadLocation = () => {
@@ -35,8 +34,8 @@ class Controls extends Component {
         this.props.triggerFavouritesList()
     }
 
-    triggerFavouritesMarkers = () => {
-        this.mapsRef.current.didTriggerFavouritesMap()
+    triggerMarkerReload = () => {
+        this.mapsRef.current.didTriggerMarkerReload()
     }
 
     centreMap = () => {

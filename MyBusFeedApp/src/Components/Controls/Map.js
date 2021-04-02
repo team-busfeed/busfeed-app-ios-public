@@ -48,23 +48,7 @@ class Map extends Component {
         }
     }
 
-    didMapsTriggerOnSearch() {
-        this.setState({
-            isUpdated: true
-        })
-        this.refreshMarker()
-        this.refreshLocation()
-    }
-
-    didMapsTriggerOnRefresh() {
-        this.setState({
-            isUpdated: true
-        })
-        this.refreshMarker()
-        this.refreshLocation()
-    }
-
-    didTriggerFavouritesMap() {
+    didTriggerMarkerReload() {
         this.setState({
             isUpdated: true
         })
@@ -142,12 +126,12 @@ class Map extends Component {
             this.props.states.latitude = parseFloat(response.data[0].busstop_lat)
             this.props.states.longitude = parseFloat(response.data[0].busstop_lng)
             this.props.triggerIndexOnSearch()
-            this.didMapsTriggerOnRefresh()
+            this.didTriggerMarkerReload()
         }).catch((error) => {
             console.log(error)
             this.props.states.busStops = []
             this.props.triggerIndexOnSearch()
-            this.didMapsTriggerOnRefresh()
+            this.didTriggerMarkerReload()
         })
     }
 

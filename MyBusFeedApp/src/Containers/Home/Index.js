@@ -482,7 +482,7 @@ class HomeContainer extends Component {
 
     reloadMaps = () => {
         this.refreshGeoLocation()
-        this.controlsRef.current.triggerFavouritesMarkers()
+        this.controlsRef.current.triggerMarkerReload()
     }
 
     resetSearchState = () => {
@@ -509,8 +509,8 @@ class HomeContainer extends Component {
 
         // set tutorial content here
         content = ["MyBusFeed is an application that tells you when your next bus will arrive at any bus stop in Singapore using the data provided from Land Transport Authority (LTA)’s Datamall*.\n\n\
-The application is developed with your experience in mind. Additionally, we aim to transform your inputs into crowdsourced analytics in a non-intrusive manner. The additional steps that require you to click on multiple buses to check for bus arrival timings is a form of data crowdsourcing to measure the demand for each bus.\n\n\
-Your inputs will provide valuable insights for us to better plan bus dispatch frequencies to serve you better.\n\nPlease be aware that this application requires an internet connection, with bluetooth enabled, and location services set to “always allowed” for full functionality."]
+The application is developed with your experience in mind. Additionally, we aim to transform your anonymised inputs into crowdsourced analytics in a non-intrusive manner. The additional steps that require you to click on multiple buses to check for bus arrival timings is a form of data crowdsourcing to measure the demand for each bus.\n\n\
+Your anonymised inputs will provide valuable insights for us to understand bus dispatch frequencies.\n\nPlease be aware that this application requires an internet connection, with bluetooth enabled, and location services set to “always allowed” for full functionality."]
 
         aboutUs = <Modal
         animationType="slide"
