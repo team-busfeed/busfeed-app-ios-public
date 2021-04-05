@@ -380,8 +380,8 @@ export default class BusTimeBlock extends Component {
         var nextBus1 = response.data.services[0].next_bus
         var nextBus2 = response.data.services[0].next_bus_2
 
-        nextBus1.estimated_arrival_text = nextBus1Timing > 2 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr"
-        nextBus2.estimated_arrival_text = nextBus2Timing > 2 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr"
+        nextBus1.estimated_arrival_text = nextBus1Timing > 1 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr" //0-1 min arr
+        nextBus2.estimated_arrival_text = nextBus2Timing > 1 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr" //0-1 min arr
         this.setState({
           nextBus1: nextBus1,
           nextBus2: nextBus2,
@@ -393,7 +393,7 @@ export default class BusTimeBlock extends Component {
         console.log("nextBus2Timing for " + this.state.busNumber + " => " + nextBus2Timing);
 
         // Bus "Arr" State
-        if (nextBus1Timing <= 2 && nextBus1Timing >= 0){
+        if (nextBus1Timing <= 1 && nextBus1Timing >= 0){ //0-1 min arr
           this.setState({
             constantPollOn: false,
             arrivalPause: true,
@@ -404,7 +404,7 @@ export default class BusTimeBlock extends Component {
         }else if (this.state.busTrackCount <= 2){
 
           // Constant poll from 4 min to "Arr" State
-          if (nextBus1Timing <= 4 && nextBus1Timing >= 2){
+          if (nextBus1Timing <= 4 && nextBus1Timing >= 1){ //0-1 min arr
             this.setState({
               constantPollOn: true,
               arrivalPause: false,
