@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
 import { FlatList, StyleSheet, Text, View, Alert } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import externalStyle from '../../../style/externalStyle'
 import tailwind from 'tailwind-rn'
-import Icon from 'react-native-vector-icons/MaterialIcons'
 import Geolocation from '@react-native-community/geolocation'
 import axios from 'axios'
 import Accordion from './Accordion'
@@ -18,7 +15,6 @@ class ListView extends Component {
       userProximity: false,
       isLoading: false,
       busStops: this.props.states.busStops,
-      busTrackCount: 0,
       isUpdated: false
     }
   }
@@ -71,7 +67,6 @@ class ListView extends Component {
 
             console.log("LAT:" + info.coords.latitude)
             console.log("LONG:" + info.coords.longitude)
-            // console.log(this.state.updatedGeolocation ? "Updated to real-time geolocation values!" : "Using default geolocation values")
 
             this.getProximityBusStops()
             this.props.resetSearchState()
@@ -121,18 +116,6 @@ class ListView extends Component {
         })
     }
 
-    // Track total count of bus that user wants to view bus timing. Used to cap expected demand per user at 3
-    busTrackCountFunction = () => {
-        var count = this.state.busTrackCount
-        var count2 = count + 1
-        this.setState({
-            busTrackCount: count2
-        })
-        console.log('====================================');
-        console.log("busTrackCount => " + this.state.busTrackCount);
-        console.log('====================================');
-    }
-
     // Alternative display when there are no bus stop around user proximity
     updateFlatList() {
         if (this.props.states.busStops.length == 0) {
@@ -156,7 +139,7 @@ class ListView extends Component {
             onRefresh={() => this.getGeoLocation()}
             refreshing={this.state.isLoading}
             renderItem={({ item }) => (
-                <Accordion title={item} data={this.props.states} busTrackCountFunction={this.busTrackCountFunction} busTrackCount={this.state.busTrackCount}/>
+                <Accordion title={item} data={this.props.states}/>
             )}
             keyExtractor={(item) => item.busstop_number}
             />
@@ -195,7 +178,7 @@ class ListView extends Component {
                 onRefresh={() => this.getGeoLocation()}
                 refreshing={this.state.isLoading}
                 renderItem={({ item }) => (
-                    <Accordion title={item} data={this.props.states} busTrackCountFunction={this.busTrackCountFunction} busTrackCount={this.state.busTrackCount} foundBeacon={this.props.foundBeacon} beaconStart={this.props.beaconStart}/>
+                    <Accordion title={item} data={this.props.states}/>
                 )}
                 keyExtractor={(item) => item.busstop_number}
                 />

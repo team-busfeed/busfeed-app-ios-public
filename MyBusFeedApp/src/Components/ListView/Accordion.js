@@ -7,20 +7,14 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
-  Button,
-  ProgressViewIOSComponent,
   Alert,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import externalStyle from '../../../style/externalStyle'
 import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler'
 import BusTimeBlock from './BusTimeBlock'
 import tailwind from 'tailwind-rn'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import BackgroundTimer from 'react-native-background-timer';
-import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
-import { TELE_TOKEN } from '@env'
 
 
 export default class Accordion extends Component {
@@ -34,13 +28,6 @@ export default class Accordion extends Component {
       latitude: props.data.latitude,
       longitude: props.data.longitude,
       favIcon: "favorite-border",
-      actualBusStack: [],
-      actualBusStackTimer: false,
-      busCrowdStatus: {
-        "SEA": 1,
-        "SDA": 2,
-        "LSD": 3
-      },
       allBusesDidLeave: false,
     }
 
@@ -120,14 +107,6 @@ export default class Accordion extends Component {
     console.log('onPressGetBus API Exit')
   }
 
-  // Track total count of bus that user wants to view bus timing. Used to cap expected demand per user at 3
-  busTrackCountFunction = () => {
-    console.log('====================================');
-    console.log("busTrackCountFunction accordion");
-    console.log('====================================');
-    this.props.busTrackCountFunction()
-  }
-
   // Function to add busstop to favourite storage
   favouriteThisStop = async (busStopNumber) => {
       try {
@@ -200,87 +179,9 @@ export default class Accordion extends Component {
     }
   }
 
-  // Add 1 count to actual demand database
-  // @param - Bus number
-  addToActualDemand = (busNumber) => {
-    console.log('####################################');
-    console.log('addToActualDemand START => ' + busNumber);
-    console.log('####################################');
-
-    const moment = require("moment")
-
-    axios
-    .post("https://api.mybusfeed.com/demand/actual/add", {
-      
-      app_id: this.state.data.appID,
-      bus_stop_no: this.props.title.busstop_number,
-      bus_no: busNumber,
-      has_successfully_board: true,
-      created_time: moment().utcOffset("+08:00").format("YYYY-MM-DD HH:mm:ss")
-    })
-    .then((response) => {
-      console.log("addToActualDemand resp =>" + response.data)
-      this.getTeleBot(busNumber, this.props.title.busstop_number)
-
-      console.log('####################################');
-      console.log('addToActualDemand END');
-      console.log('####################################');
-    })
-  }
-
-  // Call telebot API to send a text - For ground truth data collection
-  // @param - Bus number, Bus stop number
-  getTeleBot = (busNumber, busStopNumber) => {
-    axios
-    .post(`https://api.telegram.org/bot${TELE_TOKEN}/sendMessage`, {
-      chat_id: "-538084552",
-      text: `[ACTUAL DEMAND]: User <${this.state.data.appID}> for <${busNumber}> at <${busStopNumber}>`,
-    })
-    .then((response) => {
-      console.log("Telebot msg sent");
-    })
-  }
-
   // To hold busses, that arrives at similar timing, in an temp array to determine which bus user has left with & add to actual demand count accordingly
   // Assumption - user will leave the with the least crowded bus; if crowd level is the same, user will leave with the first bus.
   // @param - bus number
-  actualBusStackFunction = (bus) => {
-    // console.log('====================================');
-    // console.log("actualBusStackFunction for => " + bus);
-    // console.log('====================================');
-    if (!this.state.actualBusStack.includes(bus)){
-      this.state.actualBusStack.push(bus)
-
-      // Start 30s timer
-      if (!this.state.actualBusStackTimer){
-        this.setState({
-          actualBusStackTimer: true
-        })
-
-        console.log('====================================');
-        console.log("actualBusStackFunction timer start");
-
-        // Logic to select least crowded bus
-        BackgroundTimer.setTimeout(() => {
-          var actualBusStack = this.state.actualBusStack
-          var leastCrowdBus = actualBusStack[0][0]
-          var leastCrowdBusStatus = actualBusStack[0][1]
-          for (i = 1; i < actualBusStack.length; i++){
-            if ( this.state.busCrowdStatus[actualBusStack[i][1]] < leastCrowdBusStatus ){
-              leastCrowdBus = actualBusStack[i][0]
-              leastCrowdBusStatus = this.state.busCrowdStatus[actualBusStack[i][1]]
-            }
-          }
-
-          console.log("leastCrowdBus => " + leastCrowdBus);
-          console.log('====================================');
-
-          this.state.actualBusStack = []
-          this.addToActualDemand(leastCrowdBus)
-        }, 30000); //300000 -> 5 minutes
-      }
-    }
-  }
 
   render() {
 
@@ -303,8 +204,7 @@ export default class Accordion extends Component {
         renderItem={({ item }) => (
         <BusTimeBlock ref={this.state.newServices[item]} 
             bus_number={item} busstop_number={this.props.title.busstop_number} 
-            data={this.state.data} busTrackCountFunction={this.busTrackCountFunction} 
-            busTrackCount={this.props.busTrackCount} foundBeacon={this.props.foundBeacon} beaconStart={this.props.beaconStart} actualBusStackFunction={this.actualBusStackFunction} />
+            data={this.state.data}/>
             )}
             keyExtractor={(item) => item}
         />

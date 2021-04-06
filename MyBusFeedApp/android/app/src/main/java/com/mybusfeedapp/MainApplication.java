@@ -4,13 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.mackentoch.beaconsandroid.BeaconsAndroidPackage;
-import com.mackentoch.beaconsandroid.BeaconsAndroidPackage;
-import com.mackentoch.beaconsandroid.BeaconsAndroidPackage;
-import com.ocetnik.timer.BackgroundTimerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.polidea.reactnativeble.BlePackage;
-import com.polidea.reactnativeble.BlePackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -19,8 +13,6 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.airbnb.android.react.maps.MapsPackage;
-import com.marianhello.bgloc.react.BackgroundGeolocationPackage;  // <--- Import Package
-
 
 
 public class MainApplication extends Application implements ReactApplication {
