@@ -44,9 +44,7 @@
 		</dict>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Please allow access as your device's Bluetooth will be used to detect the bus stop.</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Your device Bluetooth is used to check if you are within the proximity of a bus stop for data accuracy.</string>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the react-native-permissions library, which references this permission in its code.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location will be used to fetch nearby bus stops.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
