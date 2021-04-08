@@ -61,7 +61,7 @@ export default class Accordion extends Component {
 
   // Fetch the list of bus based on busstop_number given
   GetBus = () => {
-    const baseFetchURL = 'https://api.mybusfeed.com/demand/bus-stop/'
+    const baseFetchURL = 'https://mybusfeed.herokuapp.com/demand/bus-stop/'
 
     // Retrieve all bus number for a bus stop
     axios

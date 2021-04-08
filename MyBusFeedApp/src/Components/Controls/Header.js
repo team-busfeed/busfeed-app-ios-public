@@ -71,7 +71,7 @@ export default class Header extends Component {
         console.log(this.state.searchText)
 
         axios
-        .get("https://api.mybusfeed.com/location/getBusStopInformation/" + this.state.searchText)
+        .get("https://mybusfeed.herokuapp.com/location/getBusStopInformation/" + this.state.searchText)
         .then((response) => {
             console.log(response.data)
             this.props.states.busStops = response.data

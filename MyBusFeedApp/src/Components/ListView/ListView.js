@@ -32,7 +32,7 @@ class ListView extends Component {
 
         if (favouriteBusStopsList.length != 0) {
             axios
-            .post("https://api.mybusfeed.com/location/returnBusStopInformation/",
+            .post("https://mybusfeed.herokuapp.com/location/returnBusStopInformation/",
             {
                 "busStops": favouriteBusStopsList
             })
@@ -80,7 +80,7 @@ class ListView extends Component {
         console.log("========================")
         console.log('Getting data from Location Service API!!')
         console.log("========================")
-        const fetchURL = "https://api.mybusfeed.com/location/getListOfBusStopNo/".concat(this.state.latitude, "-", this.state.longitude)
+        const fetchURL = "https://mybusfeed.herokuapp.com/location/getListOfBusStop/".concat(this.state.latitude, "-", this.state.longitude)
         axios
         .get(fetchURL)
         .then((response) => {

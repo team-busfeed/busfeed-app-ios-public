@@ -89,8 +89,7 @@ class HomeContainer extends Component {
 
     //  Return list of bus stops around user proximity according to their geolocation
     getProximityBusStops() {
-        const fetchURL = 'https://api.mybusfeed.com/location/getListOfBusStopNo/'.concat(this.state.latitude,'-',this.state.longitude)
-
+        const fetchURL = 'https://mybusfeed.herokuapp.com/location/getListOfBusStop/'.concat(this.state.latitude,'-',this.state.longitude)
         axios
         .get(fetchURL)
         .then((response) => {

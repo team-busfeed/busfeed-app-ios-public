@@ -119,7 +119,7 @@ class Map extends Component {
         console.log(selected)
 
         axios
-        .get("https://api.mybusfeed.com/location/getBusStopInformation/" + selected)
+        .get("https://mybusfeed.herokuapp.com/location/getBusStopInformation/" + selected)
         .then((response) => {
             console.log(response.data)
             this.props.states.busStops = response.data
