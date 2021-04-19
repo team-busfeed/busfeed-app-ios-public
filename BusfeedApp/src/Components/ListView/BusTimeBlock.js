@@ -99,9 +99,10 @@ export default class BusTimeBlock extends Component {
         var nextBus2Timing = moment(response.data.Services[0].NextBus2.EstimatedArrival).diff(moment(), 'minutes')
         var nextBus1 = response.data.Services[0].NextBus
         var nextBus2 = response.data.Services[0].NextBus2
+        console.log(nextBus2Timing)
 
-        nextBus1.estimated_arrival_text = nextBus1Timing > 1 ? nextBus1Timing + " min" : nextBus1Timing < -10 ? "NIL" : "Arr" //0-1 min arr
-        nextBus2.estimated_arrival_text = nextBus2Timing > 1 ? nextBus2Timing + " min" : nextBus2Timing < -10 ? "NIL" : "Arr" //0-1 min arr
+        nextBus1.estimated_arrival_text = nextBus1Timing > 1 ? nextBus1Timing + " min" : nextBus1Timing < -10 || isNaN(nextBus1Timing) ? "NIL" : "Arr" //0-1 min arr
+        nextBus2.estimated_arrival_text = nextBus2Timing > 1 ? nextBus2Timing + " min" : nextBus2Timing < -10 || isNaN(nextBus2Timing) ? "NIL" : "Arr" //0-1 min arr
         console.log(nextBus1)
         this.setState({
           nextBus1: nextBus1,
@@ -131,10 +132,10 @@ export default class BusTimeBlock extends Component {
         ) : (
           <View style={tailwind('flex flex-row')}>
             <View style={this.state.nextBus1.Load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus1.Load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : this.state.nextBus1.Load == "SDA" ? tailwind('border-b-4 border-yellow-500 mx-2') : tailwind('border-b-4 border-gray-500 mx-2')}>
-              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text} {this.state.nextBus1.Feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={20} /> : null} {this.state.nextBus1.Type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={20} /> : <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={20} /> }</Text>
+              <Text style={tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text} {this.state.nextBus1.Feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={20} /> : null} {this.state.nextBus1.Type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={20} /> : this.state.nextBus1.Type == "SD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={20} /> : null}</Text>
             </View>
             <View style={this.state.nextBus2.Load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus2.Load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : this.state.nextBus2.Load == "SDA" ? tailwind('border-b-4 border-yellow-500 mx-2') : tailwind('border-b-4 border-gray-500 mx-2')}>
-              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text} {this.state.nextBus2.Feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={15} /> : null} {this.state.nextBus2.Type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={15} /> : <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={15} /> }</Text>
+              <Text style={tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text} {this.state.nextBus2.Feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={15} /> : null} {this.state.nextBus2.Type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={15} /> : this.state.nextBus2.Type == "SD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={15} /> : null}</Text>
             </View>
           </View>
         )}
