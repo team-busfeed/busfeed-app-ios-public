@@ -21,7 +21,8 @@ export default class Header extends Component {
         this.state = {
             isSearchInputHidden: true,
             searchText: "",
-            setKeyboardOnFocus: false
+            setKeyboardOnFocus: false,
+            isLoading: false,
         }
     }
 
@@ -54,12 +55,14 @@ export default class Header extends Component {
         console.log("Did press cancel button")
         console.log("=======================")
 
+        // this.props.resetAccordion()
+
         this.setState((previousState) => ({
             isSearchInputHidden: !previousState.isSearchInputHidden,
         }))
 
-        this.props.triggerRefresh()
-        this.props.triggerCentreOnRefresh()
+        // this.props.triggerRefresh()
+        // this.props.triggerCentreOnRefresh()
 
         this.setState({
             setKeyboardOnFocus: false
@@ -69,6 +72,9 @@ export default class Header extends Component {
     didTriggerSearch() {
         Keyboard.dismiss()
         console.log(this.state.searchText)
+        this.props.resetAccordion()
+
+        this.resetSearchState()
 
         axios
         .get("https://mybusfeed.herokuapp.com/location/getBusStopInformation/" + this.state.searchText)
@@ -79,13 +85,11 @@ export default class Header extends Component {
             this.props.states.longitude = parseFloat(response.data[0].busstop_lng)
             this.props.triggerIndexOnSearch()
             this.props.triggerMapsOnSearch()
-            this.resetSearchState()
         }).catch((error) => {
             console.log(error)
             this.props.states.busStops = []
             this.props.triggerIndexOnSearch()
             this.props.triggerMapsOnSearch()
-            this.resetSearchState()
         })
     }
 
@@ -97,7 +101,7 @@ export default class Header extends Component {
             <View style={tailwind('flex flex-row justify-center items-center')}>
                 <View style={tailwind('flex flex-row w-4/6 py-1')}>
                     <Text style={tailwind('text-xl font-semibold text-gray-600 mx-2')}>
-                        MyBusFeed
+                        Busfeed
                     </Text>
                 </View>
                 <View style={tailwind('flex flex-row w-1/3 justify-around')}>

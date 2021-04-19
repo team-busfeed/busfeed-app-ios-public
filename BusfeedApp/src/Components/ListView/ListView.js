@@ -5,6 +5,7 @@ import Geolocation from '@react-native-community/geolocation'
 import axios from 'axios'
 import Accordion from './Accordion'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Spinner from 'react-native-spinkit'
 
 class ListView extends Component {
   constructor(props) {
@@ -54,6 +55,7 @@ class ListView extends Component {
 
     // Get user current location, Return list of bus stops around user proximity according to their geolocation
     getGeoLocation() {
+        this.props.resetAccordion()
         Geolocation.getCurrentPosition((info) => {
             this.setState({
                 latitude: info.coords.latitude,
@@ -187,10 +189,22 @@ class ListView extends Component {
 
         return (
         <View style={tailwind('h-1/2 bg-white px-2 pb-8')}>
-            {this.isUpdated ? this.state.flatList : flatList}
+            {this.props.states.isLoading ? null : this.isUpdated ? this.state.flatList : flatList}
+            <View style={styles.container}>
+                <Spinner isVisible={this.props.states.isLoading} size={50} type={'ThreeBounce'} color={'#69a197'}/>
+                <Text>{this.props.states.isLoading ? "Loading" : ""}</Text>
+            </View>
         </View>
         )
     }
 }
+
+var styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+})
 
 export default ListView

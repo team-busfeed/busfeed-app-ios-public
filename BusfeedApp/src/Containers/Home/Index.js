@@ -145,17 +145,18 @@ class HomeContainer extends Component {
 
     didPerformSearch = () => {
         this.setState({
-        isLoading: true,
+            isLoading: true,
         })
         this.listViewRef.current.didTriggerSearch()
         this.controlsRef.current.didTriggerRefresh()
     }
 
     triggerReloadLocation = () => {
-        this.listViewRef.current.getGeoLocation()
         this.setState({
-        isLoading: true,
+            isLoading: true,
+            busStops: [],
         })
+        this.listViewRef.current.getGeoLocation()
         this.listViewRef.current.didTriggerSearch()
     }
 
@@ -165,7 +166,7 @@ class HomeContainer extends Component {
 
     didTapOnFavourites = () => {
         this.setState({
-        isLoading: true,
+            isLoading: true,
         })
         // trigger listview
         this.listViewRef.current.didTriggerFavourites()
@@ -195,15 +196,22 @@ class HomeContainer extends Component {
         this.setState({modalVisible: true})
     }
 
+    resetAccordion = () => {
+
+        this.setState({
+            busStops: [],
+            isLoading: true,
+        })
+    }
+
     render() {
 
         // set tutorial title here
-        titles = ["About MyBusFeed 😍"]
+        titles = ["About Busfeed 😍"]
 
         // set tutorial content here
-        content = ["MyBusFeed is an application that tells you when your next bus will arrive at any bus stop in Singapore using the data provided from Land Transport Authority (LTA)’s Datamall*.\n\n\
-The application is developed with your experience in mind. Additionally, we aim to transform your anonymised inputs into crowdsourced analytics in a non-intrusive manner. The additional steps that require you to click on multiple buses to check for bus arrival timings is a form of data crowdsourcing to measure the demand for each bus.\n\n\
-Your anonymised inputs will provide valuable insights for us to understand bus dispatch frequencies.\n\nPlease be aware that this application requires an internet connection, with bluetooth enabled, and location services set to “always allowed” for full functionality."]
+        content = ["Busfeed tells you when your next bus will arrive at any bus stop in Singapore using the data provided from Land Transport Authority (LTA)’s Datamall*.\n\n\
+Busfeed is an offshoot application from MyBusFeed of Project Busfeed."]
 
         aboutUs = <Modal
         animationType="slide"
@@ -215,11 +223,11 @@ Your anonymised inputs will provide valuable insights for us to understand bus d
             this.setFirstLaunchFalse()
         }}
         >
-            <View style={tailwind("my-10"), styles.centeredView}>
-                <View style={styles.modalView}>
+            <View style={tailwind("bottom-0"), styles.centeredView}>
+                <View style={tailwind("pt-10"), styles.modalView}>
                     <Text style={tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
                     <Text style={tailwind("text-xs text-gray-600 my-5 text-justify")}>{content[this.state.tutorialState]}</Text>
-                    <Text style={tailwind("text-xs text-gray-600 mb-5 italic text-justify")}>*LTA occassionally does maintenance which might return no results to bus timings.</Text>
+                    <Text style={tailwind("text-xs text-gray-600 mb-5 italic text-justify")}>*LTA occassionally does maintenance which might return no results to bus timings. {'\n\n\n\n\n\n\n\n\n\n\n'}</Text>
                     <View style={tailwind("flex")}>
                         <Pressable
                             style={tailwind("bg-blue-600 py-2 px-5 rounded-lg mt-2 mb-5")}
@@ -254,6 +262,7 @@ Your anonymised inputs will provide valuable insights for us to understand bus d
             triggerIndexOnSearch={this.didPerformSearch}
             triggerReloadLocation={this.triggerReloadLocation}
             setModalVisible={this.setModalVisible}
+            resetAccordion={this.resetAccordion}
             />
             <ListView
             states={this.state}
@@ -262,6 +271,7 @@ Your anonymised inputs will provide valuable insights for us to understand bus d
             reloadMaps={this.reloadMaps}
             updateMaps={this.reloadMaps}
             triggerCentreOnRefresh={this.centreOnRefresh}
+            resetAccordion={this.resetAccordion}
             />
         </View>
         )
