@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import InitStartup from '@/Store/Startup/Init'
 import { useTranslation } from 'react-i18next'
 import { Brand } from '@/Components'
+import tailwind from 'tailwind-rn'
 
 const IndexStartupContainer = () => {
   const { Layout, Gutters, Fonts } = useTheme()
@@ -18,7 +19,7 @@ const IndexStartupContainer = () => {
   }, [dispatch])
 
   return (
-    <View style={[Layout.fill, Layout.colCenter]}>
+    <View style={tailwind("bg-white"), [Layout.fill, Layout.colCenter]}>
       <Brand />
       <ActivityIndicator size={'large'} style={[Gutters.largeVMargin]} />
       <Text style={Fonts.textCenter}>{t('welcome')}</Text>

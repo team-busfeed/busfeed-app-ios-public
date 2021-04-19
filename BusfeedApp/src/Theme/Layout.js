@@ -84,6 +84,7 @@ export default function () {
     /* Sizes Layouts */
     fill: {
       flex: 1,
+      backgroundColor: "#fff",
     },
     fullSize: {
       height: '100%',
