@@ -126,6 +126,7 @@ export default class Header extends Component {
                         placeholder={"e.g. Marymount Stn or 05131..."}
                         clearButtonMode={"while-editing"}
                         autoFocus={this.state.setKeyboardOnFocus}
+                        returnKeyType="search"
                     />
                     {/* <SearchBar
                         placeholder={"e.g. Marymount Stn or 05131..."}
