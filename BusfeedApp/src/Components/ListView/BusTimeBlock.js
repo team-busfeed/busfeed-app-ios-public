@@ -12,6 +12,7 @@ export default class BusTimeBlock extends Component {
     super(props)
     this.state = {
       data: props.data,
+      theme: props.theme,
       busTimingContent: false,
       busNumber: this.props.bus_number,
       busStopNumber: this.props.busstop_number,
@@ -122,8 +123,8 @@ export default class BusTimeBlock extends Component {
 
   render() {
     return (
-      <View style={this.state.data.theme == 'dark' ? styles.eachRowDark : styles.eachRow}>
-        <Text style={this.state.data.theme == 'dark' ? styles.busNumberDark : styles.busNumber}>{this.state.busNumber}</Text>
+      <View style={this.props.theme == 'dark' ? styles.eachRowDark : styles.eachRow}>
+        <Text style={this.props.theme == 'dark' ? styles.busNumberDark : styles.busNumber}>{this.state.busNumber}</Text>
 
         {!this.state.busTimingContent ? (
           <TouchableOpacity onPress={() => this.componentHideAndShow()}>
@@ -132,10 +133,10 @@ export default class BusTimeBlock extends Component {
         ) : (
           <View style={tailwind('flex flex-row')}>
             <View style={this.state.nextBus1.Load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus1.Load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : this.state.nextBus1.Load == "SDA" ? tailwind('border-b-4 border-yellow-500 mx-2') : tailwind('border-b-4 border-gray-500 mx-2')}>
-              <Text style={this.state.data.theme == 'dark' ? tailwind('text-lg font-medium text-gray-300') : tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text} {this.state.nextBus1.Feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={20} /> : null} {this.state.nextBus1.Type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={20} /> : this.state.nextBus1.Type == "SD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={20} /> : null}</Text>
+              <Text style={this.props.theme == 'dark' ? tailwind('text-lg font-medium text-gray-300') : tailwind('text-lg font-medium text-gray-700')}>{this.state.nextBus1.estimated_arrival_text} {this.state.nextBus1.Feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={20} /> : null} {this.state.nextBus1.Type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={20} /> : this.state.nextBus1.Type == "SD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={20} /> : null}</Text>
             </View>
             <View style={this.state.nextBus2.Load == "SEA" ? tailwind('border-b-4 border-green-500 mx-2') : this.state.nextBus2.Load == "LSD" ? tailwind('border-b-4 border-red-500 mx-2') : this.state.nextBus2.Load == "SDA" ? tailwind('border-b-4 border-yellow-500 mx-2') : tailwind('border-b-4 border-gray-500 mx-2')}>
-              <Text style={this.state.data.theme == 'dark' ? tailwind('mt-2 text-gray-300') : tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text} {this.state.nextBus2.Feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={15} /> : null} {this.state.nextBus2.Type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={15} /> : this.state.nextBus2.Type == "SD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={15} /> : null}</Text>
+              <Text style={this.props.theme == 'dark' ? tailwind('mt-2 text-gray-300') : tailwind('mt-2 text-gray-700')}>{this.state.nextBus2.estimated_arrival_text} {this.state.nextBus2.Feature == "WAB" ? <Icon style={tailwind('text-blue-500 pl-5')} name={'wheelchair-pickup'} size={15} /> : null} {this.state.nextBus2.Type == "DD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-double-decker'} size={15} /> : this.state.nextBus2.Type == "SD" ? <Icon2 style={tailwind('text-blue-500 pl-5')} name={'bus-side'} size={15} /> : null}</Text>
             </View>
           </View>
         )}

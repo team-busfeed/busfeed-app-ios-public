@@ -29,6 +29,7 @@ export default class Accordion extends Component {
       longitude: props.data.longitude,
       favIcon: "favorite-border",
       allBusesDidLeave: false,
+      theme: props.theme,
     }
 
     if (Platform.OS === 'android') {
@@ -205,7 +206,9 @@ export default class Accordion extends Component {
         renderItem={({ item }) => (
         <BusTimeBlock ref={this.state.newServices[item]} 
             bus_number={item} busstop_number={this.props.title.busstop_number} 
-            data={this.state.data}/>
+            data={this.state.data}
+            theme={this.props.theme}
+            />
             )}
             keyExtractor={(item) => item}
         />
@@ -215,11 +218,11 @@ export default class Accordion extends Component {
       <View>
         <TouchableOpacity
           ref={this.accordian}
-          style={this.state.data.theme == 'dark' ? styles.rowDark : styles.row}
+          style={this.props.theme == 'dark' ? styles.rowDark : styles.row}
           onPress={() => this.onPressToggle()}
         >
           <TouchableOpacity style={
-              this.state.data.theme == 'dark' ? 
+              this.props.theme == 'dark' ? 
               this.state.favIcon === "favorite-border" ? tailwind("bg-gray-600 px-1 py-1 rounded-lg") : tailwind("bg-gray-700 px-1 py-1 rounded-lg")
               : this.state.favIcon === "favorite-border" ? tailwind("bg-gray-200 px-1 py-1 rounded-lg") : tailwind("bg-gray-100 px-1 py-1 rounded-lg") 
               }>
@@ -231,13 +234,13 @@ export default class Accordion extends Component {
                 size={20}
                 // style={{ color: "green[500]" }}
                 style={
-                    this.state.data.theme == 'dark' ? 
+                    this.props.theme == 'dark' ? 
                     this.state.favIcon === "favorite-border" ? tailwind("text-gray-400") : tailwind("text-red-700")
                     : this.state.favIcon === "favorite-border" ? tailwind("text-gray-700") : tailwind("text-red-700")}
                 onPress={() => this.favouriteThisStop(this.props.title.busstop_number)}
             />
           </TouchableOpacity>
-          <Text style={this.state.data.theme == 'dark' ? [styles.titleDark, styles.font] : [styles.title, styles.font]}>
+          <Text style={this.props.theme == 'dark' ? [styles.titleDark, styles.font] : [styles.title, styles.font]}>
             {this.props.title.busstop_number.length == 4 ? "0" + this.props.title.busstop_number : this.props.title.busstop_number}  –  {this.props.title.busstop_name}
           </Text>
           <Icon
@@ -248,9 +251,9 @@ export default class Accordion extends Component {
             color="#5E5E5E"
           />
         </TouchableOpacity>
-        <View style={this.state.data.theme == 'dark' ? styles.parentHrDark : styles.parentHr} />
+        <View style={this.props.theme == 'dark' ? styles.parentHrDark : styles.parentHr} />
         {this.state.expanded && (
-          <View style={this.state.data.theme == 'dark' ? styles.childDark : styles.child}>
+          <View style={this.props.theme == 'dark' ? styles.childDark : styles.child}>
             {refreshButton}
             {flatList}
           </View>

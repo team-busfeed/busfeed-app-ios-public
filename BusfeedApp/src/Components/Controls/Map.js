@@ -93,18 +93,18 @@ class Map extends Component {
                     >
                         <Callout
                         tooltip={true}
-                        style={this.props.states.theme == 'dark' ? styles.calloutDark : styles.callout}
+                        style={this.props.theme == 'dark' ? styles.calloutDark : styles.callout}
                         onPress={() => this.didTriggerMarker(busStop.busstop_number)}
                         >
                             <TouchableOpacity style={tailwind('flex flex-row justify-center items-center')}>
                                 <View style={tailwind("w-10")}>
-                                    <Icon name="bus" size={30} color={this.props.states.theme == 'dark' ? 'gray' : 'black'} style={[tailwind("flex"), styles.image]}/>
+                                    <Icon name="bus" size={30} color={this.props.theme == 'dark' ? 'gray' : 'black'} style={[tailwind("flex"), styles.image]}/>
                                 </View>
                                 <View>
-                                    <Text style={this.props.states.theme == 'dark' ? styles.titleDark : styles.title}>
+                                    <Text style={this.props.theme == 'dark' ? styles.titleDark : styles.title}>
                                         {busStop.busstop_name}
                                     </Text>
-                                    <Text style={this.props.states.theme == 'dark' ? styles.descriptionDark : styles.description}>
+                                    <Text style={this.props.theme == 'dark' ? styles.descriptionDark : styles.description}>
                                         {"Stop Number: " + busStop.busstop_number}
                                     </Text>
                                 </View>
@@ -173,18 +173,18 @@ class Map extends Component {
                         >
                                 <Callout
                                 tooltip={true}
-                                style={this.props.states.theme == 'dark' ? styles.calloutDark : styles.callout}
+                                style={this.props.theme == 'dark' ? styles.calloutDark : styles.callout}
                                 onPress={() => this.didTriggerMarker(busStop.busstop_number)}
                                 >
                                     <View style={tailwind('flex flex-row justify-center items-center')}>
                                         <View style={tailwind("w-10")}>
-                                            <Icon name="bus" size={30} color={this.props.states.theme == 'dark' ? 'gray' : 'black'} style={[tailwind("flex"), styles.image]}/>
+                                            <Icon name="bus" size={30} color={this.props.theme == 'dark' ? 'gray' : 'black'} style={[tailwind("flex"), styles.image]}/>
                                         </View>
                                         <View>
-                                            <Text style={this.props.states.theme == 'dark' ? styles.titleDark : styles.title}>
+                                            <Text style={this.props.theme == 'dark' ? styles.titleDark : styles.title}>
                                                 {busStop.busstop_name}
                                             </Text>
-                                            <Text style={this.props.states.theme == 'dark' ? styles.descriptionDark : styles.description}>
+                                            <Text style={this.props.theme == 'dark' ? styles.descriptionDark : styles.description}>
                                                 {"Stop Number: "}{busStop.busstop_number.length == 4 ? "0" + busStop.busstop_number : busStop.busstop_number}
                                             </Text>
                                         </View>

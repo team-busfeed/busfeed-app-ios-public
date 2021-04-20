@@ -100,7 +100,7 @@ export default class Header extends Component {
             controls =  
             <View style={tailwind('flex flex-row justify-center items-center')}>
                 <View style={tailwind('flex flex-row w-4/6 py-1')}>
-                    <Text style={this.props.states.theme == 'dark' ? tailwind('text-xl font-semibold text-gray-400 mx-2') : tailwind('text-xl font-semibold text-gray-600 mx-2')}>
+                    <Text style={this.props.theme == 'dark' ? tailwind('text-xl font-semibold text-gray-400 mx-2') : tailwind('text-xl font-semibold text-gray-600 mx-2')}>
                         Busfeed
                     </Text>
                 </View>
@@ -120,7 +120,7 @@ export default class Header extends Component {
             controls = <View style={tailwind('flex flex-row justify-between items-center')}>
                 <View style={tailwind('w-5/6')}>
                     <TextInput
-                        style={this.props.states.theme == 'dark' ? 
+                        style={this.props.theme == 'dark' ? 
                             tailwind('py-2 px-2 border border-gray-700 rounded-2xl bg-gray-800 text-white') :
                             tailwind('py-2 px-2 border border-gray-200 rounded-2xl bg-gray-100')
                         }
@@ -142,7 +142,7 @@ export default class Header extends Component {
             </View>
         }
         return (
-            <View style={this.props.states.theme == 'dark' ? tailwind('m-3') : tailwind('m-3 bg-white')}>
+            <View style={this.props.theme == 'dark' ? tailwind('m-3') : tailwind('m-3 bg-white')}>
                 {controls}
             </View>
         )

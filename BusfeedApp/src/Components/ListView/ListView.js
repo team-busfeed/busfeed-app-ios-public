@@ -180,7 +180,7 @@ class ListView extends Component {
                 onRefresh={() => this.getGeoLocation()}
                 refreshing={this.state.isLoading}
                 renderItem={({ item }) => (
-                    <Accordion title={item} data={this.props.states}/>
+                    <Accordion title={item} data={this.props.states} theme={this.props.theme}/>
                 )}
                 keyExtractor={(item) => item.busstop_number}
                 />
@@ -188,11 +188,11 @@ class ListView extends Component {
         }
 
         return (
-        <View style={this.props.states.theme == 'dark' ? tailwind('h-1/2 bg-black px-2 pb-8'):  tailwind('h-1/2 bg-white px-2 pb-8')}>
+        <View style={this.props.theme == 'dark' ? tailwind('h-1/2 bg-black px-2 pb-8'):  tailwind('h-1/2 bg-white px-2 pb-8')}>
             {this.props.states.isLoading ? null : this.isUpdated ? this.state.flatList : flatList}
             <View style={styles.container}>
                 <Spinner isVisible={this.props.states.isLoading} size={50} type={'ThreeBounce'} color={'#69a197'}/>
-                <Text style={this.props.states.theme == 'dark' ? tailwind('text-gray-300') : tailwind('text-gray-800')}>{this.props.states.isLoading ? "Loading" : ""}</Text>
+                <Text style={this.props.theme == 'dark' ? tailwind('text-gray-300') : tailwind('text-gray-800')}>{this.props.states.isLoading ? "Loading" : ""}</Text>
             </View>
         </View>
         )

@@ -270,9 +270,8 @@ Busfeed is an offshoot application from MyBusFeed of Project Busfeed."]
         </Modal>
         // 
         return (
-        <View style={this.state.theme == 'dark' ? tailwind('bg-black h-full') : tailwind('bg-white h-full')}>
+        <View style={this.props.theme == 'dark' ? tailwind('bg-black h-full') : tailwind('bg-white h-full')}>
             {aboutUs}
-            {this.props.theme != this.state.theme ? <Button onPress={this.resetAppearance} title="Refresh appearance"></Button> : null}
             <Controls
             states={this.state}
             ref={this.controlsRef}
@@ -282,6 +281,7 @@ Busfeed is an offshoot application from MyBusFeed of Project Busfeed."]
             triggerReloadLocation={this.triggerReloadLocation}
             setModalVisible={this.setModalVisible}
             resetAccordion={this.resetAccordion}
+            theme={this.props.theme}
             />
             <ListView
             states={this.state}
@@ -291,6 +291,7 @@ Busfeed is an offshoot application from MyBusFeed of Project Busfeed."]
             updateMaps={this.reloadMaps}
             triggerCentreOnRefresh={this.centreOnRefresh}
             resetAccordion={this.resetAccordion}
+            theme={this.props.theme}
             />
         </View>
         )
