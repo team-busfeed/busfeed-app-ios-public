@@ -184,6 +184,7 @@ export default class Accordion extends Component {
   // @param - bus number
 
   render() {
+      
 
     if (this.state.allBusesDidLeave) {
         var refreshButton = null
@@ -214,10 +215,14 @@ export default class Accordion extends Component {
       <View>
         <TouchableOpacity
           ref={this.accordian}
-          style={styles.row}
+          style={this.state.data.theme == 'dark' ? styles.rowDark : styles.row}
           onPress={() => this.onPressToggle()}
         >
-          <TouchableOpacity style={this.state.favIcon === "favorite-border" ? tailwind("bg-gray-200 px-1 py-1 rounded-lg") : tailwind("bg-gray-100 px-1 py-1 rounded-lg") }>
+          <TouchableOpacity style={
+              this.state.data.theme == 'dark' ? 
+              this.state.favIcon === "favorite-border" ? tailwind("bg-gray-600 px-1 py-1 rounded-lg") : tailwind("bg-gray-700 px-1 py-1 rounded-lg")
+              : this.state.favIcon === "favorite-border" ? tailwind("bg-gray-200 px-1 py-1 rounded-lg") : tailwind("bg-gray-100 px-1 py-1 rounded-lg") 
+              }>
             <Icon
                 // style={tailwind("text-gray-700")}
                 name={
@@ -225,11 +230,14 @@ export default class Accordion extends Component {
                 }
                 size={20}
                 // style={{ color: "green[500]" }}
-                style={this.state.favIcon === "favorite-border" ? tailwind("text-gray-700") : tailwind("text-red-700")}
+                style={
+                    this.state.data.theme == 'dark' ? 
+                    this.state.favIcon === "favorite-border" ? tailwind("text-gray-400") : tailwind("text-red-700")
+                    : this.state.favIcon === "favorite-border" ? tailwind("text-gray-700") : tailwind("text-red-700")}
                 onPress={() => this.favouriteThisStop(this.props.title.busstop_number)}
             />
           </TouchableOpacity>
-          <Text style={[styles.title, styles.font]}>
+          <Text style={this.state.data.theme == 'dark' ? [styles.titleDark, styles.font] : [styles.title, styles.font]}>
             {this.props.title.busstop_number.length == 4 ? "0" + this.props.title.busstop_number : this.props.title.busstop_number}  –  {this.props.title.busstop_name}
           </Text>
           <Icon
@@ -240,11 +248,10 @@ export default class Accordion extends Component {
             color="#5E5E5E"
           />
         </TouchableOpacity>
-        <View style={styles.parentHr} />
+        <View style={this.state.data.theme == 'dark' ? styles.parentHrDark : styles.parentHr} />
         {this.state.expanded && (
-          <View style={styles.child}>
+          <View style={this.state.data.theme == 'dark' ? styles.childDark : styles.child}>
             {refreshButton}
-
             {flatList}
           </View>
         )}
@@ -259,6 +266,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     color: '#5E5E5E',
+  },
+  titleDark: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#bbb',
   },
   row: {
     flexDirection: 'row',
@@ -288,13 +300,51 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     height: 50,
   },
+  rowDark: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 56,
+    paddingLeft: 25,
+    paddingRight: 18,
+    alignItems: 'center',
+    shadowColor: "#333",
+    shadowOffset: {
+        width: 0,
+        height: 3,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2,
+
+    elevation: 10,
+
+    backgroundColor: '#222',
+    borderRadius: 10,
+    marginTop: 5,
+    paddingTop: 12,
+    marginBottom: 5,
+    paddingBottom: 12,
+    marginLeft: 8,
+    paddingLeft: 8,
+    marginRight: 8,
+    paddingRight: 8,
+    height: 50,
+  },
   parentHr: {
     height: 1,
     color: '#000000',
     width: '100%',
   },
+  parentHrDark: {
+    height: 1,
+    color: '#fff',
+    width: '100%',
+  },
   child: {
     backgroundColor: '#ffffff',
+    padding: 16,
+  },
+  childDark: {
+    backgroundColor: '#000',
     padding: 16,
   },
 })

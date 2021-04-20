@@ -51,6 +51,22 @@ const externalStyle=StyleSheet.create({
         backgroundColor: 'white',
         flex: 1,
         borderRadius: 10,
+    },
+
+    controlsCardDark: {
+        shadowColor: "#333",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 2,
+
+        elevation: 10,
+
+        backgroundColor: '#222',
+        flex: 1,
+        borderRadius: 10,
     }
 })
 

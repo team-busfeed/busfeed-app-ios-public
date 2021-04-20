@@ -48,6 +48,7 @@ const ApplicationNavigator = () => {
                 component={MainNavigator}
                 options={{
                   animationEnabled: false,
+                  darkMode: darkMode,
                 }}
               />
             )}

@@ -7,12 +7,14 @@ import {
     Modal,
     StyleSheet,
     Pressable,
+    Appearance
 } from 'react-native'
 import { Controls } from '@/Components/Controls'
 import { ListView } from '@/Components/ListView'
 import tailwind from 'tailwind-rn'
 import Geolocation from '@react-native-community/geolocation'
 import axios from 'axios'
+import { useTheme } from '@react-navigation/native'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -32,6 +34,7 @@ class HomeContainer extends Component {
         bustop: null,
         tutorialState: 0,
         modalVisible: false,
+        theme: Appearance.getColorScheme(),
     }
   }
 
@@ -205,7 +208,7 @@ class HomeContainer extends Component {
     }
 
     render() {
-
+        console.log('theme', this.state.theme)
         // set tutorial title here
         titles = ["About Busfeed 😍"]
 
@@ -224,10 +227,10 @@ Busfeed is an offshoot application from MyBusFeed of Project Busfeed."]
         }}
         >
             <View style={tailwind("bottom-0"), styles.centeredView}>
-                <View style={tailwind("pt-10"), styles.modalView}>
-                    <Text style={tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
-                    <Text style={tailwind("text-xs text-gray-600 my-5 text-justify")}>{content[this.state.tutorialState]}</Text>
-                    <Text style={tailwind("text-xs text-gray-600 mb-5 italic text-justify")}>*LTA occassionally does maintenance which might return no results to bus timings. {'\n\n\n\n\n\n\n\n\n\n\n'}</Text>
+                <View style={tailwind("pt-10"), this.state.theme == 'dark' ? styles.modalViewDark : styles.modalView}>
+                    <Text style={this.state.theme == 'dark' ? tailwind("text-xl font-semibold text-blue-600 pt-5") : tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
+                    <Text style={this.state.theme == 'dark' ? tailwind("text-xs text-gray-200 my-5 text-justify") : tailwind("text-xs text-gray-600 my-5 text-justify")}>{content[this.state.tutorialState]}</Text>
+                    <Text style={this.state.theme == 'dark' ? tailwind("text-xs text-gray-200 mb-5 italic text-justify") : tailwind("text-xs text-gray-600 mb-5 italic text-justify")}>*LTA occassionally does maintenance which might return no results to bus timings. {'\n\n\n\n\n\n\n\n\n\n\n'}</Text>
                     <View style={tailwind("flex")}>
                         <Pressable
                             style={tailwind("bg-blue-600 py-2 px-5 rounded-lg mt-2 mb-5")}
@@ -250,9 +253,9 @@ Busfeed is an offshoot application from MyBusFeed of Project Busfeed."]
                 </View>
             </View>
         </Modal>
-        
+        // 
         return (
-        <View style={tailwind('bg-white h-full')}>
+        <View style={this.state.theme == 'dark' ? tailwind('bg-black h-full') : tailwind('bg-white h-full')}>
             {aboutUs}
             <Controls
             states={this.state}
@@ -291,6 +294,20 @@ const styles = StyleSheet.create({
         padding: 35,
         alignItems: "center",
         shadowColor: "#888",
+        shadowOffset: {
+            width: 0,
+            height: -8
+        },
+        shadowOpacity: 0.35,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    modalViewDark: {
+        backgroundColor: "#222",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#333",
         shadowOffset: {
             width: 0,
             height: -8

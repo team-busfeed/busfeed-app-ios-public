@@ -58,8 +58,8 @@ class Controls extends Component {
 
     render() {
         return (
-            <View style={tailwind('h-3/6 bg-white px-4 mb-4 mt-4')}>
-                <View style={externalStyle.controlsCard}>
+            <View style={this.props.states.theme == 'dark' ? tailwind('h-3/6 bg-black px-4 mb-4 mt-4') : tailwind('h-3/6 bg-white px-4 mb-4 mt-4')}>
+                <View style={this.props.states.theme == 'dark' ? externalStyle.controlsCardDark :  externalStyle.controlsCard}>
                     <Header states = {this.props.states} ref={this.headerRef} resetAccordion={this.props.resetAccordion} setModalVisible={this.setModalVisible} resetLocation={this.resetLocation} triggerCentreOnRefresh={this.centreMap} triggerMapsOnSearch={this.triggerMaps} triggerRefresh={this.didTriggerReloadLocation} triggerIndexOnSearch={this.props.triggerIndexOnSearch} />
                     <Map states = {this.props.states} ref={this.mapsRef} triggerCentreOnRefresh={this.props.triggerCentreOnRefresh} triggerIndexOnSearch={this.props.triggerIndexOnSearch} />
                     <Navigation states = {this.props.states} triggerFavourites={this.didTriggerFavourites} triggerMapsOnSearch={this.triggerMaps} triggerRefresh={this.didTriggerReloadLocation}/>
