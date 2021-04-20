@@ -86,6 +86,10 @@ export default function () {
       flex: 1,
       backgroundColor: "#fff",
     },
+    fillDark: {
+      flex: 1,
+      backgroundColor: "#000",
+    },
     fullSize: {
       height: '100%',
       width: '100%',

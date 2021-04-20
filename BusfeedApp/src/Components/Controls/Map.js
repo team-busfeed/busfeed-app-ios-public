@@ -23,8 +23,24 @@ const styles = StyleSheet.create({
         flex: 1, 
         position: "relative", 
     },
+    calloutDark: {
+        backgroundColor: "#222",
+        borderRadius: 4,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 10, 
+        flex: 1, 
+        position: "relative", 
+    },
     title: {
         color: "#4F4F4F",
+        fontSize: 14,
+        lineHeight: 18,
+        flex: 1,
+        fontWeight: "bold"
+    },
+    titleDark: {
+        color: "#ddd",
         fontSize: 14,
         lineHeight: 18,
         flex: 1,
@@ -35,7 +51,13 @@ const styles = StyleSheet.create({
         fontSize: 12,
         lineHeight: 16,
         flex: 1,
-    }
+    },
+    descriptionDark: {
+        color: "#ddd",
+        fontSize: 12,
+        lineHeight: 16,
+        flex: 1,
+    },
 
 });
 class Map extends Component {
@@ -71,18 +93,18 @@ class Map extends Component {
                     >
                         <Callout
                         tooltip={true}
-                        style={styles.callout}
+                        style={this.props.states.theme == 'dark' ? styles.calloutDark : styles.callout}
                         onPress={() => this.didTriggerMarker(busStop.busstop_number)}
                         >
                             <TouchableOpacity style={tailwind('flex flex-row justify-center items-center')}>
                                 <View style={tailwind("w-10")}>
-                                    <Icon name="bus" size={30} color="black" style={[tailwind("flex"), styles.image]}/>
+                                    <Icon name="bus" size={30} color={this.props.states.theme == 'dark' ? 'gray' : 'black'} style={[tailwind("flex"), styles.image]}/>
                                 </View>
                                 <View>
-                                    <Text style={styles.title}>
+                                    <Text style={this.props.states.theme == 'dark' ? styles.titleDark : styles.title}>
                                         {busStop.busstop_name}
                                     </Text>
-                                    <Text style={styles.description}>
+                                    <Text style={this.props.states.theme == 'dark' ? styles.descriptionDark : styles.description}>
                                         {"Stop Number: " + busStop.busstop_number}
                                     </Text>
                                 </View>
@@ -117,6 +139,7 @@ class Map extends Component {
 
     didTriggerMarker = (selected) => {
         console.log(selected)
+        this.props.resetAccordion()
 
         axios
         .get("https://mybusfeed.herokuapp.com/location/getBusStopInformation/" + selected)
@@ -150,18 +173,18 @@ class Map extends Component {
                         >
                                 <Callout
                                 tooltip={true}
-                                style={styles.callout}
+                                style={this.props.states.theme == 'dark' ? styles.calloutDark : styles.callout}
                                 onPress={() => this.didTriggerMarker(busStop.busstop_number)}
                                 >
                                     <View style={tailwind('flex flex-row justify-center items-center')}>
                                         <View style={tailwind("w-10")}>
-                                            <Icon name="bus" size={30} color="black" style={[tailwind("flex"), styles.image]}/>
+                                            <Icon name="bus" size={30} color={this.props.states.theme == 'dark' ? 'gray' : 'black'} style={[tailwind("flex"), styles.image]}/>
                                         </View>
                                         <View>
-                                            <Text style={styles.title}>
+                                            <Text style={this.props.states.theme == 'dark' ? styles.titleDark : styles.title}>
                                                 {busStop.busstop_name}
                                             </Text>
-                                            <Text style={styles.description}>
+                                            <Text style={this.props.states.theme == 'dark' ? styles.descriptionDark : styles.description}>
                                                 {"Stop Number: "}{busStop.busstop_number.length == 4 ? "0" + busStop.busstop_number : busStop.busstop_number}
                                             </Text>
                                         </View>

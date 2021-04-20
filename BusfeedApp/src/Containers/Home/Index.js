@@ -7,7 +7,9 @@ import {
     Modal,
     StyleSheet,
     Pressable,
-    Appearance
+    Appearance,
+    useColorScheme,
+    Button
 } from 'react-native'
 import { Controls } from '@/Components/Controls'
 import { ListView } from '@/Components/ListView'
@@ -21,22 +23,28 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 const TIME_FORMAT = 'MM/DD/YYYY HH:mm:ss'
 
 class HomeContainer extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-        latitude: 1.3521,
-        longitude: 103.8198,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
-        updatedGeolocation: false,
-        isLoading: true,
-        busStops: [],
-        bustop: null,
-        tutorialState: 0,
-        modalVisible: false,
-        theme: Appearance.getColorScheme(),
+    constructor(props) {
+        super(props)
+        this.state = {
+            latitude: 1.3521,
+            longitude: 103.8198,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+            updatedGeolocation: false,
+            isLoading: true,
+            busStops: [],
+            bustop: null,
+            tutorialState: 0,
+            modalVisible: false,
+            theme: Appearance.getColorScheme(),
+        }
     }
-  }
+    componentWillUnmount() {
+        // fix Warning: Can't perform a React state update on an unmounted component
+        this.setState = (state,callback)=>{
+            return
+        }
+    }
 
     // Get user current location, call function to set list of bus stops around user proximity
     getGeoLocation() {
@@ -207,10 +215,17 @@ class HomeContainer extends Component {
         })
     }
 
+    resetAppearance = () => {
+        this.setState({
+            theme: this.props.theme
+        })
+        this.resetLocation()
+    }
+
     render() {
-        console.log('theme', this.state.theme)
         // set tutorial title here
         titles = ["About Busfeed 😍"]
+
 
         // set tutorial content here
         content = ["Busfeed tells you when your next bus will arrive at any bus stop in Singapore using the data provided from Land Transport Authority (LTA)’s Datamall*.\n\n\
@@ -257,6 +272,7 @@ Busfeed is an offshoot application from MyBusFeed of Project Busfeed."]
         return (
         <View style={this.state.theme == 'dark' ? tailwind('bg-black h-full') : tailwind('bg-white h-full')}>
             {aboutUs}
+            {this.props.theme != this.state.theme ? <Button onPress={this.resetAppearance} title="Refresh appearance"></Button> : null}
             <Controls
             states={this.state}
             ref={this.controlsRef}
@@ -318,4 +334,11 @@ const styles = StyleSheet.create({
     },
 })
 
-export default HomeContainer
+function homeHook(Component) {
+    return function WrappedComponent(props) {
+        const colourScheme = useColorScheme()
+        return <Component ref={this.componentRef} theme={colourScheme}/>
+    }
+}
+
+export default homeHook(HomeContainer)

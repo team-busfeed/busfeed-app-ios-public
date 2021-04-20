@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { ActivityIndicator, View, Text } from 'react-native'
+import { ActivityIndicator, View, Text, Appearance } from 'react-native'
 import { useTheme } from '@/Theme'
 import { useDispatch } from 'react-redux'
 import InitStartup from '@/Store/Startup/Init'
@@ -18,11 +18,13 @@ const IndexStartupContainer = () => {
     dispatch(InitStartup.action())
   }, [dispatch])
 
+  const theme = Appearance.getColorScheme()
+
   return (
-    <View style={tailwind("bg-white"), [Layout.fill, Layout.colCenter]}>
+    <View style={theme == 'dark' ? [Layout.fillDark, Layout.colCenter] : [Layout.fill, Layout.colCenter]}>
       <Brand />
       <ActivityIndicator size={'large'} style={[Gutters.largeVMargin]} />
-      <Text style={Fonts.textCenter}>{t('welcome')}</Text>
+      <Text style={theme == 'dark' ? tailwind('text-gray-200') : tailwind('text-gray-800')}>{t('welcome')}</Text>
     </View>
   )
 }
