@@ -242,10 +242,10 @@ Busfeed is an offshoot application from MyBusFeed of Project Busfeed."]
         }}
         >
             <View style={tailwind("bottom-0"), styles.centeredView}>
-                <View style={tailwind("pt-10"), this.state.theme == 'dark' ? styles.modalViewDark : styles.modalView}>
-                    <Text style={this.state.theme == 'dark' ? tailwind("text-xl font-semibold text-blue-600 pt-5") : tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
-                    <Text style={this.state.theme == 'dark' ? tailwind("text-xs text-gray-200 my-5 text-justify") : tailwind("text-xs text-gray-600 my-5 text-justify")}>{content[this.state.tutorialState]}</Text>
-                    <Text style={this.state.theme == 'dark' ? tailwind("text-xs text-gray-200 mb-5 italic text-justify") : tailwind("text-xs text-gray-600 mb-5 italic text-justify")}>*LTA occassionally does maintenance which might return no results to bus timings. {'\n\n\n\n\n\n\n\n\n\n\n'}</Text>
+                <View style={tailwind("pt-10"), this.props.theme == 'dark' ? styles.modalViewDark : styles.modalView}>
+                    <Text style={this.props.theme == 'dark' ? tailwind("text-xl font-semibold text-blue-600 pt-5") : tailwind("text-xl font-semibold text-blue-600 pt-5")}>{titles[this.state.tutorialState]}</Text>
+                    <Text style={this.props.theme == 'dark' ? tailwind("text-xs text-gray-200 my-5 text-justify") : tailwind("text-xs text-gray-600 my-5 text-justify")}>{content[this.state.tutorialState]}</Text>
+                    <Text style={this.props.theme == 'dark' ? tailwind("text-xs text-gray-200 mb-5 italic text-justify") : tailwind("text-xs text-gray-600 mb-5 italic text-justify")}>*LTA occassionally does maintenance which might return no results to bus timings. {'\n\n\n\n\n\n\n\n\n\n\n'}</Text>
                     <View style={tailwind("flex")}>
                         <Pressable
                             style={tailwind("bg-blue-600 py-2 px-5 rounded-lg mt-2 mb-5")}

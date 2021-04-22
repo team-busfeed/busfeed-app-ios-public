@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Your location will be used to fetch nearby bus stops in the background.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -39,8 +37,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Your location will be used to fetch nearby bus stops for your convenience.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Your location will be used to fetch nearby bus stops in the background.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Your location will be used to fetch nearby bus stops for your convenience.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your location will be used to fetch nearby bus stops.</string>
+	<string>Your location will be used to fetch nearby bus stops for your convenience.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
