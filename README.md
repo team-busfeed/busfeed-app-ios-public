@@ -44,3 +44,11 @@ Ideally where you can store your global variables.
 
 **Run instructions for Windows and macOS:**
 - See https://aka.ms/ReactNative for the latest up-to-date instructions.
+
+
+## Support us!
+
+Help support our cloud costs:
+https://www.buymeacoffee.com/teambusfeed
+
+![Buy Me A Coffee](https://img.buymeacoffee.com/api/?url=aHR0cHM6Ly9pbWcuYnV5bWVhY29mZmVlLmNvbS9hcGkvP25hbWU9dGVhbWJ1c2ZlZWQmc2l6ZT0zMDAmYmctaW1hZ2U9Ym1jJmJhY2tncm91bmQ9NUY3RkZG&creator=teambusfeed&design_code=1&design_color=%235F7FFF&slug=teambusfeed)
